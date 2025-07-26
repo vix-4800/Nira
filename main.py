@@ -39,6 +39,18 @@ def run_command(cmd):
 
     return out, err
 
+def check_command_error(err):
+    error_signatures = [
+        "Syntax error", "syntax error", "unexpected EOF",
+        "unterminated quoted string", "unmatched quote",
+        "command not found", "not found", "invalid option", "No such file or directory"
+    ]
+    for sign in error_signatures:
+        if sign in err:
+            return True
+
+    return False
+
 def main():
     with open("prompt.json", "r", encoding="utf-8") as f:
         prompt_data = json.load(f)
@@ -77,6 +89,10 @@ def main():
                     continue
 
                 out, err = run_command(cmd)
+
+                if err and check_command_error(err):
+                    print("❗️ Внимание: в команде обнаружена синтаксическая или критическая ошибка!")
+                    print(f"Ошибка: {err}")
 
                 output_text = f"stdout:\n{out}\nstderr:\n{err}"
                 history.append({"role": "system", "content": output_text})
