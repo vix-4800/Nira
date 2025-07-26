@@ -92,6 +92,10 @@
     {
       "user": "В проекте CRM в папке backend найди все совпадения \"Config::get\"",
       "assistant": "COMMAND: find ~/ -type d -iname '*crm*' > /tmp/crm_paths.txt 2>/dev/null\nCOMMAND: if [ ! -s /tmp/crm_paths.txt ]; then echo 'Проект crm не найден.'; else while read project; do find \"$project\" -type d -iname 'backend' >> /tmp/backend_paths.txt 2>/dev/null; done < /tmp/crm_paths.txt; fi\nCOMMAND: if [ ! -s /tmp/backend_paths.txt ]; then echo 'Папка backend не найдена.'; else while read bpath; do grep -R --include=\"*.php\" \"Config::get\" \"$bpath\" 2>/dev/null; done < /tmp/backend_paths.txt; fi"
+    },
+    {
+      "role": "system",
+      "content": "stderr:\n/bin/sh: 1: Syntax error: end of file unexpected (expecting \"fi\")"
     }
   ]
 }

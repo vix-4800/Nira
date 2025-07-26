@@ -7,7 +7,7 @@ GOODBYE_PHRASES = ["bye","goodbye","nothing","exit","quit"]
 
 def ask_llm(prompt):
     res = requests.post('http://localhost:11434/api/generate', json={
-        "model": "llama3.2:3b", # qwen3:4b / deepseek-r1:8b-0528-qwen3-q4_K_M
+        "model": "qwen3:4b", # llama3.2:3b / deepseek-r1:8b-0528-qwen3-q4_K_M
         "prompt": prompt,
         "stream": False
     })
@@ -16,11 +16,18 @@ def ask_llm(prompt):
 def build_prompt(system_prompt, examples, task, history=None):
     lines = [system_prompt]
     for ex in examples:
-        lines.append(f"User: {ex['user']}\nAssistant: {ex['assistant']}")
+        user = ex.get('user')
+        assistant = ex.get('assistant')
+        if user is not None and assistant is not None:
+            lines.append(f"User: {user}\nAssistant: {assistant}")
+        elif 'role' in ex and 'content' in ex:
+            lines.append(f"{ex['role'].capitalize()}: {ex['content']}")
 
     if history:
         for step in history:
-            lines.append(f"{step['role'].capitalize()}: {step['content']}")
+            role = step.get('role', 'User')
+            content = step.get('content', '')
+            lines.append(f"{role.capitalize()}: {content}")
     lines.append(f"User: {task}\nAssistant:")
 
     return "\n".join(lines)
@@ -93,6 +100,7 @@ def main():
                 if err and check_command_error(err):
                     print("❗️ Внимание: в команде обнаружена синтаксическая или критическая ошибка!")
                     print(f"Ошибка: {err}")
+                    prev_task = f"Предыдущая команда завершилась ошибкой:\n{err}\nПожалуйста, исправь команду и повтори попытку."
 
                 output_text = f"stdout:\n{out}\nstderr:\n{err}"
                 history.append({"role": "system", "content": output_text})
