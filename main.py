@@ -4,6 +4,8 @@ import re
 import json
 
 
+GOODBYE_PHRASES = ["bye","goodbye","nothing","exit"]
+
 def ask_llm(model, prompt):
     res = requests.post('http://localhost:11434/api/generate', json={
         "model": model,
@@ -27,6 +29,10 @@ def main():
     examples = prompt_data.get("examples", [])
 
     task = input("What should I do?\n")
+
+    if task.lower() in GOODBYE_PHRASES:
+        exit()
+
     prompt = build_prompt(system_prompt, examples, task)
     response = ask_llm(model, prompt)
 
