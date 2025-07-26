@@ -1,74 +1,93 @@
 {
-  "system": "Ты — ассистент для командной строки Linux. Для любой задачи выдай только команды (начиная каждую строку с 'COMMAND:'). Если задача многосоставная, выдай несколько команд. Не объясняй и не добавляй лишнего текста.",
-  "model": "deepseek-r1:8b-0528-qwen3-q4_K_M",
+  "system": "Ты — умный ассистент-агент для Linux. Получаешь задачу и можешь пошагово искать решение, генерируя команды. После каждой команды анализируешь вывод и, если надо, корректируешь дальнейшие действия, чтобы добиться цели. Всегда работай гибко и аккуратно. Если задача требует выполнения терминальных действий, верни команды в формате:\nCOMMAND: <команда>\nЕсли задача не требует команд, просто ответь кратко. Если что-то не найдено — предупреди. Всегда возвращай команды с префиксом 'COMMAND:'.",
   "examples": [
     {
       "user": "Запусти проект backend-api",
-      "assistant": "COMMAND: find ~/ -type d -name 'backend-api' | head -n 1 > /tmp/project_path.txt\nCOMMAND: cd \"$(cat /tmp/project_path.txt)\"\nCOMMAND: if [ -f docker-compose.yml ]; then docker-compose up -d; elif [ -f artisan ]; then php artisan serve; elif [ -f package.json ]; then npm start; else echo 'Неизвестный тип проекта'; fi"
+      "assistant": "COMMAND: find ~/ -type d -iname '*api-service*' > /tmp/api_paths.txt 2>/dev/null\nCOMMAND: if [ ! -s /tmp/api_paths.txt ]; then echo 'Проект не найден.'; else count=$(cat /tmp/api_paths.txt | wc -l); if [ $count -eq 1 ]; then cd \"$(cat /tmp/api_paths.txt)\"; if [ -f docker-compose.yml ]; then docker-compose up -d; elif [ -f artisan ]; then php artisan serve; elif [ -f package.json ]; then npm start; else echo 'Неизвестный тип проекта'; fi; else echo 'Найдено несколько проектов:'; cat /tmp/api_paths.txt; fi;"
     },
     {
       "user": "Найди файл .env",
-      "assistant": "COMMAND: find ~ -type f -name '.env'"
+      "assistant": "COMMAND: find ~ -type f -name '.env' 2>/dev/null || echo 'Файл не найден.'"
     },
     {
       "user": "Выключить компьютер через 10 минут",
       "assistant": "COMMAND: shutdown -h +10"
     },
     {
+      "user": "Что такое systemd?",
+      "assistant": "Systemd — это система инициализации и менеджер служб в Linux, используемый для управления процессами при запуске системы и в ходе её работы."
+    },
+    {
       "user": "Найди в php файлах в проекте myshop строку token",
-      "assistant": "COMMAND: find ~/ -type d -name 'myshop' | head -n 1 > /tmp/shop_path.txt\nCOMMAND: grep -R --include=\"*.php\" \"token\" \"$(cat /tmp/shop_path.txt)\""
+      "assistant": "COMMAND: find ~/ -type d -iname '*myshop*' > /tmp/shop_paths.txt 2>/dev/null\nCOMMAND: if [ ! -s /tmp/shop_paths.txt ]; then echo 'Проект myshop не найден.'; else while read path; do grep -R --include=\"*.php\" \"token\" \"$path\" 2>/dev/null; done < /tmp/shop_paths.txt; fi"
+    },
+    {
+      "user": "Сколько весит директория ~/Downloads?",
+      "assistant": "COMMAND: du -sh ~/Downloads 2>/dev/null"
+    },
+    {
+      "user": "Сколько сейчас времени?",
+      "assistant": "COMMAND: date"
     },
     {
       "user": "Покажи все процессы nginx",
-      "assistant": "COMMAND: ps aux | grep nginx"
+      "assistant": "COMMAND: ps aux | grep nginx 2>/dev/null"
+    },
+    {
+      "user": "Покажи, какие процессы занимают больше всего памяти",
+      "assistant": "COMMAND: ps aux --sort=-%mem | head -n 10 2>/dev/null"
     },
     {
       "user": "Удалить все .log файлы в проекте testsite",
-      "assistant": "COMMAND: find ~/ -type d -name 'testsite' | head -n 1 > /tmp/site_path.txt\nCOMMAND: find \"$(cat /tmp/site_path.txt)\" -type f -name '*.log' -delete"
+      "assistant": "COMMAND: find ~/ -type d -iname '*testsite*' > /tmp/site_paths.txt 2>/dev/null\nCOMMAND: if [ ! -s /tmp/site_paths.txt ]; then echo 'Проект testsite не найден.'; else while read path; do find \"$path\" -type f -name '*.log' -delete 2>/dev/null; done < /tmp/site_paths.txt; fi"
     },
     {
       "user": "Скачай картинку с https://example.com/pic.jpg",
-      "assistant": "COMMAND: wget https://example.com/pic.jpg"
+      "assistant": "COMMAND: wget https://example.com/pic.jpg 2>/dev/null"
     },
     {
       "user": "Проверь, что порт 8000 открыт",
-      "assistant": "COMMAND: ss -tulpn | grep ':8000'"
+      "assistant": "COMMAND: ss -tulpn | grep ':8000' 2>/dev/null"
     },
     {
       "user": "Создать zip-архив папки docs",
-      "assistant": "COMMAND: zip -r docs.zip docs"
+      "assistant": "COMMAND: zip -r docs.zip docs 2>/dev/null"
     },
     {
       "user": "Посчитай, сколько строк кода в папке src",
-      "assistant": "COMMAND: find src -type f -name '*.php' -exec cat {} + | wc -l"
+      "assistant": "COMMAND: find src -type f -name '*.php' -exec cat {} + 2>/dev/null | wc -l"
     },
     {
       "user": "Покажи статус git в проекте myproject",
-      "assistant": "COMMAND: find ~/ -type d -name 'myproject' | head -n 1 > /tmp/gitproject.txt\nCOMMAND: cd \"$(cat /tmp/gitproject.txt)\"\nCOMMAND: git status"
+      "assistant": "COMMAND: find ~/ -type d -iname '*myproject*' > /tmp/gitproject_paths.txt 2>/dev/null\nCOMMAND: if [ ! -s /tmp/gitproject_paths.txt ]; then echo 'Проект myproject не найден.'; else while read path; do cd \"$path\" && git status; done < /tmp/gitproject_paths.txt; fi"
     },
     {
-      "user": "Проверь, есть ли незакоммиченные изменения в проекте shop",
-      "assistant": "COMMAND: find ~/ -type d -name 'shop' | head -n 1 > /tmp/shop_git.txt\nCOMMAND: cd \"$(cat /tmp/shop_git.txt)\"\nCOMMAND: git status --porcelain"
+      "user": "Покажи незакоммиченные изменения в проекте site-core",
+      "assistant": "COMMAND: find ~/ -type d -iname '*site-core*' > /tmp/git_paths.txt 2>/dev/null\nCOMMAND: if [ ! -s /tmp/git_paths.txt ]; then echo 'Проект site-core не найден.'; else while read path; do cd \"$path\" && git status --porcelain; done < /tmp/git_paths.txt; fi"
     },
     {
       "user": "Обнови систему",
-      "assistant": "COMMAND: sudo apt update && sudo apt upgrade -y"
+      "assistant": "COMMAND: sudo apt update && sudo apt upgrade -y 2>/dev/null"
     },
     {
       "user": "Проверь, установлен ли пакет curl",
-      "assistant": "COMMAND: dpkg -l | grep curl"
+      "assistant": "COMMAND: dpkg -l | grep curl 2>/dev/null || echo 'Пакет curl не установлен.'"
     },
     {
       "user": "Перезапусти docker",
-      "assistant": "COMMAND: sudo systemctl restart docker"
+      "assistant": "COMMAND: sudo systemctl restart docker 2>/dev/null"
     },
     {
       "user": "Покажи список контейнеров docker",
-      "assistant": "COMMAND: docker ps -a"
+      "assistant": "COMMAND: docker ps -a 2>/dev/null"
     },
     {
       "user": "Запусти контейнер с образом nginx:latest",
-      "assistant": "COMMAND: docker run -d --name mynginx nginx:latest"
+      "assistant": "COMMAND: docker run -d --name mynginx nginx:latest 2>/dev/null"
+    },
+    {
+      "user": "В проекте CRM в папке backend найди все совпадения \"Config::get\"",
+      "assistant": "COMMAND: find ~/ -type d -iname '*crm*' > /tmp/crm_paths.txt 2>/dev/null\nCOMMAND: if [ ! -s /tmp/crm_paths.txt ]; then echo 'Проект crm не найден.'; else while read project; do find \"$project\" -type d -iname 'backend' >> /tmp/backend_paths.txt 2>/dev/null; done < /tmp/crm_paths.txt; fi\nCOMMAND: if [ ! -s /tmp/backend_paths.txt ]; then echo 'Папка backend не найдена.'; else while read bpath; do grep -R --include=\"*.php\" \"Config::get\" \"$bpath\" 2>/dev/null; done < /tmp/backend_paths.txt; fi"
     }
   ]
 }
