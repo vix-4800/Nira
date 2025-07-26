@@ -12,14 +12,22 @@ def ask_llm(model, prompt):
     })
     return res.json()["response"]
 
+def build_prompt(system_prompt, examples, task):
+    lines = [system_prompt]
+    for ex in examples:
+        lines.append(f"User: {ex['user']}\nAssistant: {ex['assistant']}")
+    lines.append(f"Task: {task}\nAssistant:")
+    return "\n".join(lines)
+
 def main():
     with open("prompt.json", "r", encoding="utf-8") as f:
         prompt_data = json.load(f)
     system_prompt = prompt_data["system"]
     model = prompt_data["model"]
+    examples = prompt_data.get("examples", [])
 
     task = input("What should I do?\n")
-    prompt = f"{system_prompt}\nTask: {task}\n"
+    prompt = build_prompt(system_prompt, examples, task)
     response = ask_llm(model, prompt)
 
     commands = re.findall(r"COMMAND:\s*(.+)", response)

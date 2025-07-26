@@ -1,10 +1,74 @@
 {
-  "system": "You are my system assistant. Return ONLY bash commands to solve the task. If there are several steps, print each command on a separate line starting with 'COMMAND:'.",
+  "system": "Ты — ассистент для командной строки Linux. Для любой задачи выдай только команды (начиная каждую строку с 'COMMAND:'). Если задача многосоставная, выдай несколько команд. Не объясняй и не добавляй лишнего текста.",
   "model": "deepseek-r1:8b-0528-qwen3-q4_K_M",
   "examples": [
     {
-      "user": "...",
-      "assistant": "COMMAND: ..."
+      "user": "Запусти проект backend-api",
+      "assistant": "COMMAND: find ~/ -type d -name 'backend-api' | head -n 1 > /tmp/project_path.txt\nCOMMAND: cd \"$(cat /tmp/project_path.txt)\"\nCOMMAND: if [ -f docker-compose.yml ]; then docker-compose up -d; elif [ -f artisan ]; then php artisan serve; elif [ -f package.json ]; then npm start; else echo 'Неизвестный тип проекта'; fi"
+    },
+    {
+      "user": "Найди файл .env",
+      "assistant": "COMMAND: find ~ -type f -name '.env'"
+    },
+    {
+      "user": "Выключить компьютер через 10 минут",
+      "assistant": "COMMAND: shutdown -h +10"
+    },
+    {
+      "user": "Найди в php файлах в проекте myshop строку token",
+      "assistant": "COMMAND: find ~/ -type d -name 'myshop' | head -n 1 > /tmp/shop_path.txt\nCOMMAND: grep -R --include=\"*.php\" \"token\" \"$(cat /tmp/shop_path.txt)\""
+    },
+    {
+      "user": "Покажи все процессы nginx",
+      "assistant": "COMMAND: ps aux | grep nginx"
+    },
+    {
+      "user": "Удалить все .log файлы в проекте testsite",
+      "assistant": "COMMAND: find ~/ -type d -name 'testsite' | head -n 1 > /tmp/site_path.txt\nCOMMAND: find \"$(cat /tmp/site_path.txt)\" -type f -name '*.log' -delete"
+    },
+    {
+      "user": "Скачай картинку с https://example.com/pic.jpg",
+      "assistant": "COMMAND: wget https://example.com/pic.jpg"
+    },
+    {
+      "user": "Проверь, что порт 8000 открыт",
+      "assistant": "COMMAND: ss -tulpn | grep ':8000'"
+    },
+    {
+      "user": "Создать zip-архив папки docs",
+      "assistant": "COMMAND: zip -r docs.zip docs"
+    },
+    {
+      "user": "Посчитай, сколько строк кода в папке src",
+      "assistant": "COMMAND: find src -type f -name '*.php' -exec cat {} + | wc -l"
+    },
+    {
+      "user": "Покажи статус git в проекте myproject",
+      "assistant": "COMMAND: find ~/ -type d -name 'myproject' | head -n 1 > /tmp/gitproject.txt\nCOMMAND: cd \"$(cat /tmp/gitproject.txt)\"\nCOMMAND: git status"
+    },
+    {
+      "user": "Проверь, есть ли незакоммиченные изменения в проекте shop",
+      "assistant": "COMMAND: find ~/ -type d -name 'shop' | head -n 1 > /tmp/shop_git.txt\nCOMMAND: cd \"$(cat /tmp/shop_git.txt)\"\nCOMMAND: git status --porcelain"
+    },
+    {
+      "user": "Обнови систему",
+      "assistant": "COMMAND: sudo apt update && sudo apt upgrade -y"
+    },
+    {
+      "user": "Проверь, установлен ли пакет curl",
+      "assistant": "COMMAND: dpkg -l | grep curl"
+    },
+    {
+      "user": "Перезапусти docker",
+      "assistant": "COMMAND: sudo systemctl restart docker"
+    },
+    {
+      "user": "Покажи список контейнеров docker",
+      "assistant": "COMMAND: docker ps -a"
+    },
+    {
+      "user": "Запусти контейнер с образом nginx:latest",
+      "assistant": "COMMAND: docker run -d --name mynginx nginx:latest"
     }
   ]
 }
