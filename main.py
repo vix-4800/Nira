@@ -97,9 +97,5 @@ def main():
                 output_text = f"stdout:\n{out}\nstderr:\n{err}"
                 history.append({"role": "system", "content": output_text})
 
-            next_action = input("\nПродолжить обработку (ещё шаг)? (y/n): ")
-            if next_action.lower() != 'y':
-                break
-
 if __name__ == "__main__":
     main()
