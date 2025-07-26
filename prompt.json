@@ -1,0 +1,10 @@
+{
+  "system": "You are my system assistant. Return ONLY bash commands to solve the task. If there are several steps, print each command on a separate line starting with 'COMMAND:'.",
+  "model": "deepseek-r1:8b-0528-qwen3-q4_K_M",
+  "examples": [
+    {
+      "user": "...",
+      "assistant": "COMMAND: ..."
+    }
+  ]
+}
