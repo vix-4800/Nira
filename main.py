@@ -85,6 +85,18 @@ def ask_llm(prompt, server_url, model, timeout=30):
     except ValueError as exc:
         raise LLMServerUnavailable("Invalid response from LLM server") from exc
 
+def check_llm_server(server_url, model, timeout=5):
+    """Verify that the LLM server is reachable by sending a small request."""
+    try:
+        res = requests.post(
+            f"{server_url}/api/generate",
+            json={"model": model, "prompt": "", "stream": False},
+            timeout=timeout,
+        )
+        res.raise_for_status()
+    except req_exc.RequestException as exc:
+        raise LLMServerUnavailable("Failed to connect to the LLM server") from exc
+
 def build_prompt(system_prompt, examples, task, history=None):
     lines = [system_prompt]
     for ex in examples:
@@ -180,6 +192,13 @@ def main():
     examples = prompt_data.get("examples", [])
 
     server_url, model = parse_env()
+
+    # Ensure the LLM server is up before starting the interactive loop
+    try:
+        check_llm_server(server_url, model, timeout=3)
+    except LLMServerUnavailable:
+        print("Error: could not reach the LLM server. Please start it and retry.")
+        sys.exit(1)
 
     while True:
         task = input("\nЧто нужно сделать?\n")
