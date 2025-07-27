@@ -3,6 +3,7 @@ from unittest.mock import patch, mock_open
 import io
 import json
 import requests
+import os
 
 import main
 from main import ask_llm, LLMServerUnavailable, check_command_error
@@ -53,6 +54,27 @@ class LoadPromptDataTests(unittest.TestCase):
         main.load_prompt_data("bad.json")
         mock_exit.assert_called_once()
         self.assertNotEqual(mock_exit.call_args[0][0], 0)
+
+
+class ParseEnvTests(unittest.TestCase):
+    @patch.dict(os.environ, {}, clear=True)
+    def test_defaults(self):
+        server, model, auto = main.parse_env()
+        self.assertEqual(server, main.DEFAULT_SERVER)
+        self.assertEqual(model, main.DEFAULT_MODEL)
+        self.assertFalse(auto)
+
+    @patch.dict(os.environ, {"SERVER": "s", "MODEL": "m", "AUTO_CONFIRM": "true"}, clear=True)
+    def test_custom(self):
+        server, model, auto = main.parse_env()
+        self.assertEqual(server, "s")
+        self.assertEqual(model, "m")
+        self.assertTrue(auto)
+
+    @patch.dict(os.environ, {"AUTO_CONFIRM": "no"}, clear=True)
+    def test_false(self):
+        _, _, auto = main.parse_env()
+        self.assertFalse(auto)
 
 
 if __name__ == "__main__":

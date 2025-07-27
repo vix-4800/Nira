@@ -28,7 +28,8 @@ LOG_FILE = None
 def parse_env():
     server = os.getenv("SERVER", DEFAULT_SERVER)
     model = os.getenv("MODEL", DEFAULT_MODEL)
-    return server, model
+    auto = os.getenv("AUTO_CONFIRM", "").lower() in {"1", "true", "yes", "y"}
+    return server, model, auto
 
 def load_prompt_data(path="prompt.json"):
     """Load prompt configuration from JSON file.
@@ -179,7 +180,7 @@ def main():
     system_prompt = prompt_data["system"]
     examples = prompt_data.get("examples", [])
 
-    server_url, model = parse_env()
+    server_url, model, auto_confirm = parse_env()
 
     while True:
         task = input("\nЧто нужно сделать?\n")
@@ -217,7 +218,10 @@ def main():
                 step_count += 1
                 print(f"\n[Step {step_count}]\nCommand {idx}: {cmd}")
 
-                confirm = input("Выполнить? (y/n/q): ")
+                if auto_confirm:
+                    confirm = "y"
+                else:
+                    confirm = input("Выполнить? (y/n/q): ")
                 if confirm.lower() == "q":
                     print("Остановка задачи.")
                     return
