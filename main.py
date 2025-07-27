@@ -131,7 +131,7 @@ def run_command(cmd):
     if err:
         print(f"{Fore.RED}stderr:{Style.RESET_ALL} {err}")
 
-    return out, err
+    return out, err, result.returncode
 
 def log_step(cmd, out, err):
     if not LOG_FILE:
@@ -205,6 +205,8 @@ def main():
     system_prompt = prompt_data["system"]
     examples = prompt_data.get("examples", [])
 
+    executed = []
+
     server_url, model, auto_confirm = parse_env()
 
     # Ensure the LLM server is up before starting the interactive loop
@@ -266,7 +268,8 @@ def main():
                 if not is_safe:
                     print("⚠️  Выполняется потенциально опасная команда.")
 
-                out, err = run_command(cmd)
+                out, err, code = run_command(cmd)
+                executed.append((cmd, code))
                 log_step(cmd, out, err)
 
                 if err and check_command_error(err):
@@ -276,6 +279,11 @@ def main():
 
                 output_text = f"stdout:\n{out}\nstderr:\n{err}"
                 history.append({"role": "system", "content": output_text})
+
+    if executed:
+        print("\nExecuted commands summary:")
+        for i, (cmd, code) in enumerate(executed, 1):
+            print(f"{i}. {cmd} (exit code: {code})")
 
 if __name__ == "__main__":
     main()
