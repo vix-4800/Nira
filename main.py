@@ -3,13 +3,24 @@ import requests
 import re
 import json
 from requests import exceptions as req_exc
+import os
+from dotenv import load_dotenv
 
 
 class LLMServerUnavailable(Exception):
     """Raised when the local LLM server cannot be reached."""
     pass
 
-GOODBYE_PHRASES = ["bye","goodbye","nothing","exit","quit"]
+load_dotenv()
+
+DEFAULT_SERVER = "http://localhost:11434"
+DEFAULT_MODEL = "qwen3:4b"
+GOODBYE_PHRASES = ["bye", "goodbye", "nothing", "exit", "quit"]
+
+def parse_env():
+    server = os.getenv("SERVER", DEFAULT_SERVER)
+    model = os.getenv("MODEL", DEFAULT_MODEL)
+    return server, model
 
 def ask_llm(prompt):
     """Send prompt to the local LLM server and return its response.
@@ -22,39 +33,36 @@ def ask_llm(prompt):
 
     try:
         res = requests.post(
-            "http://localhost:11434/api/generate",
+            f"{server_url}/api/generate",
             json={
-                "model": "qwen3:4b",  # llama3.2:3b / deepseek-r1:8b-0528-qwen3-q4_K_M
+                "model": model,  # llama3.2:3b / deepseek-r1:8b-0528-qwen3-q4_K_M
                 "prompt": prompt,
                 "stream": False,
             },
-            timeout=60,
         )
         res.raise_for_status()
     except req_exc.RequestException as exc:
-        # Any request-related error is wrapped into LLMServerUnavailable
         raise LLMServerUnavailable("Failed to connect to the LLM server") from exc
 
     try:
         return res.json().get("response")
     except ValueError as exc:
-        # Invalid JSON or missing field
         raise LLMServerUnavailable("Invalid response from LLM server") from exc
 
 def build_prompt(system_prompt, examples, task, history=None):
     lines = [system_prompt]
     for ex in examples:
-        user = ex.get('user')
-        assistant = ex.get('assistant')
+        user = ex.get("user")
+        assistant = ex.get("assistant")
         if user is not None and assistant is not None:
             lines.append(f"User: {user}\nAssistant: {assistant}")
-        elif 'role' in ex and 'content' in ex:
+        elif "role" in ex and "content" in ex:
             lines.append(f"{ex['role'].capitalize()}: {ex['content']}")
 
     if history:
         for step in history:
-            role = step.get('role', 'User')
-            content = step.get('content', '')
+            role = step.get("role", "User")
+            content = step.get("content", "")
             lines.append(f"{role.capitalize()}: {content}")
     lines.append(f"User: {task}\nAssistant:")
 
@@ -76,9 +84,15 @@ def run_command(cmd):
 
 def check_command_error(err):
     error_signatures = [
-        "Syntax error", "syntax error", "unexpected EOF",
-        "unterminated quoted string", "unmatched quote",
-        "command not found", "not found", "invalid option", "No such file or directory"
+        "Syntax error",
+        "syntax error",
+        "unexpected EOF",
+        "unterminated quoted string",
+        "unmatched quote",
+        "command not found",
+        "not found",
+        "invalid option",
+        "No such file or directory",
     ]
     for sign in error_signatures:
         if sign in err:
@@ -91,6 +105,8 @@ def main():
         prompt_data = json.load(f)
     system_prompt = prompt_data["system"]
     examples = prompt_data.get("examples", [])
+
+    server_url, model = parse_env()
 
     while True:
         task = input("\nЧто нужно сделать?\n")
@@ -106,7 +122,7 @@ def main():
             prompt = build_prompt(system_prompt, examples, prev_task, history)
             while True:
                 try:
-                    response = ask_llm(prompt)
+                    response = ask_llm(prompt, server_url, model)
                     break
                 except LLMServerUnavailable:
                     choice = input(
@@ -128,10 +144,10 @@ def main():
                 print(f"\n[Step {step_count}]\nCommand {idx}: {cmd}")
 
                 confirm = input("Выполнить? (y/n/q): ")
-                if confirm.lower() == 'q':
+                if confirm.lower() == "q":
                     print("Остановка задачи.")
                     return
-                if confirm.lower() != 'y':
+                if confirm.lower() != "y":
                     print("Пропущено.")
                     continue
 
