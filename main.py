@@ -26,8 +26,19 @@ def parse_env():
     model = os.getenv("MODEL", DEFAULT_MODEL)
     return server, model
 
-def ask_llm(prompt, server_url, model):
+def ask_llm(prompt, server_url, model, timeout=30):
     """Send prompt to the local LLM server and return its response.
+
+    Parameters
+    ----------
+    prompt : str
+        Prompt to send to the model.
+    server_url : str
+        Base URL of the LLM server.
+    model : str
+        Target model name.
+    timeout : int or float, optional
+        Timeout in seconds for the HTTP request. Defaults to ``30``.
 
     Raises
     ------
@@ -43,6 +54,7 @@ def ask_llm(prompt, server_url, model):
                 "prompt": prompt,
                 "stream": False,
             },
+            timeout=timeout,
         )
         res.raise_for_status()
     except req_exc.RequestException as exc:
