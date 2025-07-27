@@ -98,6 +98,15 @@ def log_step(cmd, out, err):
             f.write(f"stderr:\n{err}\n")
         f.write("\n")
 
+def log_interaction(prompt, response):
+    """Log a prompt and the LLM's response with timestamp."""
+    if not LOG_FILE:
+        return
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(LOG_FILE, "a", encoding="utf-8") as f:
+        f.write(f"[{timestamp}] Prompt:\n{prompt}\n")
+        f.write(f"Response:\n{response}\n\n")
+
 def check_command_error(err):
     lower_err = err.lower()
     error_signatures = [
@@ -165,6 +174,7 @@ def main():
                         continue
                     print("Остановка задачи.")
                     return
+            log_interaction(prompt, response)
 
             commands = re.findall(r"COMMAND:\s*(.+)", response)
 
