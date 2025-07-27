@@ -239,42 +239,42 @@ def main():
                         return
                 log_interaction(prompt, response)
 
-            commands = re.findall(r"COMMAND:\s*(.+)", response)
+                commands = re.findall(r"COMMAND:\s*(.+)", response)
 
-            if not commands:
-                print("\nLLM answer:", response)
-                break
+                if not commands:
+                    print("\nLLM answer:", response)
+                    break
 
-            for idx, cmd in enumerate(commands, 1):
-                step_count += 1
-                print(f"\n[Step {step_count}]\nCommand {idx}: {cmd}")
+                for idx, cmd in enumerate(commands, 1):
+                    step_count += 1
+                    print(f"\n[Step {step_count}]\nCommand {idx}: {cmd}")
 
-                is_safe = is_command_safe(cmd)
-                if is_safe and auto_confirm:
-                    confirm = "y"
-                else:
-                    confirm = input("Выполнить? (y/n/q): ")
+                    is_safe = is_command_safe(cmd)
+                    if is_safe and auto_confirm:
+                        confirm = "y"
+                    else:
+                        confirm = input("Выполнить? (y/n/q): ")
 
-                if confirm.lower() == "q":
-                    print("Остановка задачи.")
-                    return
-                if confirm.lower() != "y":
-                    print("Пропущено.")
-                    continue
+                    if confirm.lower() == "q":
+                        print("Остановка задачи.")
+                        return
+                    if confirm.lower() != "y":
+                        print("Пропущено.")
+                        continue
 
-                if not is_safe:
-                    print("⚠️  Выполняется потенциально опасная команда.")
+                    if not is_safe:
+                        print("⚠️  Выполняется потенциально опасная команда.")
 
-                out, err = run_command(cmd)
-                log_step(cmd, out, err)
+                    out, err = run_command(cmd)
+                    log_step(cmd, out, err)
 
-                if err and check_command_error(err):
-                    print("❗️ Внимание: в команде обнаружена синтаксическая или критическая ошибка!")
-                    print(f"Ошибка: {err}")
-                    prev_task = f"Предыдущая команда завершилась ошибкой:\n{err}\nПожалуйста, исправь команду и повтори попытку."
+                    if err and check_command_error(err):
+                        print("❗️ Внимание: в команде обнаружена синтаксическая или критическая ошибка!")
+                        print(f"Ошибка: {err}")
+                        prev_task = f"Предыдущая команда завершилась ошибкой:\n{err}\nПожалуйста, исправь команду и повтори попытку."
 
-                output_text = f"stdout:\n{out}\nstderr:\n{err}"
-                history.append({"role": "system", "content": output_text})
+                    output_text = f"stdout:\n{out}\nstderr:\n{err}"
+                    history.append({"role": "system", "content": output_text})
     except KeyboardInterrupt:
         print("Interrupted")
         return
