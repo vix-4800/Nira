@@ -2,35 +2,52 @@ import subprocess
 import requests
 import re
 import json
+from requests import exceptions as req_exc
 import os
 from dotenv import load_dotenv
+
+
+class LLMServerUnavailable(Exception):
+    """Raised when the local LLM server cannot be reached."""
+    pass
 
 load_dotenv()
 
 DEFAULT_SERVER = "http://localhost:11434"
 DEFAULT_MODEL = "qwen3:4b"
-
+GOODBYE_PHRASES = ["bye", "goodbye", "nothing", "exit", "quit"]
 
 def parse_env():
     server = os.getenv("SERVER", DEFAULT_SERVER)
     model = os.getenv("MODEL", DEFAULT_MODEL)
     return server, model
 
+def ask_llm(prompt):
+    """Send prompt to the local LLM server and return its response.
 
-GOODBYE_PHRASES = ["bye", "goodbye", "nothing", "exit", "quit"]
+    Raises
+    ------
+    LLMServerUnavailable
+        If the server cannot be reached or returns a non-200 status.
+    """
 
+    try:
+        res = requests.post(
+            f"{server_url}/api/generate",
+            json={
+                "model": model,  # llama3.2:3b / deepseek-r1:8b-0528-qwen3-q4_K_M
+                "prompt": prompt,
+                "stream": False,
+            },
+        )
+        res.raise_for_status()
+    except req_exc.RequestException as exc:
+        raise LLMServerUnavailable("Failed to connect to the LLM server") from exc
 
-def ask_llm(prompt, server_url, model):
-    res = requests.post(
-        f"{server_url}/api/generate",
-        json={
-            "model": model,  # llama3.2:3b / deepseek-r1:8b-0528-qwen3-q4_K_M
-            "prompt": prompt,
-            "stream": False,
-        },
-    )
-    return res.json()["response"]
-
+    try:
+        return res.json().get("response")
+    except ValueError as exc:
+        raise LLMServerUnavailable("Invalid response from LLM server") from exc
 
 def build_prompt(system_prompt, examples, task, history=None):
     lines = [system_prompt]
@@ -51,7 +68,6 @@ def build_prompt(system_prompt, examples, task, history=None):
 
     return "\n".join(lines)
 
-
 def run_command(cmd):
     print(f"\n>> {cmd}")
 
@@ -65,7 +81,6 @@ def run_command(cmd):
         print("stderr:", err)
 
     return out, err
-
 
 def check_command_error(err):
     error_signatures = [
@@ -84,7 +99,6 @@ def check_command_error(err):
             return True
 
     return False
-
 
 def main():
     with open("prompt.json", "r", encoding="utf-8") as f:
@@ -106,7 +120,19 @@ def main():
 
         while True:
             prompt = build_prompt(system_prompt, examples, prev_task, history)
-            response = ask_llm(prompt, server_url, model)
+            while True:
+                try:
+                    response = ask_llm(prompt, server_url, model)
+                    break
+                except LLMServerUnavailable:
+                    choice = input(
+                        "LLM server is unavailable. Retry? (y to retry, q to quit): "
+                    )
+                    if choice.lower() == "y":
+                        continue
+                    print("Остановка задачи.")
+                    return
+
             commands = re.findall(r"COMMAND:\s*(.+)", response)
 
             if not commands:
@@ -128,15 +154,12 @@ def main():
                 out, err = run_command(cmd)
 
                 if err and check_command_error(err):
-                    print(
-                        "❗️ Внимание: в команде обнаружена синтаксическая или критическая ошибка!"
-                    )
+                    print("❗️ Внимание: в команде обнаружена синтаксическая или критическая ошибка!")
                     print(f"Ошибка: {err}")
                     prev_task = f"Предыдущая команда завершилась ошибкой:\n{err}\nПожалуйста, исправь команду и повтори попытку."
 
                 output_text = f"stdout:\n{out}\nstderr:\n{err}"
                 history.append({"role": "system", "content": output_text})
-
 
 if __name__ == "__main__":
     main()
