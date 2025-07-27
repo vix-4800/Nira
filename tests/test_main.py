@@ -4,9 +4,10 @@ import io
 import json
 import requests
 import os
+from types import SimpleNamespace
 
 import main
-from main import ask_llm, LLMServerUnavailable, check_command_error
+from main import ask_llm, LLMServerUnavailable, check_command_error, is_command_safe, main as main_entry
 
 
 class AskLLMTests(unittest.TestCase):
@@ -75,6 +76,56 @@ class ParseEnvTests(unittest.TestCase):
     def test_false(self):
         _, _, auto = main.parse_env()
         self.assertFalse(auto)
+
+
+class IsCommandSafeTests(unittest.TestCase):
+    def test_dangerous_patterns(self):
+        self.assertFalse(is_command_safe("rm -rf /"))
+        self.assertFalse(is_command_safe("shutdown -h now"))
+
+    def test_harmless(self):
+        self.assertTrue(is_command_safe("echo hello"))
+
+
+class MainExecutionSafetyTests(unittest.TestCase):
+    def run_main(self, auto=None, safe=True, confirms=("y",)):
+        responses = ["COMMAND: echo hi", "done"]
+
+        def fake_ask_llm(*args, **kwargs):
+            return responses.pop(0)
+
+        inputs_list = ["task"] + list(confirms) + ["quit"]
+        inputs = iter(inputs_list)
+
+        env = {}
+        if auto is not None:
+            env["AUTO_CONFIRM"] = auto
+
+        with patch.dict(os.environ, env, clear=True), \
+             patch("builtins.input", side_effect=lambda _: next(inputs)), \
+             patch.object(main, "parse_args", return_value=SimpleNamespace(log_file=None)), \
+             patch.object(main, "load_prompt_data", return_value={"system": "", "examples": []}), \
+             patch.object(main, "ask_llm", side_effect=fake_ask_llm), \
+             patch.object(main, "is_command_safe", return_value=safe), \
+             patch.object(main, "run_command", return_value=("", "")) as run_mock:
+            main_entry()
+            return run_mock.called
+
+    def test_manual_confirmation(self):
+        called = self.run_main(auto=None, safe=True, confirms=("y",))
+        self.assertTrue(called)
+
+    def test_dangerous_skipped(self):
+        called = self.run_main(auto=None, safe=False, confirms=("n",))
+        self.assertFalse(called)
+
+    def test_auto_confirm_safe(self):
+        called = self.run_main(auto="1", safe=True, confirms=())
+        self.assertTrue(called)
+
+    def test_auto_confirm_dangerous_requires_prompt(self):
+        called = self.run_main(auto="1", safe=False, confirms=("y",))
+        self.assertTrue(called)
 
 
 if __name__ == "__main__":

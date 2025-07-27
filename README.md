@@ -20,6 +20,7 @@ Example `.env`:
 ```
 SERVER=http://localhost:11434
 MODEL=qwen3:4b
+AUTO_CONFIRM=true
 ```
 
 Run the application with:
@@ -31,6 +32,8 @@ python main.py
 The default server is `http://localhost:11434` and the default model is `qwen3:4b` if the variables are not set.
 
 By default all commands, prompts and responses are logged to a timestamped file under the `logs/` directory. You can override the location with the `--log-file` argument.
+
+Set `AUTO_CONFIRM` to `true` in the environment to run safe commands without confirmation. Dangerous commands are always confirmed explicitly.
 
 ## License
 

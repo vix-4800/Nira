@@ -170,6 +170,17 @@ def check_command_error(err):
 
     return False
 
+def is_command_safe(cmd):
+    """Return ``True`` if the command doesn't look destructive."""
+    unsafe_patterns = [
+        r"\brm\s+-rf\s+/\s*$",
+        r"\bshutdown\s+-h\s+now\b",
+    ]
+    for pat in unsafe_patterns:
+        if re.search(pat, cmd, re.IGNORECASE):
+            return False
+    return True
+
 def parse_args():
     parser = argparse.ArgumentParser(description="Nexora assistant")
     parser.add_argument("--log-file", "-l", help="Path to log file")
@@ -237,16 +248,21 @@ def main():
                 step_count += 1
                 print(f"\n[Step {step_count}]\nCommand {idx}: {cmd}")
 
-                if auto_confirm:
+                is_safe = is_command_safe(cmd)
+                if is_safe and auto_confirm:
                     confirm = "y"
                 else:
                     confirm = input("Выполнить? (y/n/q): ")
+
                 if confirm.lower() == "q":
                     print("Остановка задачи.")
                     return
                 if confirm.lower() != "y":
                     print("Пропущено.")
                     continue
+
+                if not is_safe:
+                    print("⚠️  Выполняется потенциально опасная команда.")
 
                 out, err = run_command(cmd)
                 log_step(cmd, out, err)
