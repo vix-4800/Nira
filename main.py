@@ -15,6 +15,9 @@ class LLMServerUnavailable(Exception):
 
 load_dotenv()
 
+# Directory where this script resides
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+
 DEFAULT_SERVER = "http://localhost:11434"
 DEFAULT_MODEL = "qwen3:4b"
 GOODBYE_PHRASES = ["bye", "goodbye", "nothing", "exit", "quit"]
@@ -134,7 +137,8 @@ def main():
             datetime.now().strftime("%Y%m%d_%H%M%S.log"),
         )
 
-    with open("prompt.json", "r", encoding="utf-8") as f:
+    prompt_path = os.path.join(SCRIPT_DIR, "prompt.json")
+    with open(prompt_path, "r", encoding="utf-8") as f:
         prompt_data = json.load(f)
     system_prompt = prompt_data["system"]
     examples = prompt_data.get("examples", [])
