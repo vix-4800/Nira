@@ -61,24 +61,17 @@ def ask_llm(prompt, model, system_prompt):
     except KeyError:
         raise LLMServerUnavailable("Invalid response from LLM server")
 
-def build_prompt(examples, task, history=None):
+def build_prompt(task, history=None):
     lines = []
-
-    # for ex in examples:
-    #     user = ex.get("user")
-    #     assistant = ex.get("assistant")
-    #     if user is not None and assistant is not None:
-    #         lines.append(f"User: {user}\nAssistant: {assistant}")
-    #     elif "role" in ex and "content" in ex:
-    #         lines.append(f"{ex['role'].capitalize()}: {ex['content']}")
-
     if history:
         for step in history:
             role = step.get("role", "User")
             content = step.get("content", "")
-            lines.append(f"{role.capitalize()}: {content}")
+            if role.lower() == "system":
+                lines.append(f"System result:\n{content}")
+            else:
+                lines.append(f"{role.capitalize()}: {content}")
     lines.append(f"User: {task}\nAssistant:")
-
     return "\n".join(lines)
 
 def run_command(cmd):
@@ -188,16 +181,11 @@ def main():
             prev_task = task
             step_count = 0
 
-            first_call = True
-
             while True:
                 prompt = build_prompt(
-                    examples if first_call else [],
                     prev_task,
                     history
                 )
-
-                first_call = False
 
                 while True:
                     try:
@@ -249,7 +237,16 @@ def main():
                         prev_task = f"The previous command failed with error:\n{err}\nPlease fix the command and try again."
 
                     output_text = f"stdout:\n{out}\nstderr:\n{err}"
+                    history.append({"role": "assistant", "content": f"My suggested command: {cmd}"})
                     history.append({"role": "system", "content": output_text})
+
+                    if err and check_command_error(err):
+                        prev_task = (
+                            f"Команда '{cmd}' вернула ошибку: {err}. "
+                            "Что делать дальше, чтобы решить задачу?"
+                        )
+                    else:
+                        prev_task = "Что делать дальше?"
     except KeyboardInterrupt:
         print("Interrupted")
         return
