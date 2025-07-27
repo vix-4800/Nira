@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import sys
 from colorama import Fore, Style, init as colorama_init
 import ollama
+from history_agent import AgentHistory
 
 
 class LLMServerUnavailable(Exception):
@@ -23,7 +24,6 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 DEFAULT_SERVER = "http://localhost:11434"
 DEFAULT_MODEL = "qwen3:4b"
 GOODBYE_PHRASES = ["bye", "goodbye", "nothing", "exit", "quit"]
-
 LOG_FILE = None
 
 def parse_env():
@@ -49,8 +49,6 @@ def load_prompt_data(path="prompt.json"):
     sys.exit(1)
 
 def ask_llm(prompt, model, system_prompt):
-    """Send prompt to the local LLM server and return its response."""
-
     try:
         response = ollama.generate(model, prompt, system=system_prompt, stream=False)
     except (ollama.OllamaError, OSError, ConnectionError) as exc:
@@ -60,19 +58,6 @@ def ask_llm(prompt, model, system_prompt):
         return response["response"]
     except KeyError:
         raise LLMServerUnavailable("Invalid response from LLM server")
-
-def build_prompt(task, history=None):
-    lines = []
-    if history:
-        for step in history:
-            role = step.get("role", "User")
-            content = step.get("content", "")
-            if role.lower() == "system":
-                lines.append(f"System result:\n{content}")
-            else:
-                lines.append(f"{role.capitalize()}: {content}")
-    lines.append(f"User: {task}\nAssistant:")
-    return "\n".join(lines)
 
 def run_command(cmd):
     print(f"\n{Fore.CYAN}>> {cmd}{Style.RESET_ALL}")
@@ -86,7 +71,7 @@ def run_command(cmd):
     if err:
         print(f"{Fore.RED}stderr:{Style.RESET_ALL} {err}")
 
-    return out, err, result.returncode
+    return out, err
 
 def log_step(cmd, out, err):
     if not LOG_FILE:
@@ -166,8 +151,6 @@ def main():
     system_prompt = prompt_data["system"]
     examples = prompt_data.get("examples", [])
 
-    executed = []
-
     server_url, model, auto_confirm = parse_env()
 
     try:
@@ -177,24 +160,21 @@ def main():
                 print("Bye!")
                 break
 
-            history = []
+            history = AgentHistory(max_steps=12)
+            history.add("user", task)
+
             prev_task = task
             step_count = 0
 
             while True:
-                prompt = build_prompt(
-                    prev_task,
-                    history
-                )
+                prompt = history.build_prompt(prev_task)
 
                 while True:
                     try:
                         response = ask_llm(prompt, model, system_prompt)
                         break
                     except LLMServerUnavailable:
-                        choice = input(
-                            "LLM server is unavailable. Retry? (y to retry, q to quit): "
-                        )
+                        choice = input("LLM server is unavailable. Retry? (y to retry, q to quit): ")
                         if choice.lower() == "y":
                             continue
                         print("Task aborted.")
@@ -205,6 +185,7 @@ def main():
 
                 if not commands:
                     print("\nLLM answer:", response)
+                    history.add("assistant", response)
                     break
 
                 for idx, cmd in enumerate(commands, 1):
@@ -227,34 +208,25 @@ def main():
                     if not is_safe:
                         print("\u26a0\ufe0f  Potentially dangerous command is being executed.")
 
-                    out, err, code = run_command(cmd)
-                    executed.append((cmd, code))
+                    out, err = run_command(cmd)
                     log_step(cmd, out, err)
 
-                    if err and check_command_error(err):
-                        print("\u2757\ufe0f  Warning: a syntax or critical error was detected in the command!")
-                        print(f"Error: {err}")
-                        prev_task = f"The previous command failed with error:\n{err}\nPlease fix the command and try again."
+                    result_text = f"stdout:\n{out}\nstderr:\n{err}"
+                    status = "error" if err and check_command_error(err) else "ok"
+                    history.add("assistant", f"My suggested command: {cmd}")
+                    history.add("system", "", result=result_text, status=status)
 
                     output_text = f"stdout:\n{out}\nstderr:\n{err}"
                     history.append({"role": "assistant", "content": f"My suggested command: {cmd}"})
                     history.append({"role": "system", "content": output_text})
 
-                    if err and check_command_error(err):
-                        prev_task = (
-                            f"Команда '{cmd}' вернула ошибку: {err}. "
-                            "Что делать дальше, чтобы решить задачу?"
-                        )
+                    if status == "error":
+                        prev_task = f"Команда '{cmd}' вернула ошибку: {err}. Что делать дальше, чтобы решить задачу?"
                     else:
                         prev_task = "Что делать дальше?"
     except KeyboardInterrupt:
         print("Interrupted")
         return
-
-    if executed:
-        print("\nExecuted commands summary:")
-        for i, (cmd, code) in enumerate(executed, 1):
-            print(f"{i}. {cmd} (exit code: {code})")
 
 if __name__ == "__main__":
     main()
