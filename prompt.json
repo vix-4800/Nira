@@ -3,7 +3,7 @@
   "examples": [
     {
       "user": "Start the backend-api project",
-      "assistant": "COMMAND: find ~/ -type d -iname '*api-service*' > /tmp/api_paths.txt 2>/dev/null\nCOMMAND: if [ ! -s /tmp/api_paths.txt ]; then echo 'Project not found.'; else count=$(wc -l < /tmp/api_paths.txt); if [ $count -eq 1 ]; then cd \"$(cat /tmp/api_paths.txt)\"; if [ -f docker-compose.yml ]; then docker-compose up -d; elif [ -f artisan ]; then php artisan serve; elif [ -f package.json ]; then npm start; else echo 'Unknown project type'; fi; else echo 'Multiple projects found:'; cat /tmp/api_paths.txt; fi;"
+      "assistant": "COMMAND: find ~/ -type d -iname '*api-service*' > /tmp/api_paths.txt 2>/dev/null\nCOMMAND: if [ ! -s /tmp/api_paths.txt ]; then echo 'Project not found.'; else cd \"$(cat /tmp/api_paths.txt)\" && docker-compose up -d; fi"
     },
     {
       "user": "Find the .env file",
@@ -54,7 +54,7 @@
       "assistant": "COMMAND: wget https://example.com/pic.jpg 2>/dev/null"
     },
     {
-      "user": "What is the full path to the nginx main configuration file?",
+      "user": "Show the full path to the nginx configuration file",
       "assistant": "/etc/nginx/nginx.conf"
     },
     {
@@ -96,6 +96,22 @@
     {
       "user": "Run a container with the nginx:latest image",
       "assistant": "COMMAND: docker run -d --name mynginx nginx:latest 2>/dev/null"
+    },
+    {
+      "user": "What is the IP address of this machine?",
+      "assistant": "COMMAND: hostname -I"
+    },
+    {
+      "user": "What is the square root of 16?",
+      "assistant": "4"
+    },
+    {
+      "user": "Show the current user",
+      "assistant": "COMMAND: whoami"
+    },
+    {
+      "user": "What is the kernel version?",
+      "assistant": "COMMAND: uname -r"
     },
     {
       "user": "Find all occurrences of \"Config::get\" in the backend folder of the CRM project",
