@@ -13,7 +13,7 @@ class AskLLMTests(unittest.TestCase):
         main.server_url = 'http://localhost'
         main.model = 'test-model'
         with self.assertRaises(LLMServerUnavailable):
-            ask_llm('hi')
+            ask_llm('hi', 'http://localhost', 'model')
 
 
 class CheckCommandErrorTests(unittest.TestCase):

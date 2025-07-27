@@ -4,6 +4,8 @@ import re
 import json
 from requests import exceptions as req_exc
 import os
+from datetime import datetime
+import argparse
 from dotenv import load_dotenv
 
 
@@ -17,12 +19,14 @@ DEFAULT_SERVER = "http://localhost:11434"
 DEFAULT_MODEL = "qwen3:4b"
 GOODBYE_PHRASES = ["bye", "goodbye", "nothing", "exit", "quit"]
 
+LOG_FILE = None
+
 def parse_env():
     server = os.getenv("SERVER", DEFAULT_SERVER)
     model = os.getenv("MODEL", DEFAULT_MODEL)
     return server, model
 
-def ask_llm(prompt):
+def ask_llm(prompt, server_url, model):
     """Send prompt to the local LLM server and return its response.
 
     Raises
@@ -82,6 +86,18 @@ def run_command(cmd):
 
     return out, err
 
+def log_step(cmd, out, err):
+    if not LOG_FILE:
+        return
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    with open(LOG_FILE, "a", encoding="utf-8") as f:
+        f.write(f"[{timestamp}] {cmd}\n")
+        if out:
+            f.write(f"stdout:\n{out}\n")
+        if err:
+            f.write(f"stderr:\n{err}\n")
+        f.write("\n")
+
 def check_command_error(err):
     lower_err = err.lower()
     error_signatures = [
@@ -100,7 +116,24 @@ def check_command_error(err):
 
     return False
 
+def parse_args():
+    parser = argparse.ArgumentParser(description="Nexora assistant")
+    parser.add_argument("--log-file", "-l", help="Path to log file")
+    return parser.parse_args()
+
 def main():
+    args = parse_args()
+
+    global LOG_FILE
+    if args.log_file:
+        LOG_FILE = args.log_file
+    else:
+        os.makedirs("logs", exist_ok=True)
+        LOG_FILE = os.path.join(
+            "logs",
+            datetime.now().strftime("%Y%m%d_%H%M%S.log"),
+        )
+
     with open("prompt.json", "r", encoding="utf-8") as f:
         prompt_data = json.load(f)
     system_prompt = prompt_data["system"]
@@ -152,6 +185,7 @@ def main():
                     continue
 
                 out, err = run_command(cmd)
+                log_step(cmd, out, err)
 
                 if err and check_command_error(err):
                     print("❗️ Внимание: в команде обнаружена синтаксическая или критическая ошибка!")
