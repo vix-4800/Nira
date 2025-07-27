@@ -17,7 +17,7 @@ pip install -r requirements.txt
 
 Example `.env`:
 
-```
+```ini
 SERVER=http://localhost:11434
 MODEL=qwen3:4b
 AUTO_CONFIRM=false
@@ -25,7 +25,7 @@ AUTO_CONFIRM=false
 
 Run the application with:
 
-```
+```bash
 python main.py
 ```
 
