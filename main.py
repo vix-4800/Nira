@@ -227,8 +227,18 @@ def main():
             prev_task = task
             step_count = 0
 
+            first_call = True
+
             while True:
-                prompt = build_prompt(system_prompt, examples, prev_task, history)
+                prompt = build_prompt(
+                    system_prompt,
+                    examples if first_call else [],
+                    prev_task,
+                    history
+                )
+
+                first_call = False
+
                 while True:
                     try:
                         response = ask_llm(prompt, server_url, model)
