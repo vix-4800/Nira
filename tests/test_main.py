@@ -17,6 +17,21 @@ class AskLLMTests(unittest.TestCase):
         with self.assertRaises(LLMServerUnavailable):
             ask_llm("hi", "http://localhost", "model")
 
+    @patch("requests.post")
+    def test_timeout_passed_to_requests(self, mock_post):
+        mock_response = unittest.mock.Mock()
+        mock_response.raise_for_status.return_value = None
+        mock_response.json.return_value = {"response": "ok"}
+        mock_post.return_value = mock_response
+
+        ask_llm("hi", "http://localhost", "model", timeout=5)
+
+        mock_post.assert_called_with(
+            "http://localhost/api/generate",
+            json={"model": "model", "prompt": "hi", "stream": False},
+            timeout=5,
+        )
+
 
 class CheckCommandErrorTests(unittest.TestCase):
     def test_case_insensitive(self):
