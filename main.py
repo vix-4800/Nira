@@ -216,31 +216,32 @@ def main():
         print("Error: could not reach the LLM server. Please start it and retry.")
         sys.exit(1)
 
-    while True:
-        task = input("\nЧто нужно сделать?\n")
-        if task.lower() in GOODBYE_PHRASES:
-            print("Bye!")
-            break
-
-        history = []
-        prev_task = task
-        step_count = 0
-
+    try:
         while True:
-            prompt = build_prompt(system_prompt, examples, prev_task, history)
+            task = input("\nЧто нужно сделать?\n")
+            if task.lower() in GOODBYE_PHRASES:
+                print("Bye!")
+                break
+
+            history = []
+            prev_task = task
+            step_count = 0
+
             while True:
-                try:
-                    response = ask_llm(prompt, server_url, model)
-                    break
-                except LLMServerUnavailable:
-                    choice = input(
-                        "LLM server is unavailable. Retry? (y to retry, q to quit): "
-                    )
-                    if choice.lower() == "y":
-                        continue
-                    print("Остановка задачи.")
-                    return
-            log_interaction(prompt, response)
+                prompt = build_prompt(system_prompt, examples, prev_task, history)
+                while True:
+                    try:
+                        response = ask_llm(prompt, server_url, model)
+                        break
+                    except LLMServerUnavailable:
+                        choice = input(
+                            "LLM server is unavailable. Retry? (y to retry, q to quit): "
+                        )
+                        if choice.lower() == "y":
+                            continue
+                        print("Остановка задачи.")
+                        return
+                log_interaction(prompt, response)
 
             commands = re.findall(r"COMMAND:\s*(.+)", response)
 
@@ -279,6 +280,9 @@ def main():
 
                 output_text = f"stdout:\n{out}\nstderr:\n{err}"
                 history.append({"role": "system", "content": output_text})
+    except KeyboardInterrupt:
+        print("Interrupted")
+        return
 
     if executed:
         print("\nExecuted commands summary:")
