@@ -1,13 +1,16 @@
-name: selfhost
+name: local-llm
 
 services:
   ollama:
     image: ollama/ollama
     container_name: ollama
+    restart: unless-stopped
     volumes:
-      - "/media/vix/Extra SSD/LLM:/root/.ollama"
+      - ./llm_data/:/root/.ollama
     ports:
       - 11434:11434
+    networks:
+      - local-llm-network
     deploy:
       resources:
         reservations:
@@ -16,3 +19,31 @@ services:
               count: all
               capabilities:
                 - gpu
+
+  open-webui:
+    image: ghcr.io/open-webui/open-webui:cuda
+    container_name: open-webui
+    restart: unless-stopped
+    volumes:
+      - open-webui:/app/backend/data
+    ports:
+      - 3000:8080
+    networks:
+      - local-llm-network
+    depends_on:
+      - ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities:
+                - gpu
+
+networks:
+  local-llm-network:
+
+volumes:
+  open-webui:
+    name: open-webui

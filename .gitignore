@@ -4,6 +4,9 @@ venv/
 .venv/
 
 .env
+
 __pycache__/
 logs/
 tests/__pycache__/
+
+llm_data
