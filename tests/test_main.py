@@ -107,7 +107,8 @@ class MainExecutionSafetyTests(unittest.TestCase):
              patch.object(main, "load_prompt_data", return_value={"system": "", "examples": []}), \
              patch.object(main, "ask_llm", side_effect=fake_ask_llm), \
              patch.object(main, "is_command_safe", return_value=safe), \
-             patch.object(main, "run_command", return_value=("", "")) as run_mock:
+             patch.object(main, "run_command", return_value=("", "", 0)) as run_mock, \
+             patch.object(main, "check_llm_server", return_value=None):
             main_entry()
             return run_mock.called
 
