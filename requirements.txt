@@ -1,4 +1,6 @@
-requests
-python-dotenv
-colorama
+langchain
 ollama
+typer
+rich
+psutil
+python-dotenv
