@@ -49,7 +49,7 @@ def load_prompt_data(path="prompt.json"):
 
     sys.exit(1)
 
-def ask_llm(prompt, server_url, model, timeout=30):
+def ask_llm(prompt, server_url, model, timeout=45):
     """Send prompt to the local LLM server and return its response.
 
     Parameters
@@ -211,74 +211,78 @@ def main():
 
     # Ensure the LLM server is up before starting the interactive loop
     try:
-        check_llm_server(server_url, model, timeout=3)
+        check_llm_server(server_url, model, timeout=10)
     except LLMServerUnavailable:
         print("Error: could not reach the LLM server. Please start it and retry.")
         sys.exit(1)
 
-    while True:
-        task = input("\nЧто нужно сделать?\n")
-        if task.lower() in GOODBYE_PHRASES:
-            print("Bye!")
-            break
-
-        history = []
-        prev_task = task
-        step_count = 0
-
+    try:
         while True:
-            prompt = build_prompt(system_prompt, examples, prev_task, history)
-            while True:
-                try:
-                    response = ask_llm(prompt, server_url, model)
-                    break
-                except LLMServerUnavailable:
-                    choice = input(
-                        "LLM server is unavailable. Retry? (y to retry, q to quit): "
-                    )
-                    if choice.lower() == "y":
-                        continue
-                    print("Остановка задачи.")
-                    return
-            log_interaction(prompt, response)
-
-            commands = re.findall(r"COMMAND:\s*(.+)", response)
-
-            if not commands:
-                print("\nLLM answer:", response)
+            task = input("\nЧто нужно сделать?\n")
+            if task.lower() in GOODBYE_PHRASES:
+                print("Bye!")
                 break
 
-            for idx, cmd in enumerate(commands, 1):
-                step_count += 1
-                print(f"\n[Step {step_count}]\nCommand {idx}: {cmd}")
+            history = []
+            prev_task = task
+            step_count = 0
 
-                is_safe = is_command_safe(cmd)
-                if is_safe and auto_confirm:
-                    confirm = "y"
-                else:
-                    confirm = input("Выполнить? (y/n/q): ")
+            while True:
+                prompt = build_prompt(system_prompt, examples, prev_task, history)
+                while True:
+                    try:
+                        response = ask_llm(prompt, server_url, model)
+                        break
+                    except LLMServerUnavailable:
+                        choice = input(
+                            "LLM server is unavailable. Retry? (y to retry, q to quit): "
+                        )
+                        if choice.lower() == "y":
+                            continue
+                        print("Остановка задачи.")
+                        return
+                log_interaction(prompt, response)
 
-                if confirm.lower() == "q":
-                    print("Остановка задачи.")
-                    return
-                if confirm.lower() != "y":
-                    print("Пропущено.")
-                    continue
+                commands = re.findall(r"COMMAND:\s*(.+)", response)
 
-                if not is_safe:
-                    print("⚠️  Выполняется потенциально опасная команда.")
+                if not commands:
+                    print("\nLLM answer:", response)
+                    break
 
-                out, err, code = run_command(cmd)
-                executed.append((cmd, code))
-                log_step(cmd, out, err)
+                for idx, cmd in enumerate(commands, 1):
+                    step_count += 1
+                    print(f"\n[Step {step_count}]\nCommand {idx}: {cmd}")
 
-                if err and check_command_error(err):
-                    print("❗️ Внимание: в команде обнаружена синтаксическая или критическая ошибка!")
-                    print(f"Ошибка: {err}")
-                    prev_task = f"Предыдущая команда завершилась ошибкой:\n{err}\nПожалуйста, исправь команду и повтори попытку."
+                    is_safe = is_command_safe(cmd)
+                    if is_safe and auto_confirm:
+                        confirm = "y"
+                    else:
+                        confirm = input("Выполнить? (y/n/q): ")
 
-                output_text = f"stdout:\n{out}\nstderr:\n{err}"
-                history.append({"role": "system", "content": output_text})
+                    if confirm.lower() == "q":
+                        print("Остановка задачи.")
+                        return
+                    if confirm.lower() != "y":
+                        print("Пропущено.")
+                        continue
+
+                    if not is_safe:
+                        print("⚠️  Выполняется потенциально опасная команда.")
+
+                    out, err, code = run_command(cmd)
+                    executed.append((cmd, code))
+                    log_step(cmd, out, err)
+
+                    if err and check_command_error(err):
+                        print("❗️ Внимание: в команде обнаружена синтаксическая или критическая ошибка!")
+                        print(f"Ошибка: {err}")
+                        prev_task = f"Предыдущая команда завершилась ошибкой:\n{err}\nПожалуйста, исправь команду и повтори попытку."
+
+                    output_text = f"stdout:\n{out}\nstderr:\n{err}"
+                    history.append({"role": "system", "content": output_text})
+    except KeyboardInterrupt:
+        print("Interrupted")
+        return
 
     if executed:
         print("\nExecuted commands summary:")
