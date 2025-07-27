@@ -8,6 +8,7 @@ from datetime import datetime
 import argparse
 from dotenv import load_dotenv
 import sys
+from colorama import Fore, Style, init as colorama_init
 
 
 class LLMServerUnavailable(Exception):
@@ -15,6 +16,7 @@ class LLMServerUnavailable(Exception):
     pass
 
 load_dotenv()
+colorama_init()
 
 # Directory where this script resides
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -118,7 +120,7 @@ def build_prompt(system_prompt, examples, task, history=None):
     return "\n".join(lines)
 
 def run_command(cmd):
-    print(f"\n>> {cmd}")
+    print(f"\n{Fore.CYAN}>> {cmd}{Style.RESET_ALL}")
 
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     out = result.stdout.strip()
@@ -127,7 +129,7 @@ def run_command(cmd):
     if out:
         print(out)
     if err:
-        print("stderr:", err)
+        print(f"{Fore.RED}stderr:{Style.RESET_ALL} {err}")
 
     return out, err
 
