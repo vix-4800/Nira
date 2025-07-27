@@ -7,6 +7,7 @@ import os
 from datetime import datetime
 import argparse
 from dotenv import load_dotenv
+import sys
 
 
 class LLMServerUnavailable(Exception):
@@ -25,6 +26,23 @@ def parse_env():
     server = os.getenv("SERVER", DEFAULT_SERVER)
     model = os.getenv("MODEL", DEFAULT_MODEL)
     return server, model
+
+
+def load_prompt_data(path="prompt.json"):
+    """Load prompt configuration from JSON file.
+
+    If the file is missing or contains invalid JSON, print a user friendly
+    error message and exit with a non-zero code.
+    """
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"Error: prompt file '{path}' not found.")
+    except json.JSONDecodeError as exc:
+        print(f"Error: could not parse '{path}': {exc}")
+
+    sys.exit(1)
 
 def ask_llm(prompt, server_url, model):
     """Send prompt to the local LLM server and return its response.
@@ -134,8 +152,7 @@ def main():
             datetime.now().strftime("%Y%m%d_%H%M%S.log"),
         )
 
-    with open("prompt.json", "r", encoding="utf-8") as f:
-        prompt_data = json.load(f)
+    prompt_data = load_prompt_data("prompt.json")
     system_prompt = prompt_data["system"]
     examples = prompt_data.get("examples", [])
 
