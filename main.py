@@ -218,7 +218,7 @@ def main():
 
     try:
         while True:
-            task = input("\nЧто нужно сделать?\n")
+            task = input("\nWhat needs to be done?\n")
             if task.lower() in GOODBYE_PHRASES:
                 print("Bye!")
                 break
@@ -249,7 +249,7 @@ def main():
                         )
                         if choice.lower() == "y":
                             continue
-                        print("Остановка задачи.")
+                        print("Task aborted.")
                         return
                 log_interaction(prompt, response)
 
@@ -267,26 +267,26 @@ def main():
                     if is_safe and auto_confirm:
                         confirm = "y"
                     else:
-                        confirm = input("Выполнить? (y/n/q): ")
+                        confirm = input("Execute? (y/n/q): ")
 
                     if confirm.lower() == "q":
-                        print("Остановка задачи.")
+                        print("Task aborted.")
                         return
                     if confirm.lower() != "y":
-                        print("Пропущено.")
+                        print("Skipped.")
                         continue
 
                     if not is_safe:
-                        print("⚠️  Выполняется потенциально опасная команда.")
+                        print("\u26a0\ufe0f  Potentially dangerous command is being executed.")
 
                     out, err, code = run_command(cmd)
                     executed.append((cmd, code))
                     log_step(cmd, out, err)
 
                     if err and check_command_error(err):
-                        print("❗️ Внимание: в команде обнаружена синтаксическая или критическая ошибка!")
-                        print(f"Ошибка: {err}")
-                        prev_task = f"Предыдущая команда завершилась ошибкой:\n{err}\nПожалуйста, исправь команду и повтори попытку."
+                        print("\u2757\ufe0f  Warning: a syntax or critical error was detected in the command!")
+                        print(f"Error: {err}")
+                        prev_task = f"The previous command failed with error:\n{err}\nPlease fix the command and try again."
 
                     output_text = f"stdout:\n{out}\nstderr:\n{err}"
                     history.append({"role": "system", "content": output_text})
