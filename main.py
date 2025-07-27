@@ -83,19 +83,19 @@ def run_command(cmd):
     return out, err
 
 def check_command_error(err):
+    lower_err = err.lower()
     error_signatures = [
-        "Syntax error",
         "syntax error",
-        "unexpected EOF",
+        "unexpected eof",
         "unterminated quoted string",
         "unmatched quote",
         "command not found",
         "not found",
         "invalid option",
-        "No such file or directory",
+        "no such file or directory",
     ]
     for sign in error_signatures:
-        if sign in err:
+        if sign in lower_err:
             return True
 
     return False
