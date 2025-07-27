@@ -3,6 +3,7 @@ from agent.nira_agent import NiraAgent
 from dotenv import load_dotenv
 import os
 import re
+import time
 
 load_dotenv()
 console = Console()
@@ -17,12 +18,21 @@ def prepare_response(text: str) -> str:
     response = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
     return response.strip()
 
+def typewriter(text: str, delay=0.015, prefix="") -> None:
+    if prefix:
+        console.print(f"[bold magenta]{prefix}[/]", end="")
+    for char in text:
+        print(char, end="", flush=True)
+        time.sleep(delay)
+    print("\n")
+
 def main() -> None:
     server, model, auto = parse_env()
 
     nira = NiraAgent(model, server)
-    console.print("[bold magenta]👾 Nira:[/] Привет! Я готова выполнять твои команды. Для выхода напиши /exit")
-    console.print(f"[dim]Я буду использовать модель: {model}[/]\n")
+    console.print("[bold magenta]👾 Nira:[/] Привет! Я готова отвечать на вопросы. Для выхода напиши /exit")
+    console.print(f"[dim]Я буду использовать модель: {model}[/]")
+    console.rule("[bold blue]Nira Chat[/]")
 
     try:
         while True:
@@ -32,9 +42,11 @@ def main() -> None:
                 console.print("[bold magenta]👾 Nira:[/] До встречи!")
                 break
 
-            response = nira.ask(user_input)
-            response = prepare_response(response)
-            console.print(f"[bold magenta]👾 Nira:[/] {response}\n")
+            with console.status("[cyan]Думаю...[/]", spinner="dots"):
+                response = nira.ask(user_input)
+                response = prepare_response(response)
+
+            typewriter(response, prefix="👾 Nira: ")
     except KeyboardInterrupt:
         console.print("\n[bold magenta]👾 Nira:[/] До встречи!")
     except Exception as e:
