@@ -35,6 +35,16 @@ By default all commands, prompts and responses are logged to a timestamped file 
 
 Set `AUTO_CONFIRM` to `true` in the environment to run safe commands without confirmation. Dangerous commands are always confirmed explicitly.
 
+## Running tests
+
+Install the dependencies and run:
+
+```bash
+python -m unittest discover
+```
+
+All tests are executed automatically on GitHub for every push and pull request.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
