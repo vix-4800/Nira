@@ -2,16 +2,44 @@ import subprocess
 import requests
 import re
 import json
+from requests import exceptions as req_exc
+
+
+class LLMServerUnavailable(Exception):
+    """Raised when the local LLM server cannot be reached."""
+    pass
 
 GOODBYE_PHRASES = ["bye","goodbye","nothing","exit","quit"]
 
 def ask_llm(prompt):
-    res = requests.post('http://localhost:11434/api/generate', json={
-        "model": "qwen3:4b", # llama3.2:3b / deepseek-r1:8b-0528-qwen3-q4_K_M
-        "prompt": prompt,
-        "stream": False
-    })
-    return res.json()["response"]
+    """Send prompt to the local LLM server and return its response.
+
+    Raises
+    ------
+    LLMServerUnavailable
+        If the server cannot be reached or returns a non-200 status.
+    """
+
+    try:
+        res = requests.post(
+            "http://localhost:11434/api/generate",
+            json={
+                "model": "qwen3:4b",  # llama3.2:3b / deepseek-r1:8b-0528-qwen3-q4_K_M
+                "prompt": prompt,
+                "stream": False,
+            },
+            timeout=60,
+        )
+        res.raise_for_status()
+    except req_exc.RequestException as exc:
+        # Any request-related error is wrapped into LLMServerUnavailable
+        raise LLMServerUnavailable("Failed to connect to the LLM server") from exc
+
+    try:
+        return res.json().get("response")
+    except ValueError as exc:
+        # Invalid JSON or missing field
+        raise LLMServerUnavailable("Invalid response from LLM server") from exc
 
 def build_prompt(system_prompt, examples, task, history=None):
     lines = [system_prompt]
@@ -76,7 +104,19 @@ def main():
 
         while True:
             prompt = build_prompt(system_prompt, examples, prev_task, history)
-            response = ask_llm(prompt)
+            while True:
+                try:
+                    response = ask_llm(prompt)
+                    break
+                except LLMServerUnavailable:
+                    choice = input(
+                        "LLM server is unavailable. Retry? (y to retry, q to quit): "
+                    )
+                    if choice.lower() == "y":
+                        continue
+                    print("Остановка задачи.")
+                    return
+
             commands = re.findall(r"COMMAND:\s*(.+)", response)
 
             if not commands:
