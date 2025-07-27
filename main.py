@@ -8,6 +8,7 @@ from datetime import datetime
 import argparse
 from dotenv import load_dotenv
 import sys
+from colorama import Fore, Style, init as colorama_init
 
 
 class LLMServerUnavailable(Exception):
@@ -15,6 +16,7 @@ class LLMServerUnavailable(Exception):
     pass
 
 load_dotenv()
+colorama_init()
 
 # Directory where this script resides
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -47,7 +49,7 @@ def load_prompt_data(path="prompt.json"):
 
     sys.exit(1)
 
-def ask_llm(prompt, server_url, model, timeout=30):
+def ask_llm(prompt, server_url, model, timeout=45):
     """Send prompt to the local LLM server and return its response.
 
     Parameters
@@ -106,7 +108,7 @@ def build_prompt(system_prompt, examples, task, history=None):
         if user is not None and assistant is not None:
             lines.append(f"User: {user}\nAssistant: {assistant}")
         elif "role" in ex and "content" in ex:
-            lines.append(f"{ex["role"].capitalize()}: {ex["content"]}")
+            lines.append(f"{ex['role'].capitalize()}: {ex['content']}")
 
     if history:
         for step in history:
@@ -118,7 +120,7 @@ def build_prompt(system_prompt, examples, task, history=None):
     return "\n".join(lines)
 
 def run_command(cmd):
-    print(f"\n>> {cmd}")
+    print(f"\n{Fore.CYAN}>> {cmd}{Style.RESET_ALL}")
 
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
     out = result.stdout.strip()
@@ -127,9 +129,9 @@ def run_command(cmd):
     if out:
         print(out)
     if err:
-        print("stderr:", err)
+        print(f"{Fore.RED}stderr:{Style.RESET_ALL} {err}")
 
-    return out, err
+    return out, err, result.returncode
 
 def log_step(cmd, out, err):
     if not LOG_FILE:
@@ -203,11 +205,13 @@ def main():
     system_prompt = prompt_data["system"]
     examples = prompt_data.get("examples", [])
 
+    executed = []
+
     server_url, model, auto_confirm = parse_env()
 
     # Ensure the LLM server is up before starting the interactive loop
     try:
-        check_llm_server(server_url, model, timeout=3)
+        check_llm_server(server_url, model, timeout=10)
     except LLMServerUnavailable:
         print("Error: could not reach the LLM server. Please start it and retry.")
         sys.exit(1)
@@ -265,7 +269,8 @@ def main():
                     if not is_safe:
                         print("⚠️  Выполняется потенциально опасная команда.")
 
-                    out, err = run_command(cmd)
+                    out, err, code = run_command(cmd)
+                    executed.append((cmd, code))
                     log_step(cmd, out, err)
 
                     if err and check_command_error(err):
@@ -278,6 +283,11 @@ def main():
     except KeyboardInterrupt:
         print("Interrupted")
         return
+
+    if executed:
+        print("\nExecuted commands summary:")
+        for i, (cmd, code) in enumerate(executed, 1):
+            print(f"{i}. {cmd} (exit code: {code})")
 
 if __name__ == "__main__":
     main()
