@@ -10,7 +10,7 @@ class AskLLMTests(unittest.TestCase):
     def test_connection_error_raises(self, mock_post):
         mock_post.side_effect = requests.exceptions.ConnectionError
         with self.assertRaises(LLMServerUnavailable):
-            ask_llm('hi')
+            ask_llm('hi', 'http://localhost', 'model')
 
 
 if __name__ == '__main__':
