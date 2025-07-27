@@ -1,4 +1,4 @@
-# Nexora
+# Nira
 
 A simple command execution assistant that uses an LLM backend.
 

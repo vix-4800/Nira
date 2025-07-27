@@ -124,7 +124,7 @@ def is_command_safe(cmd):
     return True
 
 def parse_args():
-    parser = argparse.ArgumentParser(description="Nexora assistant")
+    parser = argparse.ArgumentParser(description="Nira assistant")
     parser.add_argument("--log-file", "-l", help="Path to log file")
     return parser.parse_args()
 
