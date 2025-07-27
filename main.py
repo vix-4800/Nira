@@ -1,14 +1,13 @@
 import subprocess
-import requests
 import re
 import json
-from requests import exceptions as req_exc
 import os
 from datetime import datetime
 import argparse
 from dotenv import load_dotenv
 import sys
 from colorama import Fore, Style, init as colorama_init
+import ollama
 
 
 class LLMServerUnavailable(Exception):
@@ -49,66 +48,29 @@ def load_prompt_data(path="prompt.json"):
 
     sys.exit(1)
 
-def ask_llm(prompt, server_url, model, timeout=45):
-    """Send prompt to the local LLM server and return its response.
-
-    Parameters
-    ----------
-    prompt : str
-        Prompt to send to the model.
-    server_url : str
-        Base URL of the LLM server.
-    model : str
-        Target model name.
-    timeout : int or float, optional
-        Timeout in seconds for the HTTP request. Defaults to ``30``.
-
-    Raises
-    ------
-    LLMServerUnavailable
-        If the server cannot be reached or returns a non-200 status.
-    """
+def ask_llm(prompt, model, system_prompt):
+    """Send prompt to the local LLM server and return its response."""
 
     try:
-        res = requests.post(
-            f"{server_url}/api/generate",
-            json={
-                "model": model,  # llama3.2:3b / deepseek-r1:8b-0528-qwen3-q4_K_M
-                "prompt": prompt,
-                "stream": False,
-            },
-            timeout=timeout,
-        )
-        res.raise_for_status()
-    except req_exc.RequestException as exc:
+        response = ollama.generate(model, prompt, system=system_prompt, stream=False)
+    except (ollama.OllamaError, OSError, ConnectionError) as exc:
         raise LLMServerUnavailable("Failed to connect to the LLM server") from exc
 
     try:
-        return res.json().get("response")
-    except ValueError as exc:
-        raise LLMServerUnavailable("Invalid response from LLM server") from exc
+        return response["response"]
+    except KeyError:
+        raise LLMServerUnavailable("Invalid response from LLM server")
 
-def check_llm_server(server_url, model, timeout=5):
-    """Verify that the LLM server is reachable by sending a small request."""
-    try:
-        res = requests.post(
-            f"{server_url}/api/generate",
-            json={"model": model, "prompt": "", "stream": False},
-            timeout=timeout,
-        )
-        res.raise_for_status()
-    except req_exc.RequestException as exc:
-        raise LLMServerUnavailable("Failed to connect to the LLM server") from exc
+def build_prompt(examples, task, history=None):
+    lines = []
 
-def build_prompt(system_prompt, examples, task, history=None):
-    lines = [system_prompt]
-    for ex in examples:
-        user = ex.get("user")
-        assistant = ex.get("assistant")
-        if user is not None and assistant is not None:
-            lines.append(f"User: {user}\nAssistant: {assistant}")
-        elif "role" in ex and "content" in ex:
-            lines.append(f"{ex['role'].capitalize()}: {ex['content']}")
+    # for ex in examples:
+    #     user = ex.get("user")
+    #     assistant = ex.get("assistant")
+    #     if user is not None and assistant is not None:
+    #         lines.append(f"User: {user}\nAssistant: {assistant}")
+    #     elif "role" in ex and "content" in ex:
+    #         lines.append(f"{ex['role'].capitalize()}: {ex['content']}")
 
     if history:
         for step in history:
@@ -215,13 +177,6 @@ def main():
 
     server_url, model, auto_confirm = parse_env()
 
-    # Ensure the LLM server is up before starting the interactive loop
-    try:
-        check_llm_server(server_url, model, timeout=10)
-    except LLMServerUnavailable:
-        print("Error: could not reach the LLM server. Please start it and retry.")
-        sys.exit(1)
-
     try:
         while True:
             task = input("\nWhat needs to be done?\n")
@@ -237,7 +192,6 @@ def main():
 
             while True:
                 prompt = build_prompt(
-                    system_prompt,
                     examples if first_call else [],
                     prev_task,
                     history
@@ -247,7 +201,7 @@ def main():
 
                 while True:
                     try:
-                        response = ask_llm(prompt, server_url, model)
+                        response = ask_llm(prompt, model, system_prompt)
                         break
                     except LLMServerUnavailable:
                         choice = input(
