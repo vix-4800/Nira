@@ -188,6 +188,12 @@ def parse_args():
     parser.add_argument("--log-file", "-l", help="Path to log file")
     return parser.parse_args()
 
+def extract_commands(response):
+    if '</think>' in response:
+        response = response.split('</think>')[-1]
+
+    return re.findall(r'^COMMAND:\s*(.+)', response, re.MULTILINE)
+
 def main():
     args = parse_args()
 
@@ -253,7 +259,7 @@ def main():
                         return
                 log_interaction(prompt, response)
 
-                commands = re.findall(r"COMMAND:\s*(.+)", response)
+                commands = extract_commands(response)
 
                 if not commands:
                     print("\nLLM answer:", response)
