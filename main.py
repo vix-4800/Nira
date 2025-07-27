@@ -7,6 +7,7 @@ import os
 from datetime import datetime
 import argparse
 from dotenv import load_dotenv
+import sys
 
 
 class LLMServerUnavailable(Exception):
@@ -29,8 +30,35 @@ def parse_env():
     model = os.getenv("MODEL", DEFAULT_MODEL)
     return server, model
 
-def ask_llm(prompt, server_url, model):
+def load_prompt_data(path="prompt.json"):
+    """Load prompt configuration from JSON file.
+
+    If the file is missing or contains invalid JSON, print a user friendly
+    error message and exit with a non-zero code.
+    """
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        print(f"Error: prompt file '{path}' not found.")
+    except json.JSONDecodeError as exc:
+        print(f"Error: could not parse '{path}': {exc}")
+
+    sys.exit(1)
+
+def ask_llm(prompt, server_url, model, timeout=30):
     """Send prompt to the local LLM server and return its response.
+
+    Parameters
+    ----------
+    prompt : str
+        Prompt to send to the model.
+    server_url : str
+        Base URL of the LLM server.
+    model : str
+        Target model name.
+    timeout : int or float, optional
+        Timeout in seconds for the HTTP request. Defaults to ``30``.
 
     Raises
     ------
@@ -46,6 +74,7 @@ def ask_llm(prompt, server_url, model):
                 "prompt": prompt,
                 "stream": False,
             },
+            timeout=timeout,
         )
         res.raise_for_status()
     except req_exc.RequestException as exc:
@@ -137,9 +166,7 @@ def main():
             datetime.now().strftime("%Y%m%d_%H%M%S.log"),
         )
 
-    prompt_path = os.path.join(SCRIPT_DIR, "prompt.json")
-    with open(prompt_path, "r", encoding="utf-8") as f:
-        prompt_data = json.load(f)
+    prompt_data = load_prompt_data(os.path.join(SCRIPT_DIR, "prompt.json"))
     system_prompt = prompt_data["system"]
     examples = prompt_data.get("examples", [])
 
