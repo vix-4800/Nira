@@ -20,3 +20,7 @@ python main.py
 ```
 
 The default server is `http://localhost:11434` and the default model is `qwen3:4b` if the variables are not set.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
