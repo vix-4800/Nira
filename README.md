@@ -20,7 +20,7 @@ Example `.env`:
 ```
 SERVER=http://localhost:11434
 MODEL=qwen3:4b
-AUTO_CONFIRM=true
+AUTO_CONFIRM=false
 ```
 
 Run the application with:
