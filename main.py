@@ -106,7 +106,7 @@ def build_prompt(system_prompt, examples, task, history=None):
         if user is not None and assistant is not None:
             lines.append(f"User: {user}\nAssistant: {assistant}")
         elif "role" in ex and "content" in ex:
-            lines.append(f"{ex["role"].capitalize()}: {ex["content"]}")
+            lines.append(f"{ex['role'].capitalize()}: {ex['content']}")
 
     if history:
         for step in history:
