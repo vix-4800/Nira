@@ -30,6 +30,8 @@ python main.py
 
 The default server is `http://localhost:11434` and the default model is `qwen3:4b` if the variables are not set.
 
+By default all commands, prompts and responses are logged to a timestamped file under the `logs/` directory. You can override the location with the `--log-file` argument.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
