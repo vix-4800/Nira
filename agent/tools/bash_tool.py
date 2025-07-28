@@ -1,6 +1,6 @@
-import os
 import re
 import subprocess
+from env import get_auto_confirm
 
 
 _DANGEROUS_PATTERNS = [
@@ -24,7 +24,7 @@ def _confirm(prompt: str) -> bool:
     return reply in {"y", "yes"}
 
 def run_bash_command(command: str) -> str:
-    auto_confirm = os.getenv("AUTO_CONFIRM", "").lower() in {"1", "true", "yes", "y"}
+    auto_confirm = get_auto_confirm()
     dangerous = _is_dangerous(command)
 
     if not auto_confirm or dangerous:
