@@ -3,7 +3,11 @@ from .bash_tool import run_bash_command
 from .telegram_tool import send_telegram_message
 from .file_tools import (
     transcribe_audio,
-	find_file,
+        find_file,
+)
+from .obsidian_tools import (
+    create_note,
+    summarize_note,
 )
 from .pdf_tools import (
     extract_text_from_pdf,
@@ -37,7 +41,17 @@ tools = [
         func=transcribe_audio,
         description="Transcribe speech from an audio file using Whisper if available.",
     ),
-	Tool(
+    Tool(
+        name="CreateNote",
+        func=create_note,
+        description="Create a new markdown note in the configured Obsidian vault.",
+    ),
+    Tool(
+        name="SummarizeNote",
+        func=summarize_note,
+        description="Summarize a markdown note from the Obsidian vault.",
+    ),
+        Tool(
         name="FindFile",
         func=find_file,
         description=(

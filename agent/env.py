@@ -33,8 +33,21 @@ def get_telegram_chat_id() -> str:
     return os.getenv("TELEGRAM_CHAT_ID", "")
 
 
+def get_obsidian_vault() -> str:
+    """Return the path to the Obsidian vault."""
+    return os.getenv("OBSIDIAN_VAULT", "")
+
+
 def parse_env() -> tuple[str, str, bool]:
     """Return server, model and auto_confirm parsed from the environment."""
     return get_server(), get_model(), get_auto_confirm()
 
-__all__ = ["get_server", "get_model", "get_auto_confirm", "get_telegram_bot_token", "get_telegram_chat_id", "parse_env"]
+__all__ = [
+    "get_server",
+    "get_model",
+    "get_auto_confirm",
+    "get_telegram_bot_token",
+    "get_telegram_chat_id",
+    "get_obsidian_vault",
+    "parse_env",
+]

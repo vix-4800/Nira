@@ -23,9 +23,11 @@ MODEL=qwen3:4b
 AUTO_CONFIRM=false
 TELEGRAM_BOT_TOKEN=
 TELEGRAM_CHAT_ID=
+OBSIDIAN_VAULT=
 ```
 
 `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are required for the Telegram tool to send messages.
+`OBSIDIAN_VAULT` should point to the directory containing your Obsidian notes and is required for the Obsidian tools.
 
 Run the application with:
 
