@@ -1,11 +1,25 @@
 import re
 from PyPDF2 import PdfReader
+import os
+import glob
+from typing import List
+
+MAX_PAGES = 30
+MAX_CHARS = 30_000
 
 try:
     import whisper  # optional, used for transcribing audio
 except Exception:  # pragma: no cover - whisper may be missing during tests
     whisper = None
 
+def find_file(pattern: str, root: str = ".") -> List[str]:
+    """
+    Recursively search for files matching the pattern under 'root'
+    and return a list of absolute paths.
+    Example pattern: "*.pdf" or "report_2024.pdf"
+    """
+    matches = glob.glob(os.path.join(root, "**", pattern), recursive=True)
+    return [os.path.abspath(p) for p in matches]
 
 def extract_text_from_pdf(path: str) -> str:
     """Return all text extracted from a PDF file located at ``path``."""
