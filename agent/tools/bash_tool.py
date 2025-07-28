@@ -1,6 +1,37 @@
+import os
+import re
 import subprocess
 
+
+_DANGEROUS_PATTERNS = [
+    r"\brm\b.*-rf",
+    r"\bshutdown\b",
+    r"\breboot\b",
+    r"\bmkfs\b",
+    r"\bdd\b.*\/dev\/sd",
+]
+
+
+def _is_dangerous(command: str) -> bool:
+    for pat in _DANGEROUS_PATTERNS:
+        if re.search(pat, command):
+            return True
+    return False
+
+
+def _confirm(prompt: str) -> bool:
+    reply = input(prompt).strip().lower()
+    return reply in {"y", "yes"}
+
 def run_bash_command(command: str) -> str:
+    auto_confirm = os.getenv("AUTO_CONFIRM", "").lower() in {"1", "true", "yes", "y"}
+    dangerous = _is_dangerous(command)
+
+    if not auto_confirm or dangerous:
+        prompt = f"Команда '{command}' выглядит опасной. Выполнить? [y/N]: " if dangerous else f"Выполнить команду '{command}'? [y/N]: "
+        if not _confirm(prompt):
+            return "Команда отменена"
+
     try:
         result = subprocess.run(
             command,

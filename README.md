@@ -33,7 +33,7 @@ The default server is `http://localhost:11434` and the default model is `qwen3:4
 
 By default all commands, prompts and responses are logged to a timestamped file under the `logs/` directory. You can override the location with the `--log-file` argument.
 
-Set `AUTO_CONFIRM` to `true` in the environment to run safe commands without confirmation. Dangerous commands are always confirmed explicitly.
+Set `AUTO_CONFIRM` to `true` in the environment to run safe commands without confirmation. Any command recognised as dangerous (like `rm -rf` or `shutdown`) will always require explicit confirmation before execution.
 
 The assistant now maintains conversational context using LangChain's conversation memory. This allows you to chat naturally and refer back to previous questions in the same session.
 
