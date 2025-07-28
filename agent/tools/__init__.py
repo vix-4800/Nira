@@ -10,6 +10,7 @@ from .pdf_tools import (
     summarize_pdf,
     count_words_in_file,
 )
+from .github_tool import get_repo_info
 
 tools = [
     Tool(
@@ -37,12 +38,19 @@ tools = [
         func=transcribe_audio,
         description="Transcribe speech from an audio file using Whisper if available.",
     ),
-	Tool(
+    Tool(
         name="FindFile",
         func=find_file,
         description=(
             "Recursively search for files by name or glob pattern. "
             "Return absolute paths. Use before reading or summarizing files."
+        ),
+    ),
+    Tool(
+        name="GetGitHubRepoInfo",
+        func=get_repo_info,
+        description=(
+            "Retrieve basic information about a GitHub repository in 'owner/repo' format."
         ),
     ),
     Tool(
