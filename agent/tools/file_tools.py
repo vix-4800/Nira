@@ -1,4 +1,6 @@
 import re
+from pydantic import BaseModel, Field
+from langchain.tools import tool
 from PyPDF2 import PdfReader
 
 try:
@@ -7,6 +9,13 @@ except Exception:  # pragma: no cover - whisper may be missing during tests
     whisper = None
 
 
+class ExtractTextFromPDFInput(BaseModel):
+    """Arguments for :func:`extract_text_from_pdf`."""
+
+    path: str = Field(..., description="Path to the PDF file")
+
+
+@tool("ExtractTextFromPDF", args_schema=ExtractTextFromPDFInput)
 def extract_text_from_pdf(path: str) -> str:
     """Return all text extracted from a PDF file located at ``path``."""
     reader = PdfReader(path)
@@ -24,12 +33,27 @@ def summarize_text(text: str, sentences: int = 3) -> str:
     return " ".join(parts[:sentences]).strip()
 
 
+class SummarizePDFInput(BaseModel):
+    """Arguments for :func:`summarize_pdf`."""
+
+    path: str = Field(..., description="Path to the PDF file")
+    sentences: int = Field(3, description="Number of sentences to return")
+
+
+@tool("SummarizePDF", args_schema=SummarizePDFInput)
 def summarize_pdf(path: str, sentences: int = 3) -> str:
     """Extract text from a PDF and return a short summary."""
-    text = extract_text_from_pdf(path)
+    text = extract_text_from_pdf.func(path) if hasattr(extract_text_from_pdf, "func") else extract_text_from_pdf(path)
     return summarize_text(text, sentences)
 
 
+class CountWordsInFileInput(BaseModel):
+    """Arguments for :func:`count_words_in_file`."""
+
+    path: str = Field(..., description="Path to the text file")
+
+
+@tool("CountWordsInFile", args_schema=CountWordsInFileInput)
 def count_words_in_file(path: str) -> str:
     """Return the number of words in a text file."""
     with open(path, "r", encoding="utf-8") as fh:
@@ -37,6 +61,14 @@ def count_words_in_file(path: str) -> str:
     return str(len(words))
 
 
+class TranscribeAudioInput(BaseModel):
+    """Arguments for :func:`transcribe_audio`."""
+
+    path: str = Field(..., description="Path to the audio file")
+    model_name: str = Field("base", description="Whisper model name to use")
+
+
+@tool("TranscribeAudio", args_schema=TranscribeAudioInput)
 def transcribe_audio(path: str, model_name: str = "base") -> str:
     """Transcribe an audio file using OpenAI Whisper if available."""
     if whisper is None:

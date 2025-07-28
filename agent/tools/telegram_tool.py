@@ -1,7 +1,16 @@
 import requests
+from pydantic import BaseModel, Field
+from langchain.tools import tool
 from ..env import get_telegram_bot_token, get_telegram_chat_id
 
 
+class SendTelegramMessageInput(BaseModel):
+    """Arguments for :func:`send_telegram_message`."""
+
+    text: str = Field(..., description="Message text to send")
+
+
+@tool("SendTelegramMessage", args_schema=SendTelegramMessageInput)
 def send_telegram_message(text: str) -> str:
     """Send a Telegram message using the configured bot."""
     token = get_telegram_bot_token()

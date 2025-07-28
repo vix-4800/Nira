@@ -18,7 +18,7 @@ from agent.tools.file_tools import (
 
 class FileToolsTest(unittest.TestCase):
     def test_extract_text_from_pdf(self):
-        text = extract_text_from_pdf('tests/sample.pdf')
+        text = extract_text_from_pdf.invoke({'path': 'tests/sample.pdf'})
         self.assertIn('Hello world', text)
 
     def test_summarize_text(self):
@@ -26,7 +26,7 @@ class FileToolsTest(unittest.TestCase):
         self.assertEqual(summary, 'One. Two.')
 
     def test_summarize_pdf(self):
-        summary = summarize_pdf('tests/sample.pdf', sentences=1)
+        summary = summarize_pdf.invoke({'path': 'tests/sample.pdf', 'sentences': 1})
         self.assertTrue(summary.startswith('Hello world'))
 
     def test_count_words_in_file(self):
@@ -34,7 +34,7 @@ class FileToolsTest(unittest.TestCase):
             f.write('hello world here')
             path = f.name
         try:
-            count = count_words_in_file(path)
+            count = count_words_in_file.invoke({'path': path})
             self.assertEqual(count, '3')
         finally:
             os.remove(path)
@@ -42,7 +42,7 @@ class FileToolsTest(unittest.TestCase):
     @mock.patch('agent.tools.file_tools.whisper')
     def test_transcribe_audio_missing_whisper(self, mock_whisper):
         mock_whisper.load_model.return_value.transcribe.return_value = {'text': 'hi'}
-        result = transcribe_audio('file.wav', model_name='base')
+        result = transcribe_audio.invoke({'path': 'file.wav', 'model_name': 'base'})
         self.assertEqual(result, 'hi')
 
 

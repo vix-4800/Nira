@@ -1,5 +1,7 @@
 import re
 import subprocess
+from pydantic import BaseModel, Field
+from langchain.tools import tool
 from ..env import get_auto_confirm
 
 
@@ -23,6 +25,13 @@ def _confirm(prompt: str) -> bool:
     reply = input(prompt).strip().lower()
     return reply in {"y", "yes"}
 
+class BashCommandInput(BaseModel):
+    """Schema for :func:`run_bash_command`."""
+
+    command: str = Field(..., description="Bash command to execute")
+
+
+@tool("RunBashCommand", args_schema=BashCommandInput)
 def run_bash_command(command: str) -> str:
     auto_confirm = get_auto_confirm()
     dangerous = _is_dangerous(command)
