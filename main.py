@@ -1,9 +1,11 @@
 from rich.console import Console
 from agent.nira_agent import NiraAgent
 from dotenv import load_dotenv
+from agent.tools.voice_tool import transcribe_whisper
 import os
 import re
 import time
+import sys
 
 load_dotenv()
 console = Console()
@@ -30,13 +32,23 @@ def main() -> None:
     server, model, auto = parse_env()
 
     nira = NiraAgent(model_name=model, base_url=server)
+
+    use_voice = "--voice" in sys.argv
+
     console.print("[bold magenta]👾 Nira:[/] Привет! Я готова отвечать на вопросы. Для выхода напиши /exit")
     console.print(f"[dim]Я буду использовать модель: {model}[/]")
     console.rule("[bold blue]Nira Chat[/]")
 
     try:
         while True:
-            user_input = console.input("[green]Ты:[/] ")
+            if use_voice:
+                user_input = transcribe_whisper()
+                if not user_input:
+                    console.print("[yellow]Не удалось распознать речь. Попробуй ещё раз![/]")
+                    continue
+                console.print(f"[green]Ты (голос):[/] {user_input}")
+            else:
+                user_input = console.input("[green]Ты:[/] ")
 
             if user_input.strip() in ["/exit", "выход", "exit"]:
                 console.print("[bold magenta]👾 Nira:[/] До встречи!")

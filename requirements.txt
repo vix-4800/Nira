@@ -6,3 +6,6 @@ typer
 rich
 psutil
 python-dotenv
+openai-whisper
+sounddevice
+soundfile
