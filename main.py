@@ -1,6 +1,6 @@
 from rich.console import Console
 from agent.nira_agent import NiraAgent
-from env import parse_env
+from agent.env import get_model, get_server
 import re
 import time
 import sys
@@ -30,7 +30,8 @@ def typewriter(text: str, delay=0.015, prefix="") -> None:
     print("\n")
 
 def main() -> None:
-    server, model, auto = parse_env()
+    model = get_model()
+    server = get_server()
 
     nira = NiraAgent(model_name=model, base_url=server)
 

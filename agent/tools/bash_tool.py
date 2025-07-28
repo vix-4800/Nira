@@ -1,6 +1,6 @@
 import re
 import subprocess
-from env import get_auto_confirm
+from ..env import get_auto_confirm
 
 
 _DANGEROUS_PATTERNS = [
