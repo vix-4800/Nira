@@ -6,5 +6,6 @@ typer
 rich
 psutil
 python-dotenv
+PyPDF2
 
 # Optional voice dependencies are provided in requirements-voice.txt
