@@ -10,3 +10,4 @@ logs/
 tests/__pycache__/
 
 llm_data
+chat.log
