@@ -1,5 +1,6 @@
 from langchain.agents import Tool
 from .bash_tool import run_bash_command
+from .telegram_tool import send_telegram_message
 from .file_tools import (
     extract_text_from_pdf,
     summarize_pdf,
@@ -11,7 +12,7 @@ tools = [
     Tool(
         name="RunBashCommand",
         func=run_bash_command,
-        description="Executes a system bash command and returns the result. Use it for file searching, system management, and other terminal tasks.",
+        description="Execute a system bash command and returns the result. Use it for file searching, system management, and other terminal tasks.",
     ),
     Tool(
         name="ExtractTextFromPDF",
@@ -32,5 +33,10 @@ tools = [
         name="TranscribeAudio",
         func=transcribe_audio,
         description="Transcribe speech from an audio file using Whisper if available.",
+    ),
+    Tool(
+        name="SendTelegramMessage",
+        func=send_telegram_message,
+        description="Send a text message via the configured Telegram bot.",
     ),
 ]
