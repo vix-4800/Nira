@@ -6,3 +6,4 @@ typer
 rich
 psutil
 python-dotenv
+prompt_toolkit

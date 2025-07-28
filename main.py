@@ -1,12 +1,31 @@
 from rich.console import Console
 from agent.nira_agent import NiraAgent
 from dotenv import load_dotenv
+from prompt_toolkit import PromptSession
+from prompt_toolkit.key_binding import KeyBindings
+from prompt_toolkit.formatted_text import HTML
 import os
 import re
 import time
 
 load_dotenv()
 console = Console()
+
+# Prompt session with multiline input using Shift+Enter
+bindings = KeyBindings()
+
+@bindings.add("enter")
+def _(event) -> None:
+    """Handle Enter: send message."""
+    event.current_buffer.validate_and_handle()
+
+
+@bindings.add("s-enter")
+def _(event) -> None:
+    """Handle Shift+Enter: insert newline."""
+    event.current_buffer.insert_text("\n")
+
+session = PromptSession(key_bindings=bindings, multiline=True)
 
 def parse_env() -> tuple[str, str, bool]:
     server = os.getenv("SERVER", "http://localhost:11434")
@@ -36,7 +55,10 @@ def main() -> None:
 
     try:
         while True:
-            user_input = console.input("[green]Ты:[/] ")
+            user_input = session.prompt(
+                HTML("<ansigreen>Ты:</ansigreen> "),
+                bottom_toolbar="Press Enter to send, Shift+Enter for newline",
+            )
 
             if user_input.strip() in ["/exit", "выход", "exit"]:
                 console.print("[bold magenta]👾 Nira:[/] До встречи!")
