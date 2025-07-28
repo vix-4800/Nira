@@ -5,7 +5,7 @@ tools = [
     Tool(
         name="RunBashCommand",
         func=run_bash_command,
-        description="Выполняет системную bash-команду и возвращает результат. Используй для поиска файлов, управления системой и других задач по терминалу."
+        description="Executes a system bash command and returns the result. Use it for file searching, system management, and other terminal tasks."
     ),
     # ...
 ]
