@@ -23,9 +23,10 @@ MODEL=qwen3:4b
 AUTO_CONFIRM=false
 TELEGRAM_BOT_TOKEN=
 TELEGRAM_CHAT_ID=
+GITHUB_TOKEN=
 ```
 
-`TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are required for the Telegram tool to send messages.
+`TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are required for the Telegram tool to send messages. `GITHUB_TOKEN` is optional and is used by the GitHub tool for authenticated requests.
 
 Run the application with:
 
