@@ -35,6 +35,8 @@ By default all commands, prompts and responses are logged to a timestamped file 
 
 Set `AUTO_CONFIRM` to `true` in the environment to run safe commands without confirmation. Dangerous commands are always confirmed explicitly.
 
+The assistant now maintains conversational context using LangChain's conversation memory. This allows you to chat naturally and refer back to previous questions in the same session.
+
 ## Running tests
 
 Install the dependencies and run:

@@ -29,7 +29,7 @@ def typewriter(text: str, delay=0.015, prefix="") -> None:
 def main() -> None:
     server, model, auto = parse_env()
 
-    nira = NiraAgent(model, server)
+    nira = NiraAgent(model_name=model, base_url=server)
     console.print("[bold magenta]👾 Nira:[/] Привет! Я готова отвечать на вопросы. Для выхода напиши /exit")
     console.print(f"[dim]Я буду использовать модель: {model}[/]")
     console.rule("[bold blue]Nira Chat[/]")
