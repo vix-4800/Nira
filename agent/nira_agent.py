@@ -42,7 +42,8 @@ class NiraAgent:
                 HumanMessagePromptTemplate.from_template("{input}"),
                 MessagesPlaceholder("agent_scratchpad"),
             ])
-            agent = create_tool_calling_agent(llm=self.llm, tools=tools, prompt=self.prompt)
+
+            agent = create_tool_calling_agent(self.llm, tools, self.prompt)
             self.agent_executor = AgentExecutor(
                 agent=agent,
                 tools=tools,
@@ -52,16 +53,7 @@ class NiraAgent:
                 max_iterations=3,
             )
         else:
-            self.prompt = ChatPromptTemplate.from_messages([
-                SystemMessagePromptTemplate.from_template(system_prompt),
-                MessagesPlaceholder("chat_history"),
-                HumanMessagePromptTemplate.from_template("{input}"),
-            ])
-            self.chain = LLMChain(
-                llm=self.llm,
-                prompt=self.prompt,
-                memory=self.memory,
-            )
+            self.agent_executor = None
 
     def log_chat(self, question: str, response: str) -> None:
         """Log a chat interaction to the log file."""
@@ -81,10 +73,13 @@ class NiraAgent:
             exit(1)
 
     def ask(self, question: str) -> str:
-        if hasattr(self, "agent_executor"):
+        if self.agent_executor is not None:
             result = self.agent_executor.invoke({"input": question})
             response = result.get("output", "") if isinstance(result, dict) else str(result)
         else:
-            response = self.chain.predict(input=question)
+            self.memory.chat_memory.add_user_message(question)
+            response = self.llm.invoke(question)
+            self.memory.chat_memory.add_ai_message(response)
+
         self.log_chat(question, response)
         return response
