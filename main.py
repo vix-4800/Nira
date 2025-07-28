@@ -1,7 +1,6 @@
 from rich.console import Console
 from agent.nira_agent import NiraAgent
-from dotenv import load_dotenv
-import os
+from agent.env import get_model, get_server
 import re
 import time
 import sys
@@ -15,15 +14,8 @@ except Exception:
     VoiceSynthesizer = None
     voice_modules_available = False
 
-load_dotenv()
 console = Console()
 voice_synthesizer = None
-
-def parse_env() -> tuple[str, str, bool]:
-    server = os.getenv("SERVER", "http://localhost:11434")
-    model = os.getenv("MODEL", "qwen3:4b")
-    auto = os.getenv("AUTO_CONFIRM", "").lower() in {"1", "true", "yes", "y"}
-    return server, model, auto
 
 def prepare_response(text: str) -> str:
     response = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
@@ -38,7 +30,8 @@ def typewriter(text: str, delay=0.015, prefix="") -> None:
     print("\n")
 
 def main() -> None:
-    server, model, auto = parse_env()
+    model = get_model()
+    server = get_server()
 
     nira = NiraAgent(model_name=model, base_url=server)
 
