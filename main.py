@@ -2,6 +2,7 @@ from rich.console import Console
 from agent.nira_agent import NiraAgent
 from dotenv import load_dotenv
 from agent.tools.voice_tool import transcribe_whisper
+from agent.voice_synthesizer import VoiceSynthesizer
 import os
 import re
 import time
@@ -9,6 +10,7 @@ import sys
 
 load_dotenv()
 console = Console()
+voice_synthesizer = VoiceSynthesizer()
 
 def parse_env() -> tuple[str, str, bool]:
     server = os.getenv("SERVER", "http://localhost:11434")
@@ -34,6 +36,7 @@ def main() -> None:
     nira = NiraAgent(model_name=model, base_url=server)
 
     use_voice = "--voice" in sys.argv
+    speak = "--speak" in sys.argv
 
     console.print("[bold magenta]👾 Nira:[/] Привет! Я готова отвечать на вопросы. Для выхода напиши /exit")
     console.print(f"[dim]Я буду использовать модель: {model}[/]")
@@ -59,6 +62,8 @@ def main() -> None:
                 response = prepare_response(response)
 
             typewriter(response, prefix="👾 Nira: ")
+            if speak:
+                voice_synthesizer.speak(response)
     except KeyboardInterrupt:
         console.print("\n[bold magenta]👾 Nira:[/] До встречи!")
     except Exception as e:
