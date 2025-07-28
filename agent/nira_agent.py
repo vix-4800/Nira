@@ -9,10 +9,9 @@ from langchain_core.prompts import (
     SystemMessagePromptTemplate,
 )
 from langchain.agents import create_tool_calling_agent, AgentExecutor
-from agent.tools import tools
-from config import load_prompt, ConfigError
+from .tools import tools
+from .prompt import load_prompt, ConfigError
 from langchain_ollama import ChatOllama
-from langchain.chains import LLMChain
 
 class NiraAgent:
     def __init__(self, model_name=None, base_url=None, llm=None, log_file="chat.log", *, max_bytes=1 * 1024 * 1024, backup_count=5) -> None:
