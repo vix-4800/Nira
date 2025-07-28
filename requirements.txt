@@ -6,7 +6,5 @@ typer
 rich
 psutil
 python-dotenv
-openai-whisper
-sounddevice
-soundfile
-coqui-tts
+
+# Optional voice dependencies are provided in requirements-voice.txt

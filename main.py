@@ -1,16 +1,23 @@
 from rich.console import Console
 from agent.nira_agent import NiraAgent
 from dotenv import load_dotenv
-from agent.tools.voice_tool import transcribe_whisper
-from agent.voice_synthesizer import VoiceSynthesizer
 import os
 import re
 import time
 import sys
 
+try:
+    from agent.tools.voice_tool import transcribe_whisper
+    from agent.voice_synthesizer import VoiceSynthesizer
+    voice_modules_available = True
+except Exception:
+    transcribe_whisper = None
+    VoiceSynthesizer = None
+    voice_modules_available = False
+
 load_dotenv()
 console = Console()
-voice_synthesizer = VoiceSynthesizer()
+voice_synthesizer = None
 
 def parse_env() -> tuple[str, str, bool]:
     server = os.getenv("SERVER", "http://localhost:11434")
@@ -37,6 +44,20 @@ def main() -> None:
 
     use_voice = "--voice" in sys.argv
     speak = "--speak" in sys.argv
+
+    if (use_voice or speak) and not voice_modules_available:
+        console.print(
+            "[yellow]Voice features requested but optional dependencies are not installed.[/]")
+        if use_voice:
+            console.print("[yellow]Распознавание речи недоступно.[/]")
+        if speak:
+            console.print("[yellow]Синтез речи недоступен.[/]")
+        use_voice = False
+        speak = False
+
+    if speak:
+        global voice_synthesizer
+        voice_synthesizer = VoiceSynthesizer()
 
     console.print("[bold magenta]👾 Nira:[/] Привет! Я готова отвечать на вопросы. Для выхода напиши /exit")
     console.print(f"[dim]Я буду использовать модель: {model}[/]")
