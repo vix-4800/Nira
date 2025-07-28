@@ -6,5 +6,6 @@ typer
 rich
 psutil
 python-dotenv
+requests
 
 # Optional voice dependencies are provided in requirements-voice.txt

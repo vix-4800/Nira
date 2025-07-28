@@ -23,8 +23,18 @@ def get_auto_confirm() -> bool:
     return os.getenv("AUTO_CONFIRM", "").lower() in _TRUE_VALUES
 
 
+def get_telegram_bot_token() -> str:
+    """Return the Telegram bot token from the environment."""
+    return os.getenv("TELEGRAM_BOT_TOKEN", "")
+
+
+def get_telegram_chat_id() -> str:
+    """Return the Telegram chat ID from the environment."""
+    return os.getenv("TELEGRAM_CHAT_ID", "")
+
+
 def parse_env() -> tuple[str, str, bool]:
     """Return server, model and auto_confirm parsed from the environment."""
     return get_server(), get_model(), get_auto_confirm()
 
-__all__ = ["get_server", "get_model", "get_auto_confirm", "parse_env"]
+__all__ = ["get_server", "get_model", "get_auto_confirm", "get_telegram_bot_token", "get_telegram_chat_id", "parse_env"]

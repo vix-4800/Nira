@@ -21,7 +21,11 @@ Example `.env`:
 SERVER=http://localhost:11434
 MODEL=qwen3:4b
 AUTO_CONFIRM=false
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
 ```
+
+`TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are required for the Telegram tool to send messages.
 
 Run the application with:
 
