@@ -23,9 +23,11 @@ MODEL=qwen3:4b
 AUTO_CONFIRM=false
 TELEGRAM_BOT_TOKEN=
 TELEGRAM_CHAT_ID=
+DNS_SERVER=
 ```
 
 `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are required for the Telegram tool to send messages.
+`DNS_SERVER` is optional and overrides the DNS server used for domain lookups.
 
 Run the application with:
 
