@@ -1,5 +1,6 @@
 import json
 import logging
+from logging.handlers import RotatingFileHandler
 from datetime import datetime
 from langchain.memory import ConversationBufferMemory
 from langchain_core.prompts import (
@@ -14,7 +15,7 @@ from langchain_ollama import ChatOllama
 from langchain.chains import LLMChain
 
 class NiraAgent:
-    def __init__(self, model_name=None, base_url=None, llm=None, log_file="chat.log") -> None:
+    def __init__(self, model_name=None, base_url=None, llm=None, log_file="chat.log", *, max_bytes=1 * 1024 * 1024, backup_count=5) -> None:
         self.llm = llm or ChatOllama(
             model=model_name,
             base_url=base_url,
@@ -25,7 +26,7 @@ class NiraAgent:
         self.logger = logging.getLogger(self.__class__.__name__)
         for h in list(self.logger.handlers):
             self.logger.removeHandler(h)
-        handler = logging.FileHandler(log_file)
+        handler = RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count)
         handler.setFormatter(logging.Formatter("%(message)s"))
         self.logger.addHandler(handler)
         self.logger.setLevel(logging.INFO)
