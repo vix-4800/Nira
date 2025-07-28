@@ -7,7 +7,7 @@ import time
 import sys
 
 try:
-    from agent.voice_tool import transcribe_whisper
+    from agent.voice_recognizer import transcribe_whisper
     from agent.voice_synthesizer import VoiceSynthesizer
     voice_modules_available = True
 except Exception:
