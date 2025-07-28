@@ -85,6 +85,8 @@ def main() -> None:
             typewriter(response, prefix="👾 Nira: ")
             if speak:
                 voice_synthesizer.speak(response)
+    except EOFError:
+        console.print("\n[bold magenta]👾 Nira:[/] До встречи!")
     except KeyboardInterrupt:
         console.print("\n[bold magenta]👾 Nira:[/] До встречи!")
     except Exception as e:

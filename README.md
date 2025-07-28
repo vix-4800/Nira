@@ -29,6 +29,8 @@ Run the application with:
 python main.py
 ```
 
+Use `/exit`, `Ctrl+C` or `Ctrl+D` to quit the application gracefully.
+
 The default server is `http://localhost:11434` and the default model is `qwen3:4b` if the variables are not set.
 
 By default all commands, prompts and responses are logged to a timestamped file under the `logs/` directory. You can override the location with the `--log-file` argument.
