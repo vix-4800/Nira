@@ -1,4 +1,3 @@
-import json
 import logging
 from logging.handlers import RotatingFileHandler
 from datetime import datetime
@@ -10,9 +9,9 @@ from langchain_core.prompts import (
     SystemMessagePromptTemplate,
 )
 from langchain.agents import create_tool_calling_agent, AgentExecutor
-from agent.tools import tools
+from .tools import tools
+from .prompt import load_prompt, ConfigError
 from langchain_ollama import ChatOllama
-from langchain.chains import LLMChain
 
 class NiraAgent:
     def __init__(self, model_name=None, base_url=None, llm=None, log_file="chat.log", *, max_bytes=1 * 1024 * 1024, backup_count=5) -> None:
@@ -33,7 +32,11 @@ class NiraAgent:
 
         self.memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
 
-        config = self.load_config()
+        try:
+            config = load_prompt()
+        except ConfigError as exc:
+            print(exc)
+            exit(1)
         system_prompt = config.get("system", "You are Nira - an AI assistant.")
 
         if hasattr(self.llm, "bind_tools"):
@@ -60,18 +63,6 @@ class NiraAgent:
         """Log a chat interaction to the log file."""
         timestamp = datetime.now().isoformat()
         self.logger.info(f"{timestamp}\tQ: {question}\tA: {response}")
-
-    def load_config(self):
-        try:
-            with open("prompt.json", "r") as f:
-                config = json.load(f)
-            return config
-        except FileNotFoundError:
-            print("prompt.json not found. Exiting.")
-            exit(1)
-        except json.JSONDecodeError:
-            print("prompt.json is not valid JSON. Exiting.")
-            exit(1)
 
     def ask(self, question: str) -> str:
         if self.agent_executor is not None:
