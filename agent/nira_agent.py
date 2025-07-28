@@ -1,61 +1,54 @@
 import json
 import logging
 from datetime import datetime
-from langchain.chains import LLMChain
 from langchain.memory import ConversationBufferMemory
-from langchain.prompts import (
+from langchain_core.prompts import (
     ChatPromptTemplate,
     HumanMessagePromptTemplate,
     MessagesPlaceholder,
     SystemMessagePromptTemplate,
 )
-from langchain_ollama.llms import OllamaLLM
+from langchain.agents import create_tool_calling_agent, AgentExecutor
+from agent.tools import tools
+from langchain_ollama import ChatOllama
 
 class NiraAgent:
-    """Simple conversational agent backed by LangChain."""
-
     def __init__(self, model_name=None, base_url=None, llm=None, log_file="chat.log") -> None:
-        """Create a new agent.
-
-        Parameters
-        ----------
-        model_name : str, optional
-            Name of the Ollama model.
-        base_url : str, optional
-            Ollama server URL.
-        llm : BaseLLM, optional
-            Custom LLM instance (used mainly for testing).
-        """
-
-        self.llm = llm or OllamaLLM(model=model_name, base_url=base_url)
-        self.log_file = log_file
+        llm = ChatOllama(
+            model=model_name,
+            base_url=base_url,
+            reasoning=False,
+            temperature=0.3,
+        )
 
         self.logger = logging.getLogger(self.__class__.__name__)
         for h in list(self.logger.handlers):
             self.logger.removeHandler(h)
-        handler = logging.FileHandler(self.log_file)
+        handler = logging.FileHandler(log_file)
         handler.setFormatter(logging.Formatter("%(message)s"))
         self.logger.addHandler(handler)
         self.logger.setLevel(logging.INFO)
 
+        memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+
         config = self.load_config()
-        system_prompt = config.get("system", "")
+        system_prompt = config.get("system", "You are Nira - an AI assistant.")
 
-        self.prompt = ChatPromptTemplate.from_messages(
-            [
-                SystemMessagePromptTemplate.from_template(system_prompt),
-                MessagesPlaceholder(variable_name="history"),
-                HumanMessagePromptTemplate.from_template("{user_input}"),
-            ]
-        )
+        prompt = ChatPromptTemplate.from_messages([
+            SystemMessagePromptTemplate.from_template(system_prompt),
+            MessagesPlaceholder("chat_history"),
+            HumanMessagePromptTemplate.from_template("{input}"),
+            MessagesPlaceholder("agent_scratchpad"),
+        ])
 
-        self.memory = ConversationBufferMemory(
-            memory_key="history", input_key="user_input", return_messages=True
-        )
-        self.chain = LLMChain(
-            llm=self.llm,
-            prompt=self.prompt,
-            memory=self.memory,
+        agent = create_tool_calling_agent(llm=llm, tools=tools, prompt=prompt)
+        self.agent_executor = AgentExecutor(
+            agent=agent,
+            tools=tools,
+            memory=memory,
+            verbose=False,
+            handle_parsing_errors=True,
+            max_iterations=3,
         )
 
     def log_chat(self, question: str, response: str) -> None:
@@ -76,7 +69,7 @@ class NiraAgent:
             exit(1)
 
     def ask(self, question: str) -> str:
-        """Ask the agent a question and return the response."""
-        response = self.chain.predict(user_input=question)
+        result = self.agent_executor.invoke({"input": question})
+        response = result.get("output", "") if isinstance(result, dict) else str(result)
         self.log_chat(question, response)
         return response
