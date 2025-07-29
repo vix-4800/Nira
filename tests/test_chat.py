@@ -2,9 +2,10 @@ import unittest
 import os
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from agent.nira_agent import NiraAgent
 from langchain_community.llms import FakeListLLM
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 class ChatMemoryTest(unittest.TestCase):
     def test_chat_memory_records_messages(self):

@@ -1,9 +1,7 @@
-import os
 import tempfile
 import unittest
 from unittest import mock
 from pathlib import Path
-
 from agent.tools.obsidian_tools import create_note, summarize_note
 
 class ObsidianToolsTest(unittest.TestCase):

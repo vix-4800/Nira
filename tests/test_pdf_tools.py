@@ -3,15 +3,14 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 from agent.tools.pdf_tools import (
     extract_text_from_pdf,
     summarize_text,
     summarize_pdf,
     count_words_in_file,
 )
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 
 class PDFToolsTest(unittest.TestCase):

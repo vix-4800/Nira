@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from .pdf_tools import summarize_text
 from ..env import get_obsidian_vault
