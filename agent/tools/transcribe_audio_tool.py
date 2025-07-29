@@ -1,7 +1,19 @@
 from pydantic import BaseModel, Field
 from langchain_core.tools import tool
 
-from .file_tools import transcribe_audio
+try:
+    import whisper
+except Exception:
+    whisper = None
+
+
+def transcribe_audio(path: str, model_name: str = "base") -> str:
+    """Transcribe an audio file using OpenAI Whisper if available."""
+    if whisper is None:
+        raise RuntimeError("whisper package not installed")
+    model = whisper.load_model(model_name)
+    result = model.transcribe(path)
+    return result.get("text", "").strip()
 
 class TranscribeAudioInput(BaseModel):
     path: str = Field(..., description="Path to the audio file")

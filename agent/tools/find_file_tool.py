@@ -1,7 +1,14 @@
 from pydantic import BaseModel, Field
 from langchain_core.tools import tool
 
-from .file_tools import find_file
+import os
+import glob
+
+
+def find_file(pattern: str, root: str = ".") -> list[str]:
+    """Recursively search for files matching the pattern under 'root'."""
+    matches = glob.glob(os.path.join(root, "**", pattern), recursive=True)
+    return [os.path.abspath(p) for p in matches]
 
 class FindFileInput(BaseModel):
     pattern: str = Field(..., description="Filename or glob pattern")

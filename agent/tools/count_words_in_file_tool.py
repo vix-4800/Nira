@@ -1,7 +1,12 @@
 from pydantic import BaseModel, Field
 from langchain_core.tools import tool
 
-from .pdf_tools import count_words_in_file
+
+def count_words_in_file(path: str) -> str:
+    """Return the number of words in a text file."""
+    with open(path, "r", encoding="utf-8") as fh:
+        words = fh.read().split()
+    return str(len(words))
 
 class CountWordsInput(BaseModel):
     path: str = Field(..., description="Path to the text file")

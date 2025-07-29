@@ -1,7 +1,24 @@
 from pydantic import BaseModel, Field
 from langchain_core.tools import tool
 
-from .pdf_tools import extract_text_from_pdf
+import os
+from PyPDF2 import PdfReader
+
+MAX_PAGES = 30
+MAX_CHARS = 30_000
+
+
+def extract_text_from_pdf(path: str, max_pages: int = MAX_PAGES) -> str:
+    if not os.path.isfile(path):
+        return f"(File not found: {path})"
+    reader = PdfReader(path)
+    pages = reader.pages[:max_pages]
+    text = []
+    for p in pages:
+        page_text = p.extract_text() or ""
+        text.append(page_text)
+    joined = "\n".join(text).strip()
+    return joined[:MAX_CHARS]
 
 class PDFPathInput(BaseModel):
     path: str = Field(..., description="Path to the PDF file")
