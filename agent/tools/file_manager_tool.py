@@ -8,16 +8,12 @@ from pydantic import BaseModel, Field, NonNegativeInt
 
 class FileManagerInput(BaseModel):
     action: str = Field(..., description="find | read | count_words")
-    pattern: str | None = Field(
-        None, description="Filename/glob for 'find'"
-    )
+    pattern: str | None = Field(None, description="Filename/glob for 'find'")
     path: str | None = Field(
         None, description="Exact file path for 'read' / 'count_words'"
     )
     root: str = Field(".", description="Root dir for 'find'")
-    max_bytes: NonNegativeInt = Field(
-        20_000, description="Limit read size (bytes)"
-    )
+    max_bytes: NonNegativeInt = Field(20_000, description="Limit read size (bytes)")
 
 
 @tool("FileManager", args_schema=FileManagerInput)

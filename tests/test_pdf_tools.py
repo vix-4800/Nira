@@ -4,8 +4,8 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from agent.tools.file_manager_tool import file_manager
 from agent.tools.extract_text_from_pdf_tool import extract_text_from_pdf_tool
+from agent.tools.file_manager_tool import file_manager
 from agent.tools.summarize_pdf_tool import summarize_pdf_tool, summarize_text
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
