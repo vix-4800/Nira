@@ -37,9 +37,7 @@ class YouTubeToolTest(unittest.TestCase):
         from youtube_transcript_api import _transcripts
 
         snippet1 = _transcripts.FetchedTranscriptSnippet("Hello world.", 0, 1)
-        snippet2 = _transcripts.FetchedTranscriptSnippet(
-            "Second sentence.", 1, 1
-        )
+        snippet2 = _transcripts.FetchedTranscriptSnippet("Second sentence.", 1, 1)
         fetched = _transcripts.FetchedTranscript(
             [snippet1, snippet2], "abc123xyz12", "English", "en", True
         )
