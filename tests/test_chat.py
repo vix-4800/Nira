@@ -1,9 +1,11 @@
-import unittest
 import os
 import sys
+import unittest
 from pathlib import Path
-from agent.nira_agent import NiraAgent
+
 from langchain_community.llms import FakeListLLM
+
+from agent.nira_agent import NiraAgent
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 

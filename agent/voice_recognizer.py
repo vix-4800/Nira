@@ -1,7 +1,8 @@
-import whisper
-import sounddevice as sd
-import numpy as np
 import tempfile
+
+import numpy as np
+import sounddevice as sd
+import whisper
 
 
 def record_audio(duration: int = 5, samplerate: int = 16000):

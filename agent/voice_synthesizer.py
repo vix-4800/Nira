@@ -1,7 +1,7 @@
+import sounddevice
+import soundfile
 import torch
 from TTS.api import TTS
-import soundfile
-import sounddevice
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 

@@ -1,10 +1,11 @@
-from pydantic import BaseModel, Field
-from langchain_core.tools import tool
-
 import re
 import subprocess
 
+from langchain_core.tools import tool
+from pydantic import BaseModel, Field
+
 from ..env import get_auto_confirm
+
 
 class BashCommandInput(BaseModel):
     command: str = Field(..., description="Bash command to execute")
@@ -56,6 +57,7 @@ def run_bash_command(command: str) -> str:
         return output if output else "(Пустой вывод)"
     except Exception as e:
         return f"Ошибка запуска команды: {e}"
+
 
 @tool("RunBashCommand", args_schema=BashCommandInput)
 def run_bash_command_tool(command: str) -> str:

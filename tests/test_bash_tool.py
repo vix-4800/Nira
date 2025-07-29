@@ -5,7 +5,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from agent.tools.run_bash_command_tool import run_bash_command, _is_dangerous
+from agent.tools.run_bash_command_tool import _is_dangerous, run_bash_command
 
 
 class BashToolTest(unittest.TestCase):

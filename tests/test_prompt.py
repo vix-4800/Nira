@@ -1,5 +1,6 @@
 import unittest
-from agent.prompt import load_prompt, ConfigError
+
+from agent.prompt import ConfigError, load_prompt
 
 
 class ConfigLoaderTest(unittest.TestCase):

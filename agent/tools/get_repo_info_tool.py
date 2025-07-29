@@ -1,7 +1,7 @@
-from pydantic import BaseModel, Field
-from langchain_core.tools import tool
-
 import requests
+from langchain_core.tools import tool
+from pydantic import BaseModel, Field
+
 from ..env import get_github_token
 
 
@@ -21,8 +21,10 @@ def get_repo_info(repo: str) -> str:
     except Exception as e:
         return f"Failed to fetch repo info: {e}"
 
+
 class RepoInfoInput(BaseModel):
     repo: str = Field(..., description="Repository in owner/name format")
+
 
 @tool("GetGitHubRepoInfo", args_schema=RepoInfoInput)
 def get_repo_info_tool(repo: str) -> str:

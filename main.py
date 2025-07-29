@@ -1,9 +1,11 @@
-from rich.console import Console
-from agent.nira_agent import NiraAgent
-from agent.env import get_model, get_server
 import re
-import time
 import sys
+import time
+
+from rich.console import Console
+
+from agent.env import get_model, get_server
+from agent.nira_agent import NiraAgent
 
 try:
     from agent.voice_recognizer import transcribe_whisper

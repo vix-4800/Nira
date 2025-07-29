@@ -1,7 +1,7 @@
-from pydantic import BaseModel, Field
-from langchain_core.tools import tool
-
 import dns.resolver
+from langchain_core.tools import tool
+from pydantic import BaseModel, Field
+
 from ..env import get_dns_server
 
 
@@ -25,8 +25,10 @@ def get_domain_info(domain: str) -> str:
         pass
     return "; ".join(info)
 
+
 class DomainInfoInput(BaseModel):
     domain: str = Field(..., description="Domain name")
+
 
 @tool("GetDomainInfo", args_schema=DomainInfoInput)
 def get_domain_info_tool(domain: str) -> str:

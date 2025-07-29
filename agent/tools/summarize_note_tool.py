@@ -1,8 +1,9 @@
-from pydantic import BaseModel, Field
-from langchain_core.tools import tool
-
-from pathlib import Path
 import re
+from pathlib import Path
+
+from langchain_core.tools import tool
+from pydantic import BaseModel, Field
+
 from ..env import get_obsidian_vault
 
 
@@ -28,9 +29,11 @@ def summarize_note(title: str, sentences: int = 3) -> str:
         return f"Failed to read note: {e}"
     return summarize_text(text, sentences)
 
+
 class SummarizeNoteInput(BaseModel):
     title: str = Field(..., description="Note title")
     sentences: int = Field(default=3, description="Number of sentences")
+
 
 @tool("SummarizeNote", args_schema=SummarizeNoteInput)
 def summarize_note_tool(title: str, sentences: int = 3) -> str:
