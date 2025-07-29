@@ -2,7 +2,7 @@ import re
 import sys
 import time
 
-from rich.console import Console
+from agent.status import console, status_manager
 
 from agent.env import get_model, get_server
 from agent.nira_agent import NiraAgent
@@ -17,7 +17,6 @@ except Exception:
     VoiceSynthesizer = None
     voice_modules_available = False
 
-console = Console()
 voice_synthesizer = None
 
 
@@ -82,7 +81,7 @@ def main() -> None:
                 console.print("[bold magenta]👾 Nira:[/] До встречи!")
                 break
 
-            with console.status("[cyan]Думаю...[/]", spinner="dots"):
+            with status_manager.status("Думаю..."):
                 response = nira.ask(user_input)
                 response = prepare_response(response)
 

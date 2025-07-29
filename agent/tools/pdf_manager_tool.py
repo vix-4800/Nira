@@ -5,6 +5,8 @@ from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 from PyPDF2 import PdfReader
 
+from ..status import status_manager
+
 MAX_PAGES = 30
 MAX_CHARS = 30_000
 
@@ -31,13 +33,13 @@ def pdf_manager(
     """Unified tool for PDF operations."""
     if not os.path.isfile(path):
         return f"(File not found: {path})"
-
-    reader = PdfReader(path)
-    pages = reader.pages[:max_pages]
-    text = []
-    for p in pages:
-        text.append(p.extract_text() or "")
-    joined = "\n".join(text).strip()[:MAX_CHARS]
+    with status_manager.status("читаю PDF"):
+        reader = PdfReader(path)
+        pages = reader.pages[:max_pages]
+        text = []
+        for p in pages:
+            text.append(p.extract_text() or "")
+        joined = "\n".join(text).strip()[:MAX_CHARS]
 
     match action:
         case "extract_text":
