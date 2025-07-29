@@ -1,7 +1,14 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from agent.tools.summarize_website_tool import summarize_text, summarize_website_tool
+# fmt: off
+# isort: off
+from agent.tools.summarize_website_tool import (
+    summarize_text,
+    summarize_website_tool,
+)
+# isort: on
+# fmt: on
 
 
 class WebsiteToolTest(unittest.TestCase):

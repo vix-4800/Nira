@@ -14,7 +14,8 @@ class GitHubToolTest(unittest.TestCase):
             "forks_count": 2,
         }
         result = get_repo_info_tool.func("octocat/Hello-World")
-        self.assertIn("octocat/Hello-World", result)
+        self.assertIsInstance(result, dict)
+        self.assertEqual(result["full_name"], "octocat/Hello-World")
         mock_get.assert_called_once()
 
     @patch("agent.tools.get_repo_info_tool.requests.get", side_effect=Exception("fail"))

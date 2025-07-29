@@ -4,12 +4,17 @@ from logging.handlers import RotatingFileHandler
 
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain.memory import ConversationBufferMemory
+
+# fmt: off
+# isort: off
 from langchain_core.prompts import (
     ChatPromptTemplate,
     HumanMessagePromptTemplate,
     MessagesPlaceholder,
     SystemMessagePromptTemplate,
 )
+# isort: on
+# fmt: on
 from langchain_ollama import ChatOllama
 
 from .prompt import ConfigError, load_prompt
