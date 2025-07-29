@@ -11,6 +11,7 @@ from .summarize_website_tool import summarize_website_tool
 from .summarize_youtube_tool import summarize_youtube_tool
 from .telegram_manager_tool import telegram_manager
 from .transcribe_audio_tool import transcribe_audio_tool
+from .web_search_tool import web_search_tool
 
 # Export a list of tools for use by LangChain agents
 
@@ -26,4 +27,5 @@ tools = [
     get_domain_info_tool,
     summarize_website_tool,
     summarize_youtube_tool,
+    web_search_tool,
 ]

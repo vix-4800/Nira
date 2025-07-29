@@ -11,5 +11,6 @@ requests
 dnspython
 beautifulsoup4
 youtube-transcript-api
+duckduckgo-search
 
 # Optional voice dependencies are provided in requirements-voice.txt
