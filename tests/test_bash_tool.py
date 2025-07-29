@@ -15,12 +15,12 @@ class BashToolTest(unittest.TestCase):
 
     @patch("builtins.input", return_value="y")
     def test_run_safe_command_confirm(self, mock_input):
-        out = run_bash_command_tool("echo hello")
+        out = run_bash_command_tool.func("echo hello")
         self.assertEqual(out.strip(), "hello")
 
     @patch("builtins.input", return_value="n")
     def test_cancel_command(self, mock_input):
-        result = run_bash_command_tool("echo hi")
+        result = run_bash_command_tool.func("echo hi")
         self.assertEqual(result, "Команда отменена")
 
     @patch("subprocess.run")
@@ -30,7 +30,7 @@ class BashToolTest(unittest.TestCase):
         mock_run.return_value.stderr = ""
         mock_run.return_value.returncode = 0
         os.environ["AUTO_CONFIRM"] = "true"
-        out = run_bash_command_tool("rm -rf tmp")
+        out = run_bash_command_tool.func("rm -rf tmp")
         self.assertEqual(out, "(Пустой вывод)")
         del os.environ["AUTO_CONFIRM"]
 

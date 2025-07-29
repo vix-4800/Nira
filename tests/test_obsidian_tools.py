@@ -17,15 +17,15 @@ class ObsidianToolsTest(unittest.TestCase):
 
     def test_create_and_summarize_note(self):
         with mock.patch.dict("os.environ", {"OBSIDIAN_VAULT": str(self.vault)}):
-            result = create_note_tool("Test", "Hello world. More text.")
+            result = create_note_tool.func("Test", "Hello world. More text.")
             self.assertIn("Created", result)
-            summary = summarize_note_tool("Test", sentences=1)
+            summary = summarize_note_tool.func("Test", sentences=1)
             self.assertEqual(summary, "Hello world.")
 
     def test_missing_vault(self):
         with mock.patch.dict("os.environ", {}, clear=True):
             with self.assertRaises(RuntimeError):
-                create_note_tool("Foo")
+                create_note_tool.func("Foo")
 
 
 if __name__ == "__main__":

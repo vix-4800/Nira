@@ -13,13 +13,13 @@ class GitHubToolTest(unittest.TestCase):
             "stargazers_count": 5,
             "forks_count": 2,
         }
-        result = get_repo_info_tool("octocat/Hello-World")
+        result = get_repo_info_tool.func("octocat/Hello-World")
         self.assertIn("octocat/Hello-World", result)
         mock_get.assert_called_once()
 
     @patch("agent.tools.get_repo_info_tool.requests.get", side_effect=Exception("fail"))
     def test_get_repo_info_error(self, mock_get):
-        result = get_repo_info_tool("octocat/Hello-World")
+        result = get_repo_info_tool.func("octocat/Hello-World")
         self.assertIn("Failed to fetch", result)
 
 
