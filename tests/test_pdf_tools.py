@@ -4,16 +4,15 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from agent.tools.extract_text_from_pdf_tool import extract_text_from_pdf_tool
+from agent.tools.pdf_manager_tool import pdf_manager, summarize_text
 from agent.tools.file_manager_tool import file_manager
-from agent.tools.summarize_pdf_tool import summarize_pdf_tool, summarize_text
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 
 class PDFToolsTest(unittest.TestCase):
     def test_extract_text_from_pdf(self):
-        text = extract_text_from_pdf_tool.func("tests/sample.pdf")
+        text = pdf_manager.func("extract_text", path="tests/sample.pdf")
         self.assertIn("Hello world", text)
 
     def test_summarize_text(self):
@@ -21,7 +20,7 @@ class PDFToolsTest(unittest.TestCase):
         self.assertEqual(summary, "One. Two.")
 
     def test_summarize_pdf(self):
-        summary = summarize_pdf_tool.func("tests/sample.pdf", sentences=1)
+        summary = pdf_manager.func("summarize", path="tests/sample.pdf", sentences=1)
         self.assertTrue(summary.startswith("Hello world"))
 
     def test_count_words_in_file(self):
