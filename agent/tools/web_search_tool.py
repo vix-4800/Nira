@@ -2,6 +2,8 @@ from duckduckgo_search import DDGS
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
+from ..status import status_manager
+
 
 class WebSearchInput(BaseModel):
     query: str = Field(..., description="Search query")
@@ -12,8 +14,9 @@ class WebSearchInput(BaseModel):
 def web_search_tool(query: str, max_results: int = 5) -> str:
     """Search the web using DuckDuckGo and return top results."""
     try:
-        with DDGS() as ddgs:
-            results = ddgs.text(query, safesearch="off", max_results=max_results)
+        with status_manager.status("ищу в интернете"):
+            with DDGS() as ddgs:
+                results = ddgs.text(query, safesearch="off", max_results=max_results)
     except Exception as e:
         return f"Search failed: {e}"
 
