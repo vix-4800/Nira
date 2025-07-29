@@ -9,6 +9,7 @@ from .pdf_manager_tool import pdf_manager
 from .run_bash_command_tool import run_bash_command_tool
 from .summarize_note_tool import summarize_note_tool
 from .summarize_website_tool import summarize_website_tool
+from .summarize_youtube_tool import summarize_youtube_tool
 from .telegram_manager_tool import telegram_manager
 from .transcribe_audio_tool import transcribe_audio_tool
 
@@ -26,4 +27,5 @@ tools = [
     check_website_tool,
     get_domain_info_tool,
     summarize_website_tool,
+    summarize_youtube_tool,
 ]
