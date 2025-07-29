@@ -5,6 +5,7 @@ from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
 from ..env import get_auto_confirm
+from ..status import status_manager
 
 
 class BashCommandInput(BaseModel):
@@ -48,13 +49,14 @@ def run_bash_command_tool(command: str) -> str:
             return "Команда отменена"
 
     try:
-        result = subprocess.run(
-            command,
-            shell=True,
-            capture_output=True,
-            text=True,
-            timeout=30,
-        )
+        with status_manager.status("выполняю команду"):
+            result = subprocess.run(
+                command,
+                shell=True,
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
         output = result.stdout.strip() or result.stderr.strip()
         return output if output else "(Пустой вывод)"
     except Exception as e:

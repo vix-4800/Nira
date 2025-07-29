@@ -3,6 +3,7 @@ from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
 from ..env import get_telegram_bot_token, get_telegram_chat_id
+from ..status import status_manager
 
 
 class TelegramManagerInput(BaseModel):
@@ -23,7 +24,8 @@ def telegram_manager(action: str, text: str | None = None) -> str:
                 return "Error: 'text' is required for send_message"
             url = f"https://api.telegram.org/bot{token}/sendMessage"
             try:
-                resp = requests.post(url, json={"chat_id": chat_id, "text": text})
+                with status_manager.status("отправляю сообщение"):
+                    resp = requests.post(url, json={"chat_id": chat_id, "text": text})
                 resp.raise_for_status()
                 return "Message sent."
             except Exception as e:

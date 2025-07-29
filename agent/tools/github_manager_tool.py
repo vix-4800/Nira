@@ -3,6 +3,7 @@ from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
 from ..env import get_github_token
+from ..status import status_manager
 
 
 class GitHubManagerInput(BaseModel):
@@ -21,7 +22,8 @@ def github_manager(action: str, repo: str | None = None) -> dict | str:
             headers = {"Authorization": f"token {token}"} if token else {}
             url = f"https://api.github.com/repos/{repo}"
             try:
-                resp = requests.get(url, headers=headers, timeout=10)
+                with status_manager.status("получаю данные репозитория"):
+                    resp = requests.get(url, headers=headers, timeout=10)
                 resp.raise_for_status()
                 return resp.json()
             except Exception as e:

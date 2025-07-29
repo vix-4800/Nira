@@ -5,6 +5,8 @@ from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 from youtube_transcript_api import YouTubeTranscriptApi
 
+from ..status import status_manager
+
 MAX_CHARS = 20000
 
 
@@ -57,7 +59,8 @@ def summarize_youtube_tool(video: str, sentences: int = 3) -> str:
     video_id = extract_video_id(video)
     if not video_id:
         return "Invalid YouTube URL or ID"
-    text = fetch_captions(video_id)
+    with status_manager.status("Изучаю видео"):
+        text = fetch_captions(video_id)
     if text.startswith("Failed to fetch"):
         return text
     return summarize_text(text, sentences)

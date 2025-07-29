@@ -5,6 +5,8 @@ from typing import List
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field, NonNegativeInt
 
+from ..status import status_manager
+
 
 class FileManagerInput(BaseModel):
     action: str = Field(..., description="find | read | count_words")
@@ -30,22 +32,25 @@ def file_manager(
         case "find":
             if not pattern:
                 return "Error: 'pattern' is required for find"
-            matches = glob.glob(os.path.join(root, "**", pattern), recursive=True)
+            with status_manager.status("ищу файлы"):
+                matches = glob.glob(os.path.join(root, "**", pattern), recursive=True)
             return [os.path.abspath(p) for p in matches]
         case "read":
             if not path:
                 return "Error: 'path' is required for read"
             try:
-                with open(path, "r", encoding="utf-8") as fh:
-                    return fh.read(max_bytes)
+                with status_manager.status("читаю файл"):
+                    with open(path, "r", encoding="utf-8") as fh:
+                        return fh.read(max_bytes)
             except Exception as exc:
                 return f"Error reading file: {exc}"
         case "count_words":
             if not path:
                 return "Error: 'path' is required for count_words"
             try:
-                with open(path, "r", encoding="utf-8") as fh:
-                    words = fh.read().split()
+                with status_manager.status("считаю слова"):
+                    with open(path, "r", encoding="utf-8") as fh:
+                        words = fh.read().split()
                 return str(len(words))
             except Exception as exc:
                 return f"Error reading file: {exc}"

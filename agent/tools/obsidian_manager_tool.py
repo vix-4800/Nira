@@ -5,6 +5,7 @@ from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
 from ..env import get_obsidian_vault
+from ..status import status_manager
 
 
 def _vault_path() -> Path:
@@ -40,7 +41,8 @@ def obsidian_manager(
             if path.exists():
                 return f"Note already exists: {path}"
             try:
-                path.write_text(content or "", encoding="utf-8")
+                with status_manager.status("создаю заметку"):
+                    path.write_text(content or "", encoding="utf-8")
                 return f"Created {path}"
             except Exception as e:
                 return f"Failed to create note: {e}"
@@ -49,7 +51,8 @@ def obsidian_manager(
             if not path.is_file():
                 return f"(File not found: {path})"
             try:
-                text = path.read_text(encoding="utf-8")
+                with status_manager.status("читаю заметку"):
+                    text = path.read_text(encoding="utf-8")
             except Exception as e:
                 return f"Failed to read note: {e}"
             return summarize_text(text, sentences)
