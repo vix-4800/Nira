@@ -11,6 +11,12 @@ A simple command execution assistant that uses an LLM backend.
 pip install -r requirements.txt
 ```
 
+3. (Optional) Install development dependencies for linting and formatting:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
 ## Configuration
 
 `main.py` reads environment variables to determine the server URL and model to use. These can be provided directly in the environment or via a `.env` file.
@@ -47,7 +53,24 @@ By default all commands, prompts and responses are logged to a timestamped file 
 
 Set `AUTO_CONFIRM` to `true` in the environment to run safe commands without confirmation. Any command recognised as dangerous (like `rm -rf` or `shutdown`) will always require explicit confirmation before execution.
 
+
 The assistant now maintains conversational context using LangChain's conversation memory. This allows you to chat naturally and refer back to previous questions in the same session.
+
+## Development
+
+Install the development dependencies:
+
+```bash
+pip install -r requirements-dev.txt
+```
+
+Run the linters and formatters:
+
+```bash
+flake8
+black --check .
+isort --check .
+```
 
 ## Running tests
 

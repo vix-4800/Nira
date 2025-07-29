@@ -8,6 +8,7 @@ import sys
 try:
     from agent.voice_recognizer import transcribe_whisper
     from agent.voice_synthesizer import VoiceSynthesizer
+
     voice_modules_available = True
 except Exception:
     transcribe_whisper = None
@@ -17,9 +18,11 @@ except Exception:
 console = Console()
 voice_synthesizer = None
 
+
 def prepare_response(text: str) -> str:
     response = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
     return response.strip()
+
 
 def typewriter(text: str, delay=0.015, prefix="") -> None:
     if prefix:
@@ -28,6 +31,7 @@ def typewriter(text: str, delay=0.015, prefix="") -> None:
         print(char, end="", flush=True)
         time.sleep(delay)
     print("\n")
+
 
 def main() -> None:
     model = get_model()
@@ -40,7 +44,8 @@ def main() -> None:
 
     if (use_voice or speak) and not voice_modules_available:
         console.print(
-            "[yellow]Voice features requested but optional dependencies are not installed.[/]")
+            "[yellow]Voice features requested but optional dependencies are not installed.[/]"
+        )
         if use_voice:
             console.print("[yellow]Распознавание речи недоступно.[/]")
         if speak:
@@ -52,7 +57,9 @@ def main() -> None:
         global voice_synthesizer
         voice_synthesizer = VoiceSynthesizer()
 
-    console.print("[bold magenta]👾 Nira:[/] Привет! Я готова отвечать на вопросы. Для выхода напиши /exit")
+    console.print(
+        "[bold magenta]👾 Nira:[/] Привет! Я готова отвечать на вопросы. Для выхода напиши /exit"
+    )
     console.print(f"[dim]Я буду использовать модель: {model}[/]")
     console.rule("[bold blue]Nira Chat[/]")
 
@@ -61,7 +68,9 @@ def main() -> None:
             if use_voice:
                 user_input = transcribe_whisper()
                 if not user_input:
-                    console.print("[yellow]Не удалось распознать речь. Попробуй ещё раз![/]")
+                    console.print(
+                        "[yellow]Не удалось распознать речь. Попробуй ещё раз![/]"
+                    )
                     continue
                 console.print(f"[green]Ты (голос):[/] {user_input}")
             else:
@@ -84,6 +93,7 @@ def main() -> None:
         console.print("\n[bold magenta]👾 Nira:[/] До встречи!")
     except Exception as e:
         console.print(f"\n[bold red]👾 Nira:[/] Произошла ошибка: {e}")
+
 
 if __name__ == "__main__":
     main()

@@ -7,6 +7,7 @@ from langchain_community.llms import FakeListLLM
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
+
 class ChatMemoryTest(unittest.TestCase):
     def test_chat_memory_records_messages(self):
         responses = ["hi there", "i am fine"]
@@ -42,5 +43,6 @@ class ChatLoggingTest(unittest.TestCase):
         self.assertIn("How are you?", lines[1])
         self.assertIn("i am fine", lines[1])
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
