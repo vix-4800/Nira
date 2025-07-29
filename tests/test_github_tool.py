@@ -18,7 +18,9 @@ class GitHubToolTest(unittest.TestCase):
         self.assertEqual(result["full_name"], "octocat/Hello-World")
         mock_get.assert_called_once()
 
-    @patch("agent.tools.github_manager_tool.requests.get", side_effect=Exception("fail"))
+    @patch(
+        "agent.tools.github_manager_tool.requests.get", side_effect=Exception("fail")
+    )
     def test_get_repo_info_error(self, mock_get):
         result = github_manager.func("repo_info", repo="octocat/Hello-World")
         self.assertIn("Failed to fetch", result)
