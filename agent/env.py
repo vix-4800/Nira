@@ -32,12 +32,12 @@ def get_telegram_chat_id() -> str:
     """Return the Telegram chat ID from the environment."""
     return os.getenv("TELEGRAM_CHAT_ID", "")
 
-  
+
 def get_github_token() -> str:
     """Return the GitHub access token from the environment."""
     return os.getenv("GITHUB_TOKEN", "")
 
-  
+
 def get_obsidian_vault() -> str:
     """Return the path to the Obsidian vault."""
     return os.getenv("OBSIDIAN_VAULT", "")

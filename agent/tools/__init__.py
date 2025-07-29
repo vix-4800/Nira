@@ -3,7 +3,7 @@ from .bash_tool import run_bash_command
 from .telegram_tool import send_telegram_message
 from .file_tools import (
     transcribe_audio,
-        find_file,
+    find_file,
 )
 from .obsidian_tools import (
     create_note,
