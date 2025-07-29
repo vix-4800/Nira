@@ -4,9 +4,8 @@ from pathlib import Path
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-from ..status import status_manager
-
 from ..env import get_obsidian_vault
+from ..status import status_manager
 
 
 def _vault_path() -> Path:

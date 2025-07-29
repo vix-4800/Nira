@@ -2,10 +2,9 @@ import re
 import sys
 import time
 
-from agent.status import console, status_manager
-
 from agent.env import get_model, get_server
 from agent.nira_agent import NiraAgent
+from agent.status import console, status_manager
 
 try:
     from agent.voice_recognizer import transcribe_whisper
