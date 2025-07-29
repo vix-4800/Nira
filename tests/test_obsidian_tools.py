@@ -3,8 +3,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from agent.tools.create_note_tool import create_note_tool
-from agent.tools.summarize_note_tool import summarize_note_tool
+from agent.tools.obsidian_manager_tool import obsidian_manager
 
 
 class ObsidianToolsTest(unittest.TestCase):
@@ -17,15 +16,21 @@ class ObsidianToolsTest(unittest.TestCase):
 
     def test_create_and_summarize_note(self):
         with mock.patch.dict("os.environ", {"OBSIDIAN_VAULT": str(self.vault)}):
-            result = create_note_tool.func("Test", "Hello world. More text.")
+            result = obsidian_manager.func(
+                "create_note",
+                title="Test",
+                content="Hello world. More text.",
+            )
             self.assertIn("Created", result)
-            summary = summarize_note_tool.func("Test", sentences=1)
+            summary = obsidian_manager.func(
+                "summarize_note", title="Test", sentences=1
+            )
             self.assertEqual(summary, "Hello world.")
 
     def test_missing_vault(self):
         with mock.patch.dict("os.environ", {}, clear=True):
             with self.assertRaises(RuntimeError):
-                create_note_tool.func("Foo")
+                obsidian_manager.func("create_note", title="Foo")
 
 
 if __name__ == "__main__":
