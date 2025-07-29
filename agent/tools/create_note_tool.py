@@ -1,5 +1,7 @@
+from pydantic import BaseModel, Field
+from langchain_core.tools import tool
+
 from pathlib import Path
-from .pdf_tools import summarize_text
 from ..env import get_obsidian_vault
 
 
@@ -21,14 +23,11 @@ def create_note(title: str, content: str = "") -> str:
     except Exception as e:
         return f"Failed to create note: {e}"
 
+class CreateNoteInput(BaseModel):
+    title: str = Field(..., description="Note title")
+    content: str = Field(default="", description="Note content")
 
-def summarize_note(title: str, sentences: int = 3) -> str:
-    """Return a short summary of the specified note."""
-    path = _vault_path() / f"{title}.md"
-    if not path.is_file():
-        return f"(File not found: {path})"
-    try:
-        text = path.read_text(encoding="utf-8")
-    except Exception as e:
-        return f"Failed to read note: {e}"
-    return summarize_text(text, sentences)
+@tool("CreateNote", args_schema=CreateNoteInput)
+def create_note_tool(title: str, content: str = "") -> str:
+    """Create a new markdown note in the configured Obsidian vault."""
+    return create_note(title, content)

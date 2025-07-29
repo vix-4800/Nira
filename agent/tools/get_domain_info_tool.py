@@ -1,15 +1,8 @@
-import requests
+from pydantic import BaseModel, Field
+from langchain_core.tools import tool
+
 import dns.resolver
 from ..env import get_dns_server
-
-
-def check_website(url: str) -> str:
-    """Return HTTP status code for a website or an error message."""
-    try:
-        resp = requests.head(url, timeout=5)
-        return f"{resp.status_code}"
-    except Exception as e:
-        return f"Error: {e}"
 
 
 def get_domain_info(domain: str) -> str:
@@ -32,5 +25,10 @@ def get_domain_info(domain: str) -> str:
         pass
     return "; ".join(info)
 
+class DomainInfoInput(BaseModel):
+    domain: str = Field(..., description="Domain name")
 
-__all__ = ["check_website", "get_domain_info"]
+@tool("GetDomainInfo", args_schema=DomainInfoInput)
+def get_domain_info_tool(domain: str) -> str:
+    """Get basic DNS information (A and MX records) for a domain."""
+    return get_domain_info(domain)

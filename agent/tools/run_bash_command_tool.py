@@ -1,6 +1,13 @@
+from pydantic import BaseModel, Field
+from langchain_core.tools import tool
+
 import re
 import subprocess
+
 from ..env import get_auto_confirm
+
+class BashCommandInput(BaseModel):
+    command: str = Field(..., description="Bash command to execute")
 
 
 _DANGEROUS_PATTERNS = [
@@ -23,12 +30,17 @@ def _confirm(prompt: str) -> bool:
     reply = input(prompt).strip().lower()
     return reply in {"y", "yes"}
 
+
 def run_bash_command(command: str) -> str:
     auto_confirm = get_auto_confirm()
     dangerous = _is_dangerous(command)
 
     if not auto_confirm or dangerous:
-        prompt = f"Команда '{command}' выглядит опасной. Выполнить? [y/N]: " if dangerous else f"Выполнить команду '{command}'? [y/N]: "
+        prompt = (
+            f"Команда '{command}' выглядит опасной. Выполнить? [y/N]: "
+            if dangerous
+            else f"Выполнить команду '{command}'? [y/N]: "
+        )
         if not _confirm(prompt):
             return "Команда отменена"
 
@@ -44,3 +56,8 @@ def run_bash_command(command: str) -> str:
         return output if output else "(Пустой вывод)"
     except Exception as e:
         return f"Ошибка запуска команды: {e}"
+
+@tool("RunBashCommand", args_schema=BashCommandInput)
+def run_bash_command_tool(command: str) -> str:
+    """Execute a system bash command and returns the result."""
+    return run_bash_command(command)

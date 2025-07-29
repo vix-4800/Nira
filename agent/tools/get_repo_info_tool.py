@@ -1,3 +1,6 @@
+from pydantic import BaseModel, Field
+from langchain_core.tools import tool
+
 import requests
 from ..env import get_github_token
 
@@ -17,3 +20,11 @@ def get_repo_info(repo: str) -> str:
         return f"{full_name}: ⭐{stars} forks:{forks}"
     except Exception as e:
         return f"Failed to fetch repo info: {e}"
+
+class RepoInfoInput(BaseModel):
+    repo: str = Field(..., description="Repository in owner/name format")
+
+@tool("GetGitHubRepoInfo", args_schema=RepoInfoInput)
+def get_repo_info_tool(repo: str) -> str:
+    """Retrieve basic information about a GitHub repository."""
+    return get_repo_info(repo)

@@ -1,89 +1,31 @@
-from langchain.agents import Tool
-from .bash_tool import run_bash_command
-from .telegram_tool import send_telegram_message
-from .file_tools import (
-    transcribe_audio,
-    find_file,
-)
-from .obsidian_tools import (
-    create_note,
-    summarize_note,
-)
-from .pdf_tools import (
-    extract_text_from_pdf,
-    summarize_pdf,
-    count_words_in_file,
-)
-from .github_tool import get_repo_info
-from .network_tools import (
-    check_website,
-    get_domain_info,
-)
+from __future__ import annotations
+
+from .run_bash_command_tool import run_bash_command_tool
+from .extract_text_from_pdf_tool import extract_text_from_pdf_tool
+from .summarize_pdf_tool import summarize_pdf_tool
+from .count_words_in_file_tool import count_words_in_file_tool
+from .transcribe_audio_tool import transcribe_audio_tool
+from .create_note_tool import create_note_tool
+from .summarize_note_tool import summarize_note_tool
+from .find_file_tool import find_file_tool
+from .get_repo_info_tool import get_repo_info_tool
+from .send_telegram_message_tool import send_telegram_message_tool
+from .check_website_tool import check_website_tool
+from .get_domain_info_tool import get_domain_info_tool
+
+# Export a list of tools for use by LangChain agents
 
 tools = [
-    Tool(
-        name="RunBashCommand",
-        func=run_bash_command,
-        description="Execute a system bash command and returns the result. Use it for file searching, system management, and other terminal tasks.",
-    ),
-    Tool(
-        name="ExtractTextFromPDF",
-        func=extract_text_from_pdf,
-        description="Extract the textual contents from a PDF file given its path.",
-    ),
-    Tool(
-        name="SummarizePDF",
-        func=summarize_pdf,
-        description="Provide a short summary of a PDF document.",
-    ),
-    Tool(
-        name="CountWordsInFile",
-        func=count_words_in_file,
-        description="Return the number of words in a text file.",
-    ),
-    Tool(
-        name="TranscribeAudio",
-        func=transcribe_audio,
-        description="Transcribe speech from an audio file using Whisper if available.",
-    ),
-    Tool(
-        name="CreateNote",
-        func=create_note,
-        description="Create a new markdown note in the configured Obsidian vault.",
-    ),
-    Tool(
-        name="SummarizeNote",
-        func=summarize_note,
-        description="Summarize a markdown note from the Obsidian vault.",
-    ),
-    Tool(
-        name="FindFile",
-        func=find_file,
-        description=(
-            "Recursively search for files by name or glob pattern. "
-            "Return absolute paths. Use before reading or summarizing files."
-        ),
-    ),
-    Tool(
-        name="GetGitHubRepoInfo",
-        func=get_repo_info,
-        description=(
-            "Retrieve basic information about a GitHub repository in 'owner/repo' format."
-        ),
-    ),
-    Tool(
-        name="SendTelegramMessage",
-        func=send_telegram_message,
-        description="Send a text message via the configured Telegram bot.",
-    ),
-    Tool(
-        name="CheckWebsite",
-        func=check_website,
-        description="Check if a website is reachable and return HTTP status code.",
-    ),
-    Tool(
-        name="GetDomainInfo",
-        func=get_domain_info,
-        description="Get basic DNS information (A and MX records) for a domain.",
-    ),
+    run_bash_command_tool,
+    extract_text_from_pdf_tool,
+    summarize_pdf_tool,
+    count_words_in_file_tool,
+    transcribe_audio_tool,
+    create_note_tool,
+    summarize_note_tool,
+    find_file_tool,
+    get_repo_info_tool,
+    send_telegram_message_tool,
+    check_website_tool,
+    get_domain_info_tool,
 ]
