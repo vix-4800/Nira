@@ -1,9 +1,15 @@
 import unittest
 from unittest.mock import patch
 
-from agent.tools.summarize_youtube_tool import (extract_video_id,
-                                                summarize_text,
-                                                summarize_youtube_tool)
+# fmt: off
+# isort: off
+from agent.tools.summarize_youtube_tool import (
+    extract_video_id,
+    summarize_text,
+    summarize_youtube_tool,
+)
+# isort: on
+# fmt: on
 
 
 class YouTubeToolTest(unittest.TestCase):
