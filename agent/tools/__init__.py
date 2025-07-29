@@ -3,13 +3,18 @@ from .bash_tool import run_bash_command
 from .telegram_tool import send_telegram_message
 from .file_tools import (
     transcribe_audio,
-	find_file,
+    find_file,
+)
+from .obsidian_tools import (
+    create_note,
+    summarize_note,
 )
 from .pdf_tools import (
     extract_text_from_pdf,
     summarize_pdf,
     count_words_in_file,
 )
+from .github_tool import get_repo_info
 from .network_tools import (
     check_website,
     get_domain_info,
@@ -41,12 +46,29 @@ tools = [
         func=transcribe_audio,
         description="Transcribe speech from an audio file using Whisper if available.",
     ),
-	Tool(
+    Tool(
+        name="CreateNote",
+        func=create_note,
+        description="Create a new markdown note in the configured Obsidian vault.",
+    ),
+    Tool(
+        name="SummarizeNote",
+        func=summarize_note,
+        description="Summarize a markdown note from the Obsidian vault.",
+    ),
+    Tool(
         name="FindFile",
         func=find_file,
         description=(
             "Recursively search for files by name or glob pattern. "
             "Return absolute paths. Use before reading or summarizing files."
+        ),
+    ),
+    Tool(
+        name="GetGitHubRepoInfo",
+        func=get_repo_info,
+        description=(
+            "Retrieve basic information about a GitHub repository in 'owner/repo' format."
         ),
     ),
     Tool(

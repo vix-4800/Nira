@@ -33,6 +33,16 @@ def get_telegram_chat_id() -> str:
     return os.getenv("TELEGRAM_CHAT_ID", "")
 
 
+def get_github_token() -> str:
+    """Return the GitHub access token from the environment."""
+    return os.getenv("GITHUB_TOKEN", "")
+
+
+def get_obsidian_vault() -> str:
+    """Return the path to the Obsidian vault."""
+    return os.getenv("OBSIDIAN_VAULT", "")
+
+
 def get_dns_server() -> str:
     """Return the DNS server to use for lookups if specified."""
     return os.getenv("DNS_SERVER", "")
@@ -48,6 +58,8 @@ __all__ = [
     "get_auto_confirm",
     "get_telegram_bot_token",
     "get_telegram_chat_id",
-    "get_dns_server",
+    "get_obsidian_vault",
+    "get_github_token",
     "parse_env",
+    "get_dns_server",
 ]

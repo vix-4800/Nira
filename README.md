@@ -23,10 +23,14 @@ MODEL=qwen3:4b
 AUTO_CONFIRM=false
 TELEGRAM_BOT_TOKEN=
 TELEGRAM_CHAT_ID=
+OBSIDIAN_VAULT=
+GITHUB_TOKEN=
 DNS_SERVER=
 ```
 
 `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are required for the Telegram tool to send messages.
+`GITHUB_TOKEN` is optional and is used by the GitHub tool for authenticated requests.
+`OBSIDIAN_VAULT` should point to the directory containing your Obsidian notes and is required for the Obsidian tools.
 `DNS_SERVER` is optional and overrides the DNS server used for domain lookups.
 
 Run the application with:
