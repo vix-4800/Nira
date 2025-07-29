@@ -5,8 +5,13 @@ from pydantic import BaseModel, Field
 from ..env import get_dns_server
 
 
-def get_domain_info(domain: str) -> str:
-    """Return basic DNS information for a domain."""
+class DomainInfoInput(BaseModel):
+    domain: str = Field(..., description="Domain name")
+
+
+@tool("GetDomainInfo", args_schema=DomainInfoInput)
+def get_domain_info_tool(domain: str) -> str:
+    """Get basic DNS information (A and MX records) for a domain."""
     resolver = dns.resolver.Resolver()
     dns_server = get_dns_server()
     if dns_server:
@@ -24,13 +29,3 @@ def get_domain_info(domain: str) -> str:
     except Exception:
         pass
     return "; ".join(info)
-
-
-class DomainInfoInput(BaseModel):
-    domain: str = Field(..., description="Domain name")
-
-
-@tool("GetDomainInfo", args_schema=DomainInfoInput)
-def get_domain_info_tool(domain: str) -> str:
-    """Get basic DNS information (A and MX records) for a domain."""
-    return get_domain_info(domain)

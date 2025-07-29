@@ -11,13 +11,6 @@ def summarize_text(text: str, sentences: int = 3) -> str:
     return " ".join(parts[:sentences]).strip()
 
 
-def summarize_pdf(path: str, sentences: int = 3) -> str:
-    text = extract_text_from_pdf(path)
-    if text.startswith("(File not found"):
-        return text
-    return summarize_text(text, sentences)
-
-
 class SummarizePDFInput(BaseModel):
     path: str = Field(..., description="Path to the PDF file")
     sentences: int = Field(default=3, description="Number of sentences")
@@ -26,4 +19,7 @@ class SummarizePDFInput(BaseModel):
 @tool("SummarizePDF", args_schema=SummarizePDFInput)
 def summarize_pdf_tool(path: str, sentences: int = 3) -> str:
     """Provide a short summary of a PDF document."""
-    return summarize_pdf(path, sentences=sentences)
+    text = extract_text_from_pdf(path)
+    if text.startswith("(File not found"):
+        return text
+    return summarize_text(text, sentences)

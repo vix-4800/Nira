@@ -32,7 +32,9 @@ def _confirm(prompt: str) -> bool:
     return reply in {"y", "yes"}
 
 
-def run_bash_command(command: str) -> str:
+@tool("RunBashCommand", args_schema=BashCommandInput)
+def run_bash_command_tool(command: str) -> str:
+    """Execute a system bash command and returns the result."""
     auto_confirm = get_auto_confirm()
     dangerous = _is_dangerous(command)
 
@@ -57,9 +59,3 @@ def run_bash_command(command: str) -> str:
         return output if output else "(Пустой вывод)"
     except Exception as e:
         return f"Ошибка запуска команды: {e}"
-
-
-@tool("RunBashCommand", args_schema=BashCommandInput)
-def run_bash_command_tool(command: str) -> str:
-    """Execute a system bash command and returns the result."""
-    return run_bash_command(command)
