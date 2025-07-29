@@ -4,10 +4,12 @@ from logging.handlers import RotatingFileHandler
 
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain.memory import ConversationBufferMemory
-from langchain_core.prompts import (ChatPromptTemplate,
-                                    HumanMessagePromptTemplate,
-                                    MessagesPlaceholder,
-                                    SystemMessagePromptTemplate)
+from langchain_core.prompts import (
+    ChatPromptTemplate,
+    HumanMessagePromptTemplate,
+    MessagesPlaceholder,
+    SystemMessagePromptTemplate,
+)
 from langchain_ollama import ChatOllama
 
 from .prompt import ConfigError, load_prompt
