@@ -1,9 +1,9 @@
 import re
+
 import requests
 from bs4 import BeautifulSoup
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
-
 
 MAX_CHARS = 20000
 
@@ -27,8 +27,6 @@ def fetch_text_from_url(url: str, max_chars: int = MAX_CHARS) -> str:
 def summarize_text(text: str, sentences: int = 3) -> str:
     parts = re.split(r"(?<=[.!?])\s+", text)
     return " ".join(parts[:sentences]).strip()
-
-
 
 
 class SummarizeWebsiteInput(BaseModel):
