@@ -3,7 +3,7 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from agent.tools.transcribe_audio_tool import transcribe_audio
+from agent.tools.transcribe_audio_tool import transcribe_audio_tool
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
@@ -13,7 +13,7 @@ class FileToolsTest(unittest.TestCase):
     @mock.patch("agent.tools.transcribe_audio_tool.whisper")
     def test_transcribe_audio_missing_whisper(self, mock_whisper):
         mock_whisper.load_model.return_value.transcribe.return_value = {"text": "hi"}
-        result = transcribe_audio("file.wav", model_name="base")
+        result = transcribe_audio_tool("file.wav", model_name="base")
         self.assertEqual(result, "hi")
 
 

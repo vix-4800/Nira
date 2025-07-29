@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from agent.tools.send_telegram_message_tool import send_telegram_message
+from agent.tools.send_telegram_message_tool import send_telegram_message_tool
 
 
 class TelegramToolTest(unittest.TestCase):
@@ -11,14 +11,14 @@ class TelegramToolTest(unittest.TestCase):
         with patch.dict(
             "os.environ", {"TELEGRAM_BOT_TOKEN": "token", "TELEGRAM_CHAT_ID": "1"}
         ):
-            result = send_telegram_message("hi")
+            result = send_telegram_message_tool("hi")
         self.assertEqual(result, "Message sent.")
         mock_post.assert_called_once()
 
     @patch("agent.tools.send_telegram_message_tool.requests.post")
     def test_missing_env(self, mock_post):
         with patch.dict("os.environ", {}, clear=True):
-            result = send_telegram_message("hi")
+            result = send_telegram_message_tool("hi")
         self.assertIn("not configured", result)
         mock_post.assert_not_called()
 
@@ -30,7 +30,7 @@ class TelegramToolTest(unittest.TestCase):
         with patch.dict(
             "os.environ", {"TELEGRAM_BOT_TOKEN": "token", "TELEGRAM_CHAT_ID": "1"}
         ):
-            result = send_telegram_message("hi")
+            result = send_telegram_message_tool("hi")
         self.assertIn("Failed to send message", result)
 
 
