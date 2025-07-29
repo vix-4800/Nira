@@ -23,12 +23,17 @@ def _confirm(prompt: str) -> bool:
     reply = input(prompt).strip().lower()
     return reply in {"y", "yes"}
 
+
 def run_bash_command(command: str) -> str:
     auto_confirm = get_auto_confirm()
     dangerous = _is_dangerous(command)
 
     if not auto_confirm or dangerous:
-        prompt = f"Команда '{command}' выглядит опасной. Выполнить? [y/N]: " if dangerous else f"Выполнить команду '{command}'? [y/N]: "
+        prompt = (
+            f"Команда '{command}' выглядит опасной. Выполнить? [y/N]: "
+            if dangerous
+            else f"Выполнить команду '{command}'? [y/N]: "
+        )
         if not _confirm(prompt):
             return "Команда отменена"
 

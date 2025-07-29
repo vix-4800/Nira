@@ -5,6 +5,7 @@ import sounddevice
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
+
 class VoiceSynthesizer:
     def __init__(self, model="tts_models/en/ljspeech/tacotron2-DDC") -> None:
         self.tts = TTS(model)

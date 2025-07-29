@@ -7,6 +7,7 @@ try:
 except Exception:
     whisper = None
 
+
 def find_file(pattern: str, root: str = ".") -> List[str]:
     """
     Recursively search for files matching the pattern under 'root'
@@ -15,6 +16,7 @@ def find_file(pattern: str, root: str = ".") -> List[str]:
     """
     matches = glob.glob(os.path.join(root, "**", pattern), recursive=True)
     return [os.path.abspath(p) for p in matches]
+
 
 def transcribe_audio(path: str, model_name: str = "base") -> str:
     """Transcribe an audio file using OpenAI Whisper if available."""

@@ -51,6 +51,7 @@ def parse_env() -> tuple[str, str, bool]:
     """Return server, model and auto_confirm parsed from the environment."""
     return get_server(), get_model(), get_auto_confirm()
 
+
 __all__ = [
     "get_server",
     "get_model",
