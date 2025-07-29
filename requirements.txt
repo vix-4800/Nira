@@ -8,5 +8,6 @@ psutil
 python-dotenv
 PyPDF2
 requests
+dnspython
 
 # Optional voice dependencies are provided in requirements-voice.txt

@@ -15,6 +15,10 @@ from .pdf_tools import (
     count_words_in_file,
 )
 from .github_tool import get_repo_info
+from .network_tools import (
+    check_website,
+    get_domain_info,
+)
 
 tools = [
     Tool(
@@ -71,5 +75,15 @@ tools = [
         name="SendTelegramMessage",
         func=send_telegram_message,
         description="Send a text message via the configured Telegram bot.",
+    ),
+    Tool(
+        name="CheckWebsite",
+        func=check_website,
+        description="Check if a website is reachable and return HTTP status code.",
+    ),
+    Tool(
+        name="GetDomainInfo",
+        func=get_domain_info,
+        description="Get basic DNS information (A and MX records) for a domain.",
     ),
 ]

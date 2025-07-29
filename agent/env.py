@@ -43,6 +43,11 @@ def get_obsidian_vault() -> str:
     return os.getenv("OBSIDIAN_VAULT", "")
 
 
+def get_dns_server() -> str:
+    """Return the DNS server to use for lookups if specified."""
+    return os.getenv("DNS_SERVER", "")
+
+
 def parse_env() -> tuple[str, str, bool]:
     """Return server, model and auto_confirm parsed from the environment."""
     return get_server(), get_model(), get_auto_confirm()
@@ -56,4 +61,5 @@ __all__ = [
     "get_obsidian_vault",
     "get_github_token",
     "parse_env",
+    "get_dns_server",
 ]
