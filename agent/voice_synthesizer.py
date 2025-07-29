@@ -10,7 +10,7 @@ class VoiceSynthesizer:
     def __init__(self, model="tts_models/en/ljspeech/tacotron2-DDC") -> None:
         self.tts = TTS(model)
 
-    def speak(self, text: str) -> None:
+    def speak(self, text: str):
         self.tts.tts_to_file(text, file_path="output/output.wav", device=device)
         data, sample_rate = soundfile.read("output/output.wav")
         sounddevice.play(data, sample_rate)
