@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 from .check_website_tool import check_website_tool
-from .count_words_in_file_tool import count_words_in_file_tool
 from .create_note_tool import create_note_tool
 from .extract_text_from_pdf_tool import extract_text_from_pdf_tool
-from .find_file_tool import find_file_tool
+from .file_manager_tool import file_manager
 from .get_domain_info_tool import get_domain_info_tool
 from .get_repo_info_tool import get_repo_info_tool
 from .run_bash_command_tool import run_bash_command_tool
@@ -19,11 +18,10 @@ tools = [
     run_bash_command_tool,
     extract_text_from_pdf_tool,
     summarize_pdf_tool,
-    count_words_in_file_tool,
+    file_manager,
     transcribe_audio_tool,
     create_note_tool,
     summarize_note_tool,
-    find_file_tool,
     get_repo_info_tool,
     send_telegram_message_tool,
     check_website_tool,
