@@ -22,9 +22,7 @@ class ObsidianToolsTest(unittest.TestCase):
                 content="Hello world. More text.",
             )
             self.assertIn("Created", result)
-            summary = obsidian_manager.func(
-                "summarize_note", title="Test", sentences=1
-            )
+            summary = obsidian_manager.func("summarize_note", title="Test", sentences=1)
             self.assertEqual(summary, "Hello world.")
 
     def test_missing_vault(self):
