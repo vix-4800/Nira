@@ -9,5 +9,6 @@ python-dotenv
 PyPDF2
 requests
 dnspython
+beautifulsoup4
 
 # Optional voice dependencies are provided in requirements-voice.txt
