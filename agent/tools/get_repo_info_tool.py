@@ -19,9 +19,6 @@ def get_repo_info_tool(repo: str) -> str:
         resp = requests.get(url, headers=headers, timeout=10)
         resp.raise_for_status()
         data = resp.json()
-        full_name = data.get("full_name", repo)
-        stars = data.get("stargazers_count", 0)
-        forks = data.get("forks_count", 0)
-        return f"{full_name}: ⭐{stars} forks:{forks}"
+        return data
     except Exception as e:
         return f"Failed to fetch repo info: {e}"
