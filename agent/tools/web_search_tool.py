@@ -12,7 +12,7 @@ class WebSearchInput(BaseModel):
 
 @tool("WebSearch", args_schema=WebSearchInput)
 def web_search_tool(query: str, max_results: int = 5) -> str:
-    """Search the web using DuckDuckGo and return top results."""
+    """Search the web and return top results."""
     try:
         with status_manager.status("ищу в интернете"):
             with DDGS() as ddgs:
