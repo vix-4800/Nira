@@ -31,7 +31,13 @@ def fetch_captions(video_id: str, languages: list[str] | None = None) -> str:
         parts = api.fetch(video_id, languages=languages)
     except Exception as e:
         return f"Failed to fetch transcript: {e}"
-    text = " ".join(p.get("text", "") for p in parts)
+    text_parts = []
+    for p in parts:
+        if isinstance(p, dict):
+            text_parts.append(p.get("text", ""))
+        else:
+            text_parts.append(getattr(p, "text", ""))
+    text = " ".join(text_parts)
     return text[:MAX_CHARS]
 
 
