@@ -5,11 +5,9 @@ import os
 MAX_PAGES = 30
 MAX_CHARS = 30_000
 
-
 def summarize_text(text: str, sentences: int = 3) -> str:
     parts = re.split(r"(?<=[.!?])\s+", text)
     return " ".join(parts[:sentences]).strip()
-
 
 def summarize_pdf(path: str, sentences: int = 3) -> str:
     text = extract_text_from_pdf(path)
@@ -17,13 +15,11 @@ def summarize_pdf(path: str, sentences: int = 3) -> str:
         return text
     return summarize_text(text, sentences)
 
-
 def count_words_in_file(path: str) -> str:
     """Return the number of words in a text file."""
     with open(path, "r", encoding="utf-8") as fh:
         words = fh.read().split()
     return str(len(words))
-
 
 def extract_text_from_pdf(path: str, max_pages: int = MAX_PAGES) -> str:
     if not os.path.isfile(path):
