@@ -19,9 +19,7 @@ class StatusManager:
         message = message.capitalize() if message else message
         self._stack.append(message)
         if self._status is None:
-            self._status = self.console.status(
-                f"[cyan]{message}[/]", spinner="dots"
-            )
+            self._status = self.console.status(f"[cyan]{message}[/]", spinner="dots")
             self._status.start()
         else:
             self._status.update(f"[cyan]{message}[/]")
