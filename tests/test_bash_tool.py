@@ -18,6 +18,8 @@ from agent.tools.run_bash_command_tool import (
 class BashToolTest(unittest.TestCase):
     def test_is_dangerous(self):
         self.assertTrue(_is_dangerous("rm -rf /"))
+        self.assertTrue(_is_dangerous("poweroff"))
+        self.assertTrue(_is_dangerous("init 0"))
         self.assertFalse(_is_dangerous("ls"))
 
     @patch("builtins.input", return_value="y")
@@ -40,6 +42,25 @@ class BashToolTest(unittest.TestCase):
         out = run_bash_command_tool.func("rm -rf tmp")
         self.assertEqual(out, "(Пустой вывод)")
         del os.environ["AUTO_CONFIRM"]
+
+    @patch("builtins.input", return_value="n")
+    def test_status_during_confirmation(self, mock_input):
+        messages = []
+
+        from contextlib import contextmanager
+
+        @contextmanager
+        def fake_status(msg):
+            messages.append(msg)
+            yield
+
+        with patch(
+            "agent.tools.run_bash_command_tool.status_manager.status", fake_status
+        ):
+            result = run_bash_command_tool.func("rm -rf tmp")
+
+        self.assertEqual(result, "Команда отменена")
+        self.assertIn("ожидаю подтверждения", messages[0])
 
 
 if __name__ == "__main__":

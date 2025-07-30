@@ -19,6 +19,10 @@ _DANGEROUS_PATTERNS = [
     r"\breboot\b",
     r"\bmkfs\b",
     r"\bdd\b.*\/dev\/sd",
+    r"\bpoweroff\b",
+    r"\bhalt\b",
+    r"^init\s+0$",
+    r"\brm\b.*--no-preserve-root",
 ]
 
 
@@ -47,8 +51,9 @@ def run_bash_command_tool(command: str) -> str:
             if dangerous
             else f"Выполнить команду '{command}'? [y/N]: "
         )
-        if not _confirm(prompt):
-            return "Команда отменена"
+        with status_manager.status("ожидаю подтверждения"):
+            if not _confirm(prompt):
+                return "Команда отменена"
 
     try:
         with status_manager.status("выполняю команду"):
