@@ -36,7 +36,7 @@ class NiraAgent:
             model=model_name,
             base_url=base_url,
             reasoning=False,
-            temperature=0.3,
+            # temperature=0.3,
         )
 
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -74,7 +74,7 @@ class NiraAgent:
             memory=self.memory,
             verbose=True,
             handle_parsing_errors=True,
-            max_iterations=3,
+            max_iterations=10,
         )
 
     def log_chat(self, question: str, response: str) -> None:
