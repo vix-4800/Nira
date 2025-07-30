@@ -5,10 +5,10 @@ from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 from youtube_transcript_api import YouTubeTranscriptApi
 
+from ..constants import MAX_TEXT_CHARS
 from ..metrics import track_tool
 from ..status import status_manager
 from .summarise_text_tool import summarise_text_tool
-from ..constants import MAX_TEXT_CHARS
 
 
 def extract_video_id(url_or_id: str) -> str:

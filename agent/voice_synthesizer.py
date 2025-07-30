@@ -1,7 +1,8 @@
+from pathlib import Path
+
 import sounddevice
 import soundfile
 import torch
-from pathlib import Path
 from TTS.api import TTS
 
 device = "cuda" if torch.cuda.is_available() else "cpu"

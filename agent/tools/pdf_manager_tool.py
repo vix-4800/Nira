@@ -4,10 +4,10 @@ from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 from PyPDF2 import PdfReader
 
+from ..constants import MAX_PDF_CHARS
 from ..metrics import track_tool
 from ..status import status_manager
 from .summarise_text_tool import summarise_text_tool
-from ..constants import MAX_PDF_CHARS
 
 MAX_PAGES = 30
 

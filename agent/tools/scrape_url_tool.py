@@ -3,9 +3,9 @@ from bs4 import BeautifulSoup
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
+from ..constants import MAX_TEXT_CHARS
 from ..metrics import track_tool
 from ..status import status_manager
-from ..constants import MAX_TEXT_CHARS
 
 
 def fetch_text_from_url(url: str, max_chars: int = MAX_TEXT_CHARS) -> str:
