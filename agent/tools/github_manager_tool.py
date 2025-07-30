@@ -3,6 +3,7 @@ from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
 from ..env import get_github_token
+from ..metrics import track_tool
 from ..status import status_manager
 
 
@@ -12,6 +13,7 @@ class GitHubManagerInput(BaseModel):
 
 
 @tool("GitHubManager", args_schema=GitHubManagerInput)
+@track_tool
 def github_manager(action: str, repo: str | None = None) -> dict | str:
     """Unified tool for GitHub operations."""
     match action:

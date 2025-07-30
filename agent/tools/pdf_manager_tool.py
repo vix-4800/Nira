@@ -5,6 +5,7 @@ from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 from PyPDF2 import PdfReader
 
+from ..metrics import track_tool
 from ..status import status_manager
 
 MAX_PAGES = 30
@@ -24,6 +25,7 @@ class PDFManagerInput(BaseModel):
 
 
 @tool("PDFManager", args_schema=PDFManagerInput)
+@track_tool
 def pdf_manager(
     action: str,
     path: str,

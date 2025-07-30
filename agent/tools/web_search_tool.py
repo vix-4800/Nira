@@ -2,6 +2,7 @@ from ddgs import DDGS
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
+from ..metrics import track_tool
 from ..status import status_manager
 
 
@@ -11,6 +12,7 @@ class WebSearchInput(BaseModel):
 
 
 @tool("WebSearch", args_schema=WebSearchInput)
+@track_tool
 def web_search_tool(query: str, max_results: int = 5) -> str:
     """Search the web and return top results."""
     try:

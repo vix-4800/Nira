@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
+from ..metrics import track_tool
+
 MAX_CHARS = 20000
 
 
@@ -35,6 +37,7 @@ class SummarizeWebsiteInput(BaseModel):
 
 
 @tool("SummarizeWebsite", args_schema=SummarizeWebsiteInput)
+@track_tool
 def summarize_website_tool(url: str, sentences: int = 3) -> str:
     """Provide a short summary of the textual content of a website."""
     text = fetch_text_from_url(url)

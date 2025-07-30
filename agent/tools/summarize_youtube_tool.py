@@ -5,6 +5,7 @@ from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 from youtube_transcript_api import YouTubeTranscriptApi
 
+from ..metrics import track_tool
 from ..status import status_manager
 
 MAX_CHARS = 20000
@@ -54,6 +55,7 @@ class SummarizeYouTubeInput(BaseModel):
 
 
 @tool("SummarizeYouTube", args_schema=SummarizeYouTubeInput)
+@track_tool
 def summarize_youtube_tool(video: str, sentences: int = 3) -> str:
     """Provide a short summary of a YouTube video's auto-generated captions."""
     video_id = extract_video_id(video)

@@ -5,6 +5,7 @@ from typing import List
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field, NonNegativeInt
 
+from ..metrics import track_tool
 from ..status import status_manager
 
 
@@ -19,6 +20,7 @@ class FileManagerInput(BaseModel):
 
 
 @tool("FileManager", args_schema=FileManagerInput)
+@track_tool
 def file_manager(
     action: str,
     pattern: str | None = None,

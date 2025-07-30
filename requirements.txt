@@ -12,5 +12,6 @@ dnspython
 beautifulsoup4
 youtube-transcript-api
 ddgs
+prometheus-client
 
 # Optional voice dependencies are provided in requirements-voice.txt

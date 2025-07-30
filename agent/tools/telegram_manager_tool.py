@@ -3,6 +3,7 @@ from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
 from ..env import get_telegram_bot_token, get_telegram_chat_id
+from ..metrics import track_tool
 from ..status import status_manager
 
 
@@ -12,6 +13,7 @@ class TelegramManagerInput(BaseModel):
 
 
 @tool("TelegramManager", args_schema=TelegramManagerInput)
+@track_tool
 def telegram_manager(action: str, text: str | None = None) -> str:
     """Unified tool for Telegram operations."""
     match action:
