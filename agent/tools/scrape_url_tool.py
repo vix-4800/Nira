@@ -3,10 +3,10 @@ from bs4 import BeautifulSoup
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-MAX_CHARS = 20000
+from ..constants import MAX_TEXT_CHARS
 
 
-def fetch_text_from_url(url: str, max_chars: int = MAX_CHARS) -> str:
+def fetch_text_from_url(url: str, max_chars: int = MAX_TEXT_CHARS) -> str:
     """Fetch plain text content from a website URL."""
     try:
         resp = requests.get(url, timeout=10)
