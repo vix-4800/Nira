@@ -3,13 +3,17 @@ from bs4 import BeautifulSoup
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
+from ..metrics import track_tool
+from ..status import status_manager
+
 MAX_CHARS = 20000
 
 
 def fetch_text_from_url(url: str, max_chars: int = MAX_CHARS) -> str:
     """Fetch plain text content from a website URL."""
     try:
-        resp = requests.get(url, timeout=10)
+        with status_manager.status("читаю страницу"):
+            resp = requests.get(url, timeout=10)
         resp.raise_for_status()
     except Exception as e:
         return f"Failed to fetch page: {e}"
@@ -27,6 +31,7 @@ class ScrapeURLInput(BaseModel):
 
 
 @tool("ScrapeURL", args_schema=ScrapeURLInput)
+@track_tool
 def scrape_url_tool(url: str) -> str:
     """Fetch and return textual content from a website."""
     return fetch_text_from_url(url)

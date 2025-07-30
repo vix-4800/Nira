@@ -21,8 +21,20 @@ class ScrapeURLToolTest(unittest.TestCase):
         mock_resp.raise_for_status = lambda: None
         mock_get.return_value = mock_resp
 
-        text = scrape_url_tool.func("https://example.com")
+        messages = []
+
+        from contextlib import contextmanager
+
+        @contextmanager
+        def fake_status(msg):
+            messages.append(msg)
+            yield
+
+        with patch("agent.tools.scrape_url_tool.status_manager.status", fake_status):
+            text = scrape_url_tool.func("https://example.com")
+
         self.assertIn("First sentence.", text)
+        self.assertIn("читаю страницу", messages[0])
 
 
 if __name__ == "__main__":
