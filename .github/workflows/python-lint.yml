@@ -16,7 +16,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'
+          python-version: "3.x"
 
       - name: Install dependencies
         run: |
@@ -24,11 +24,11 @@ jobs:
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
 
-      - name: Run format check
-        run: |
-          black --check .
-          isort --check .
+      - name: Run black
+        run: black --check .
+
+      - name: Run isort
+        run: isort --check .
 
       - name: Run flake8
-        run: |
-          flake8 .
+        run: flake8 .
