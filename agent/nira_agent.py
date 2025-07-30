@@ -90,7 +90,11 @@ class NiraAgent:
             result = self.agent_executor.invoke({"input": question})
             response = result["output"] if isinstance(result, dict) else str(result)
         else:
-            response = self.llm.predict(question)
+            try:
+                raw = self.llm.invoke(question)
+                response = raw.content if hasattr(raw, "content") else str(raw)
+            except AttributeError:
+                response = self.llm.predict(question)
             self.memory.save_context(
                 {self.memory.input_key: question},
                 {self.memory.output_key: response},
