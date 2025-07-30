@@ -1,9 +1,10 @@
 import re
 import sys
-import time
 from getpass import getuser
 
-from agent.env import get_model
+from rich.markdown import Markdown
+
+from agent.env import get_model, get_server
 from agent.planner_executor import PlannerExecutor
 from agent.status import console, status_manager
 
@@ -29,10 +30,7 @@ def prepare_response(text: str) -> str:
 def typewriter(text: str, delay=0.015, prefix="") -> None:
     if prefix:
         console.print(f"[bold magenta]{prefix}[/]", end="")
-    for char in text:
-        print(char, end="", flush=True)
-        time.sleep(delay)
-    print("\n")
+    console.print(Markdown(text))
 
 
 def get_user_input(use_voice: bool) -> str:
@@ -41,7 +39,7 @@ def get_user_input(use_voice: bool) -> str:
         if not user_input:
             console.print("[yellow]Не удалось распознать речь. Попробуй ещё раз![/]")
     else:
-        user_input = console.input(f"[green]{USERNAME}:[/] ")
+        user_input = console.input(f"👤 [bold blue]{USERNAME}:[/] ")
 
     return user_input.strip()
 
