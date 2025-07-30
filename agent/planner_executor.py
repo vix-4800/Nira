@@ -50,7 +50,8 @@ class PlannerExecutor:
         response = self.planner_llm.invoke(prompt).content
         try:
             steps = json.loads(response)
-            if not steps: steps = ["(no-plan)"]
+            if not steps:
+                steps = ["(no-plan)"]
             if not isinstance(steps, list):
                 steps = [str(steps)]
         except Exception:
