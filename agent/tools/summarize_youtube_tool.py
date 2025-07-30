@@ -6,7 +6,6 @@ from pydantic import BaseModel, Field
 from youtube_transcript_api import YouTubeTranscriptApi
 
 from ..metrics import track_tool
-
 from ..status import status_manager
 
 MAX_CHARS = 20000

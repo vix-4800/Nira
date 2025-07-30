@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from functools import wraps
+
 from prometheus_client import Counter, start_http_server
 
 _METRICS_PORT = int(os.getenv("METRICS_PORT", "8000"))
@@ -15,9 +16,7 @@ except Exception:
 TOOLS_CALLED_TOTAL = Counter(
     "tools_called_total", "Total number of times a tool was called", ["tool"]
 )
-TOOL_ERROR_TOTAL = Counter(
-    "tool_error_total", "Total number of tool errors", ["tool"]
-)
+TOOL_ERROR_TOTAL = Counter("tool_error_total", "Total number of tool errors", ["tool"])
 
 
 def track_tool(fn):
@@ -37,5 +36,6 @@ def track_tool(fn):
             raise
 
     return wrapper
+
 
 __all__ = ["track_tool", "TOOLS_CALLED_TOTAL", "TOOL_ERROR_TOTAL"]

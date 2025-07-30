@@ -1,8 +1,8 @@
 import requests
 from langchain_core.tools import tool
+from pydantic import BaseModel, Field
 
 from ..metrics import track_tool
-from pydantic import BaseModel, Field
 
 
 class CheckWebsiteInput(BaseModel):

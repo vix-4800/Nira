@@ -2,9 +2,8 @@ import dns.resolver
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-from ..metrics import track_tool
-
 from ..env import get_dns_server
+from ..metrics import track_tool
 
 
 class DomainInfoInput(BaseModel):

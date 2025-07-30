@@ -6,7 +6,6 @@ from langchain_core.tools import tool
 from pydantic import BaseModel, Field, NonNegativeInt
 
 from ..metrics import track_tool
-
 from ..status import status_manager
 
 
