@@ -3,7 +3,8 @@ from datetime import datetime
 from logging.handlers import RotatingFileHandler
 
 from langchain.agents import AgentExecutor, create_tool_calling_agent
-from langchain.memory import ConversationBufferMemory
+
+from .nira_memory import NiraMemory
 
 # fmt: off
 # isort: off
@@ -49,9 +50,7 @@ class NiraAgent:
         self.logger.addHandler(handler)
         self.logger.setLevel(logging.INFO)
 
-        self.memory = ConversationBufferMemory(
-            memory_key="chat_history", return_messages=True
-        )
+        self.memory = NiraMemory(memory_key="chat_history", return_messages=True)
 
         try:
             config = load_prompt()
