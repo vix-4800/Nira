@@ -8,13 +8,27 @@ from ..status import status_manager
 
 
 class GitHubManagerInput(BaseModel):
-    action: str = Field(..., description="repo_info")
+    action: str = Field(
+        ...,
+        description="repo_info | create_repo | create_issue | create_pr",
+    )
     repo: str | None = Field(None, description="Repository in owner/name format")
+    title: str | None = Field(None, description="Title for issue/PR")
+    body: str | None = Field(None, description="Body for issue/PR")
+    head: str | None = Field(None, description="Source branch for PR")
+    base: str | None = Field(None, description="Target branch for PR")
 
 
 @tool("GitHubManager", args_schema=GitHubManagerInput)
 @track_tool
-def github_manager(action: str, repo: str | None = None) -> dict | str:
+def github_manager(
+    action: str,
+    repo: str | None = None,
+    title: str | None = None,
+    body: str | None = None,
+    head: str | None = None,
+    base: str | None = None,
+) -> dict | str:
     """Unified tool for GitHub operations."""
     match action:
         case "repo_info":
@@ -30,5 +44,67 @@ def github_manager(action: str, repo: str | None = None) -> dict | str:
                 return resp.json()
             except Exception as e:
                 return f"Failed to fetch repo info: {e}"
+        case "create_repo":
+            token = get_github_token()
+            if not token:
+                return "GITHUB_TOKEN not configured."
+            if not repo:
+                return "Error: 'repo' is required for create_repo"
+            headers = {"Authorization": f"token {token}"}
+            url = "https://api.github.com/user/repos"
+            try:
+                with status_manager.status("создаю репозиторий"):
+                    resp = requests.post(
+                        url,
+                        headers=headers,
+                        json={"name": repo},
+                        timeout=10,
+                    )
+                resp.raise_for_status()
+                return resp.json()
+            except Exception as e:
+                return f"Failed to create repo: {e}"
+        case "create_issue":
+            token = get_github_token()
+            if not token:
+                return "GITHUB_TOKEN not configured."
+            if not repo:
+                return "Error: 'repo' is required for create_issue"
+            if not title:
+                return "Error: 'title' is required for create_issue"
+            headers = {"Authorization": f"token {token}"}
+            url = f"https://api.github.com/repos/{repo}/issues"
+            payload = {"title": title}
+            if body:
+                payload["body"] = body
+            try:
+                with status_manager.status("создаю issue"):
+                    resp = requests.post(
+                        url, headers=headers, json=payload, timeout=10
+                    )
+                resp.raise_for_status()
+                return resp.json()
+            except Exception as e:
+                return f"Failed to create issue: {e}"
+        case "create_pr":
+            token = get_github_token()
+            if not token:
+                return "GITHUB_TOKEN not configured."
+            if not repo or not title or not head or not base:
+                return "Error: 'repo', 'title', 'head' and 'base' are required for create_pr"
+            headers = {"Authorization": f"token {token}"}
+            url = f"https://api.github.com/repos/{repo}/pulls"
+            payload = {"title": title, "head": head, "base": base}
+            if body:
+                payload["body"] = body
+            try:
+                with status_manager.status("создаю pull request"):
+                    resp = requests.post(
+                        url, headers=headers, json=payload, timeout=10
+                    )
+                resp.raise_for_status()
+                return resp.json()
+            except Exception as e:
+                return f"Failed to create pr: {e}"
         case _:
             return f"Error: unknown action '{action}'"
