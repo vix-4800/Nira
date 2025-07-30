@@ -1,6 +1,7 @@
 import re
 import sys
 import time
+from getpass import getuser
 
 from agent.env import get_model, get_server
 from agent.nira_agent import NiraAgent
@@ -17,6 +18,7 @@ except Exception:
     voice_modules_available = False
 
 voice_synthesizer = None
+USERNAME = getuser().upper()
 
 
 def prepare_response(text: str) -> str:
@@ -74,7 +76,7 @@ def main() -> None:
                     continue
                 console.print(f"[green]Ты (голос):[/] {user_input}")
             else:
-                user_input = console.input("[green]Ты:[/] ")
+                user_input = console.input(f"[green]{USERNAME}:[/]")
 
             if user_input.strip() in ["/exit", "выход", "exit"]:
                 console.print("[bold magenta]👾 Nira:[/] До встречи!")
