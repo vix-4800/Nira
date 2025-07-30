@@ -4,7 +4,7 @@ from getpass import getuser
 
 from rich.markdown import Markdown
 
-from agent.env import get_model, get_server
+from agent.env import get_model
 from agent.planner_executor import PlannerExecutor
 from agent.status import console, status_manager
 
