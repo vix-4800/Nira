@@ -3,8 +3,7 @@ from datetime import datetime
 from logging.handlers import RotatingFileHandler
 
 from langchain.agents import AgentExecutor, create_tool_calling_agent
-
-from .nira_memory import NiraMemory
+from langchain_ollama import ChatOllama
 
 # fmt: off
 # isort: off
@@ -16,8 +15,8 @@ from langchain_core.prompts import (
 )
 # isort: on
 # fmt: on
-from langchain_ollama import ChatOllama
 
+from .nira_memory import NiraMemory
 from .prompt import ConfigError, load_prompt
 from .tools import tools
 
@@ -37,7 +36,7 @@ class NiraAgent:
             model=model_name,
             base_url=base_url,
             reasoning=False,
-            temperature=0.3,
+            # temperature=0.3,
         )
 
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -76,7 +75,7 @@ class NiraAgent:
                 memory=self.memory,
                 verbose=False,
                 handle_parsing_errors=True,
-                max_iterations=3,
+                max_iterations=10,
             )
         else:
             self.agent_executor = None
@@ -89,13 +88,9 @@ class NiraAgent:
     def ask(self, question: str) -> str:
         if self.agent_executor is not None:
             result = self.agent_executor.invoke({"input": question})
-            response = (
-                result.get("output", "") if isinstance(result, dict) else str(result)
-            )
+            response = result["output"] if isinstance(result, dict) else str(result)
         else:
-            self.memory.chat_memory.add_user_message(question)
-            response = self.llm.invoke(question)
-            self.memory.chat_memory.add_ai_message(response)
+            response = self.llm.predict(question)
 
         self.log_chat(question, response)
         return response
