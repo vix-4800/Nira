@@ -16,7 +16,7 @@ class StatusManager:
 
     def push(self, message: str) -> None:
         """Start or update the status message."""
-        message = message[0].upper() + message[1:] if message else message
+        message = message.capitalize() if message else message
         self._stack.append(message)
         if self._status is None:
             self._status = self.console.status(
