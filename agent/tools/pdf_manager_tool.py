@@ -1,12 +1,11 @@
 import os
-import re
 
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 from PyPDF2 import PdfReader
 
 from ..status import status_manager
-from .summarise_text_tool import summarise_text
+from .summarise_text_tool import summarise_text_tool
 
 MAX_PAGES = 30
 MAX_CHARS = 30_000
@@ -41,6 +40,6 @@ def pdf_manager(
         case "extract_text":
             return joined
         case "summarize":
-            return summarise_text(joined, sentences)
+            return summarise_text_tool.func(text=joined, sentences=sentences)
         case _:
             return f"Error: unknown action '{action}'"

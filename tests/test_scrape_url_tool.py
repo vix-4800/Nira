@@ -4,14 +4,14 @@ from unittest.mock import MagicMock, patch
 # fmt: off
 # isort: off
 from agent.tools.scrape_url_tool import scrape_url_tool
-from agent.tools.summarise_text_tool import summarise_text
+from agent.tools.summarise_text_tool import summarise_text_tool
 # isort: on
 # fmt: on
 
 
 class ScrapeURLToolTest(unittest.TestCase):
     def test_summarize_text(self):
-        summary = summarise_text("One. Two. Three.", sentences=2)
+        summary = summarise_text_tool.func(text="One. Two. Three.", sentences=2)
         self.assertEqual(summary, "One. Two.")
 
     @patch("agent.tools.scrape_url_tool.requests.get")

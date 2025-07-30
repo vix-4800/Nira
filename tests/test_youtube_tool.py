@@ -7,7 +7,7 @@ from agent.tools.summarize_youtube_tool import (
     extract_video_id,
     summarize_youtube_tool,
 )
-from agent.tools.summarise_text_tool import summarise_text
+from agent.tools.summarise_text_tool import summarise_text_tool
 # isort: on
 # fmt: on
 
@@ -18,7 +18,7 @@ class YouTubeToolTest(unittest.TestCase):
         self.assertEqual(vid, "abc123xyz12")
 
     def test_summarize_text(self):
-        summary = summarise_text("One. Two. Three.", sentences=2)
+        summary = summarise_text_tool.func(text="One. Two. Three.", sentences=2)
         self.assertEqual(summary, "One. Two.")
 
     @patch("youtube_transcript_api.YouTubeTranscriptApi.fetch")
