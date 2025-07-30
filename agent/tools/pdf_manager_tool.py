@@ -1,4 +1,4 @@
-import os
+from pathlib import Path
 
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
@@ -28,10 +28,11 @@ def pdf_manager(
     sentences: int = 3,
 ) -> str:
     """Unified tool for PDF operations."""
-    if not os.path.isfile(path):
+    file_path = Path(path)
+    if not file_path.is_file():
         return f"(File not found: {path})"
     with status_manager.status("читаю PDF"):
-        reader = PdfReader(path)
+        reader = PdfReader(str(file_path))
         pages = reader.pages[:max_pages]
         text = []
         for p in pages:
