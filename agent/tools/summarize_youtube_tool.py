@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 from youtube_transcript_api import YouTubeTranscriptApi
 
 from ..status import status_manager
+from .summarise_text_tool import summarise_text
 
 MAX_CHARS = 20000
 
@@ -43,11 +44,6 @@ def fetch_captions(video_id: str, languages: list[str] | None = None) -> str:
     return text[:MAX_CHARS]
 
 
-def summarize_text(text: str, sentences: int = 3) -> str:
-    parts = re.split(r"(?<=[.!?])\s+", text)
-    return " ".join(parts[:sentences]).strip()
-
-
 class SummarizeYouTubeInput(BaseModel):
     video: str = Field(..., description="YouTube video URL or ID")
     sentences: int = Field(default=3, description="Number of sentences")
@@ -63,4 +59,4 @@ def summarize_youtube_tool(video: str, sentences: int = 3) -> str:
         text = fetch_captions(video_id)
     if text.startswith("Failed to fetch"):
         return text
-    return summarize_text(text, sentences)
+    return summarise_text(text, sentences)

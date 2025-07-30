@@ -7,7 +7,8 @@ from .github_manager_tool import github_manager
 from .obsidian_manager_tool import obsidian_manager
 from .pdf_manager_tool import pdf_manager
 from .run_bash_command_tool import run_bash_command_tool
-from .summarize_website_tool import summarize_website_tool
+from .scrape_url_tool import scrape_url_tool
+from .summarise_text_tool import summarise_text_tool
 from .summarize_youtube_tool import summarize_youtube_tool
 from .telegram_manager_tool import telegram_manager
 from .transcribe_audio_tool import transcribe_audio_tool
@@ -25,7 +26,8 @@ tools = [
     telegram_manager,
     check_website_tool,
     get_domain_info_tool,
-    summarize_website_tool,
+    scrape_url_tool,
+    summarise_text_tool,
     summarize_youtube_tool,
     web_search_tool,
 ]

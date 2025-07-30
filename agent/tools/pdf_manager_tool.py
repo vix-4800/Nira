@@ -6,14 +6,10 @@ from pydantic import BaseModel, Field
 from PyPDF2 import PdfReader
 
 from ..status import status_manager
+from .summarise_text_tool import summarise_text
 
 MAX_PAGES = 30
 MAX_CHARS = 30_000
-
-
-def summarize_text(text: str, sentences: int = 3) -> str:
-    parts = re.split(r"(?<=[.!?])\s+", text)
-    return " ".join(parts[:sentences]).strip()
 
 
 class PDFManagerInput(BaseModel):
@@ -45,6 +41,6 @@ def pdf_manager(
         case "extract_text":
             return joined
         case "summarize":
-            return summarize_text(joined, sentences)
+            return summarise_text(joined, sentences)
         case _:
             return f"Error: unknown action '{action}'"
