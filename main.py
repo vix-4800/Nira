@@ -18,7 +18,7 @@ except Exception:
     voice_modules_available = False
 
 voice_synthesizer = None
-USERNAME = getuser().upper()
+USERNAME = getuser().capitalize()
 
 
 def prepare_response(text: str) -> str:
