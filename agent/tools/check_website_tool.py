@@ -1,5 +1,7 @@
 import requests
 from langchain_core.tools import tool
+
+from ..metrics import track_tool
 from pydantic import BaseModel, Field
 
 
@@ -8,6 +10,7 @@ class CheckWebsiteInput(BaseModel):
 
 
 @tool("CheckWebsite", args_schema=CheckWebsiteInput)
+@track_tool
 def check_website_tool(url: str) -> str:
     """Check if a website is reachable and return HTTP status code."""
     try:

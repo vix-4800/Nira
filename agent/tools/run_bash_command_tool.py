@@ -4,6 +4,8 @@ import subprocess
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
+from ..metrics import track_tool
+
 from ..env import get_auto_confirm
 from ..status import status_manager
 
@@ -34,6 +36,7 @@ def _confirm(prompt: str) -> bool:
 
 
 @tool("RunBashCommand", args_schema=BashCommandInput)
+@track_tool
 def run_bash_command_tool(command: str) -> str:
     """Execute a system bash command and returns the result."""
     auto_confirm = get_auto_confirm()

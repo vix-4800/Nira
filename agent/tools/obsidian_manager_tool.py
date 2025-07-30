@@ -4,6 +4,8 @@ from pathlib import Path
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
+from ..metrics import track_tool
+
 from ..env import get_obsidian_vault
 from ..status import status_manager
 
@@ -28,6 +30,7 @@ class ObsidianManagerInput(BaseModel):
 
 
 @tool("ObsidianManager", args_schema=ObsidianManagerInput)
+@track_tool
 def obsidian_manager(
     action: str,
     title: str,

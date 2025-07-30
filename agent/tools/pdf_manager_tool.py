@@ -3,6 +3,8 @@ import re
 
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
+
+from ..metrics import track_tool
 from PyPDF2 import PdfReader
 
 from ..status import status_manager
@@ -24,6 +26,7 @@ class PDFManagerInput(BaseModel):
 
 
 @tool("PDFManager", args_schema=PDFManagerInput)
+@track_tool
 def pdf_manager(
     action: str,
     path: str,

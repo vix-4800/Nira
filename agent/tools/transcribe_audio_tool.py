@@ -3,6 +3,8 @@ import importlib
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
+from ..metrics import track_tool
+
 whisper = None
 
 
@@ -12,6 +14,7 @@ class TranscribeAudioInput(BaseModel):
 
 
 @tool("TranscribeAudio", args_schema=TranscribeAudioInput)
+@track_tool
 def transcribe_audio_tool(path: str, model_name: str = "base") -> str:
     """Transcribe speech from an audio file using Whisper if available."""
     global whisper
