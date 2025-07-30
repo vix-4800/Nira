@@ -2,6 +2,7 @@ import re
 import sys
 import time
 from getpass import getuser
+from rich.markdown import Markdown
 
 from agent.env import get_model, get_server
 from agent.nira_agent import NiraAgent
@@ -29,10 +30,7 @@ def prepare_response(text: str) -> str:
 def typewriter(text: str, delay=0.015, prefix="") -> None:
     if prefix:
         console.print(f"[bold magenta]{prefix}[/]", end="")
-    for char in text:
-        print(char, end="", flush=True)
-        time.sleep(delay)
-    print("\n")
+    console.print(Markdown(text))
 
 
 def main() -> None:

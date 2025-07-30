@@ -1,6 +1,7 @@
 # Nira
 
 A simple command execution assistant that uses an LLM backend.
+Responses are displayed using Rich's Markdown renderer, allowing formatted output.
 
 ## Installation
 
