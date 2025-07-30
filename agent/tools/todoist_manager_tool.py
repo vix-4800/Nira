@@ -8,7 +8,9 @@ from ..status import status_manager
 
 
 class TodoistManagerInput(BaseModel):
-    action: str = Field(..., description="list_tasks | get_task | create_task | complete_task")
+    action: str = Field(
+        ..., description="list_tasks | get_task | create_task | complete_task"
+    )
     task_id: str | None = Field(None, description="ID for get_task/complete_task")
     content: str | None = Field(None, description="Task content for create_task")
 
@@ -18,7 +20,9 @@ _BASE_URL = "https://api.todoist.com/rest/v2"
 
 @tool("TodoistManager", args_schema=TodoistManagerInput)
 @track_tool
-def todoist_manager(action: str, task_id: str | None = None, content: str | None = None) -> dict | list | str:
+def todoist_manager(
+    action: str, task_id: str | None = None, content: str | None = None
+) -> dict | list | str:
     """Unified tool for Todoist operations."""
     token = get_todoist_token()
     if not token:
@@ -51,7 +55,9 @@ def todoist_manager(action: str, task_id: str | None = None, content: str | None
             url = f"{_BASE_URL}/tasks"
             try:
                 with status_manager.status("создаю задачу"):
-                    resp = requests.post(url, headers=headers, json={"content": content}, timeout=10)
+                    resp = requests.post(
+                        url, headers=headers, json={"content": content}, timeout=10
+                    )
                 resp.raise_for_status()
                 return resp.json()
             except Exception as e:

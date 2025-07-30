@@ -15,7 +15,9 @@ class TodoistToolTest(unittest.TestCase):
         self.assertEqual(result[0]["content"], "task")
         mock_get.assert_called_once()
 
-    @patch("agent.tools.todoist_manager_tool.requests.post", side_effect=Exception("fail"))
+    @patch(
+        "agent.tools.todoist_manager_tool.requests.post", side_effect=Exception("fail")
+    )
     def test_create_task_error(self, mock_post):
         with patch.dict("os.environ", {"TODOIST_TOKEN": "token"}):
             result = todoist_manager.func("create_task", content="hi")
