@@ -1,4 +1,3 @@
-import re
 from pathlib import Path
 
 from langchain_core.tools import tool
@@ -7,6 +6,7 @@ from pydantic import BaseModel, Field
 from ..env import get_obsidian_vault
 from ..metrics import track_tool
 from ..status import status_manager
+from .summarise_text_tool import summarise_text_tool
 
 
 def _vault_path() -> Path:
@@ -14,11 +14,6 @@ def _vault_path() -> Path:
     if not vault:
         raise RuntimeError("OBSIDIAN_VAULT not configured")
     return Path(vault)
-
-
-def summarize_text(text: str, sentences: int = 3) -> str:
-    parts = re.split(r"(?<=[.!?])\s+", text)
-    return " ".join(parts[:sentences]).strip()
 
 
 class ObsidianManagerInput(BaseModel):
@@ -57,6 +52,6 @@ def obsidian_manager(
                     text = path.read_text(encoding="utf-8")
             except Exception as e:
                 return f"Failed to read note: {e}"
-            return summarize_text(text, sentences)
+            return summarise_text_tool.func(text=text, sentences=sentences)
         case _:
             return f"Error: unknown action '{action}'"
