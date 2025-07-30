@@ -79,9 +79,7 @@ def github_manager(
                 payload["body"] = body
             try:
                 with status_manager.status("создаю issue"):
-                    resp = requests.post(
-                        url, headers=headers, json=payload, timeout=10
-                    )
+                    resp = requests.post(url, headers=headers, json=payload, timeout=10)
                 resp.raise_for_status()
                 return resp.json()
             except Exception as e:
@@ -99,9 +97,7 @@ def github_manager(
                 payload["body"] = body
             try:
                 with status_manager.status("создаю pull request"):
-                    resp = requests.post(
-                        url, headers=headers, json=payload, timeout=10
-                    )
+                    resp = requests.post(url, headers=headers, json=payload, timeout=10)
                 resp.raise_for_status()
                 return resp.json()
             except Exception as e:

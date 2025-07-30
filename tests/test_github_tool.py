@@ -35,7 +35,9 @@ class GitHubToolTest(unittest.TestCase):
         self.assertEqual(result["name"], "new")
         mock_post.assert_called_once()
 
-    @patch("agent.tools.github_manager_tool.requests.post", side_effect=Exception("fail"))
+    @patch(
+        "agent.tools.github_manager_tool.requests.post", side_effect=Exception("fail")
+    )
     def test_create_repo_error(self, mock_post):
         with patch.dict("os.environ", {"GITHUB_TOKEN": "t"}):
             result = github_manager.func("create_repo", repo="new")
