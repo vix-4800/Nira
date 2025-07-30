@@ -5,11 +5,10 @@ from pydantic import BaseModel, Field
 
 from ..metrics import track_tool
 from ..status import status_manager
+from ..constants import MAX_TEXT_CHARS
 
-MAX_CHARS = 20000
 
-
-def fetch_text_from_url(url: str, max_chars: int = MAX_CHARS) -> str:
+def fetch_text_from_url(url: str, max_chars: int = MAX_TEXT_CHARS) -> str:
     """Fetch plain text content from a website URL."""
     try:
         with status_manager.status("читаю страницу"):

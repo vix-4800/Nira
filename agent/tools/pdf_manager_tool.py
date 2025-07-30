@@ -7,9 +7,9 @@ from PyPDF2 import PdfReader
 from ..metrics import track_tool
 from ..status import status_manager
 from .summarise_text_tool import summarise_text_tool
+from ..constants import MAX_PDF_CHARS
 
 MAX_PAGES = 30
-MAX_CHARS = 30_000
 
 
 class PDFManagerInput(BaseModel):
@@ -37,7 +37,7 @@ def pdf_manager(
         text = []
         for p in pages:
             text.append(p.extract_text() or "")
-        joined = "\n".join(text).strip()[:MAX_CHARS]
+        joined = "\n".join(text).strip()[:MAX_PDF_CHARS]
 
     match action:
         case "extract_text":

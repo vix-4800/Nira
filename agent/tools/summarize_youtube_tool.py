@@ -8,8 +8,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from ..metrics import track_tool
 from ..status import status_manager
 from .summarise_text_tool import summarise_text_tool
-
-MAX_CHARS = 20000
+from ..constants import MAX_TEXT_CHARS
 
 
 def extract_video_id(url_or_id: str) -> str:
@@ -42,7 +41,7 @@ def fetch_captions(video_id: str, languages: list[str] | None = None) -> str:
         else:
             text_parts.append(getattr(p, "text", ""))
     text = " ".join(text_parts)
-    return text[:MAX_CHARS]
+    return text[:MAX_TEXT_CHARS]
 
 
 class SummarizeYouTubeInput(BaseModel):
