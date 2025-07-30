@@ -48,10 +48,10 @@ class PlannerExecutor:
         )
 
         try:
-            response = self.planner_llm.predict(prompt)
-        except AttributeError:
             raw = self.planner_llm.invoke(prompt)
             response = raw.content if hasattr(raw, "content") else str(raw)
+        except AttributeError:
+            response = self.planner_llm.predict(prompt)
 
         try:
             steps = json.loads(response)
