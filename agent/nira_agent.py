@@ -58,24 +58,27 @@ class NiraAgent:
             exit(1)
         system_prompt = config.get("system", "You are Nira - an AI assistant.")
 
-        prompt = ChatPromptTemplate.from_messages(
-            [
-                SystemMessagePromptTemplate.from_template(system_prompt),
-                MessagesPlaceholder("chat_history"),
-                HumanMessagePromptTemplate.from_template("{input}"),
-                MessagesPlaceholder("agent_scratchpad"),
-            ]
-        )
+        if hasattr(self.llm, "bind_tools"):
+            self.prompt = ChatPromptTemplate.from_messages(
+                [
+                    SystemMessagePromptTemplate.from_template(system_prompt),
+                    MessagesPlaceholder("chat_history"),
+                    HumanMessagePromptTemplate.from_template("{input}"),
+                    MessagesPlaceholder("agent_scratchpad"),
+                ]
+            )
 
-        agent = create_tool_calling_agent(self.llm, tools, prompt)
-        self.agent_executor = AgentExecutor(
-            agent=agent,
-            tools=tools,
-            memory=self.memory,
-            verbose=True,
-            handle_parsing_errors=True,
-            max_iterations=10,
-        )
+            agent = create_tool_calling_agent(self.llm, tools, self.prompt)
+            self.agent_executor = AgentExecutor(
+                agent=agent,
+                tools=tools,
+                memory=self.memory,
+                verbose=False,
+                handle_parsing_errors=True,
+                max_iterations=10,
+            )
+        else:
+            self.agent_executor = None
 
     def log_chat(self, question: str, response: str) -> None:
         """Log a chat interaction to the log file."""
