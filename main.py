@@ -1,7 +1,7 @@
 import re
 import sys
-import time
 from getpass import getuser
+
 from rich.markdown import Markdown
 
 from agent.env import get_model, get_server
