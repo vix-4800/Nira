@@ -86,8 +86,11 @@ class NiraAgent:
         self.logger.info(f"{timestamp}\tQ: {question}\tA: {response}")
 
     def ask(self, question: str) -> str:
-        result = self.agent_executor.invoke({"input": question})
-        response = result.get("output", "") if isinstance(result, dict) else str(result)
+        if self.agent_executor is not None:
+            result = self.agent_executor.invoke({"input": question})
+            response = result["output"] if isinstance(result, dict) else str(result)
+        else:
+            response = self.llm.predict(question)
 
         self.log_chat(question, response)
         return response
