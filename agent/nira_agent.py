@@ -3,8 +3,7 @@ from datetime import datetime
 from logging.handlers import RotatingFileHandler
 
 from langchain.agents import AgentExecutor, create_tool_calling_agent
-
-from .nira_memory import NiraMemory
+from langchain_ollama import ChatOllama
 
 # fmt: off
 # isort: off
@@ -16,8 +15,8 @@ from langchain_core.prompts import (
 )
 # isort: on
 # fmt: on
-from langchain_ollama import ChatOllama
 
+from .nira_memory import NiraMemory
 from .prompt import ConfigError, load_prompt
 from .tools import tools
 
@@ -59,27 +58,24 @@ class NiraAgent:
             exit(1)
         system_prompt = config.get("system", "You are Nira - an AI assistant.")
 
-        if hasattr(self.llm, "bind_tools"):
-            self.prompt = ChatPromptTemplate.from_messages(
-                [
-                    SystemMessagePromptTemplate.from_template(system_prompt),
-                    MessagesPlaceholder("chat_history"),
-                    HumanMessagePromptTemplate.from_template("{input}"),
-                    MessagesPlaceholder("agent_scratchpad"),
-                ]
-            )
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                SystemMessagePromptTemplate.from_template(system_prompt),
+                MessagesPlaceholder("chat_history"),
+                HumanMessagePromptTemplate.from_template("{input}"),
+                MessagesPlaceholder("agent_scratchpad"),
+            ]
+        )
 
-            agent = create_tool_calling_agent(self.llm, tools, self.prompt)
-            self.agent_executor = AgentExecutor(
-                agent=agent,
-                tools=tools,
-                memory=self.memory,
-                verbose=False,
-                handle_parsing_errors=True,
-                max_iterations=3,
-            )
-        else:
-            self.agent_executor = None
+        agent = create_tool_calling_agent(self.llm, tools, prompt)
+        self.agent_executor = AgentExecutor(
+            agent=agent,
+            tools=tools,
+            memory=self.memory,
+            verbose=True,
+            handle_parsing_errors=True,
+            max_iterations=3,
+        )
 
     def log_chat(self, question: str, response: str) -> None:
         """Log a chat interaction to the log file."""
@@ -87,15 +83,8 @@ class NiraAgent:
         self.logger.info(f"{timestamp}\tQ: {question}\tA: {response}")
 
     def ask(self, question: str) -> str:
-        if self.agent_executor is not None:
-            result = self.agent_executor.invoke({"input": question})
-            response = (
-                result.get("output", "") if isinstance(result, dict) else str(result)
-            )
-        else:
-            self.memory.chat_memory.add_user_message(question)
-            response = self.llm.invoke(question)
-            self.memory.chat_memory.add_ai_message(response)
+        result = self.agent_executor.invoke({"input": question})
+        response = result.get("output", "") if isinstance(result, dict) else str(result)
 
         self.log_chat(question, response)
         return response

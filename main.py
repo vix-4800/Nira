@@ -3,8 +3,8 @@ import sys
 import time
 from getpass import getuser
 
-from agent.env import get_model, get_server
-from agent.nira_agent import NiraAgent
+from agent.env import get_model
+from agent.planner_executor import PlannerExecutor
 from agent.status import console, status_manager
 
 try:
@@ -35,11 +35,20 @@ def typewriter(text: str, delay=0.015, prefix="") -> None:
     print("\n")
 
 
+def get_user_input(use_voice: bool) -> str:
+    if use_voice:
+        user_input = transcribe_whisper()
+        if not user_input:
+            console.print("[yellow]Не удалось распознать речь. Попробуй ещё раз![/]")
+    else:
+        user_input = console.input(f"[green]{USERNAME}:[/] ")
+
+    return user_input.strip()
+
+
 def main() -> None:
     model = get_model()
-    server = get_server()
-
-    nira = NiraAgent(model_name=model, base_url=server)
+    planner = PlannerExecutor()
 
     use_voice = "--voice" in sys.argv
     speak = "--speak" in sys.argv
@@ -67,24 +76,14 @@ def main() -> None:
 
     try:
         while True:
-            if use_voice:
-                user_input = transcribe_whisper()
-                if not user_input:
-                    console.print(
-                        "[yellow]Не удалось распознать речь. Попробуй ещё раз![/]"
-                    )
-                    continue
-                console.print(f"[green]Ты (голос):[/] {user_input}")
-            else:
-                user_input = console.input(f"[green]{USERNAME}:[/] ")
+            user_input = get_user_input(use_voice)
 
-            if user_input.strip() in ["/exit", "выход", "exit"]:
+            if user_input in ["/exit", "выход", "exit"]:
                 console.print("[bold magenta]👾 Nira:[/] До встречи!")
                 break
 
             with status_manager.status("Думаю..."):
-                response = nira.ask(user_input)
-                response = prepare_response(response)
+                response = planner.run(user_input)
 
             typewriter(response, prefix="👾 Nira: ")
             if speak:
