@@ -32,7 +32,7 @@ def pdf_manager(
     if not file_path.is_file():
         return f"(File not found: {path})"
     with status_manager.status("читаю PDF"):
-        reader = PdfReader(str(file_path))
+        reader = PdfReader(file_path)
         pages = reader.pages[:max_pages]
         text = []
         for p in pages:

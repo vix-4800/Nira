@@ -24,9 +24,9 @@ class PDFToolsTest(unittest.TestCase):
         self.assertTrue(summary.startswith("Hello world"))
 
     def test_count_words_in_file(self):
-        with tempfile.NamedTemporaryFile("w+", delete=False) as f:
-            f.write("hello world here")
+        with tempfile.NamedTemporaryFile(delete=False) as f:
             path = Path(f.name)
+        path.write_text("hello world here", encoding="utf-8")
         try:
             count = file_manager.func("count_words", path=str(path))
             self.assertEqual(count, "3")

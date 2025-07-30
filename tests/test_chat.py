@@ -31,14 +31,13 @@ class ChatLoggingTest(unittest.TestCase):
     def test_chat_logging_records_interactions(self):
         responses = ["hi there", "i am fine"]
         llm = FakeListLLM(responses=responses)
-        log_path = "chat.log"
-        if os.path.exists(log_path):
-            os.remove(log_path)
-        agent = NiraAgent(llm=llm, log_file=log_path)
+        log_path = Path("chat.log")
+        if log_path.exists():
+            log_path.unlink()
+        agent = NiraAgent(llm=llm, log_file=str(log_path))
         agent.ask("Hello?")
         agent.ask("How are you?")
-        with open(log_path, "r") as f:
-            lines = f.readlines()
+        lines = log_path.read_text(encoding="utf-8").splitlines()
         self.assertEqual(len(lines), 2)
         self.assertIn("Hello?", lines[0])
         self.assertIn("hi there", lines[0])

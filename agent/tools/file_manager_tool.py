@@ -34,8 +34,9 @@ def file_manager(
             if not pattern:
                 return "Error: 'pattern' is required for find"
             root_path = Path(root)
+            glob_pattern = pattern if "**" in pattern else f"**/{pattern}"
             with status_manager.status("ищу файлы"):
-                matches = list(root_path.rglob(pattern))
+                matches = list(root_path.glob(glob_pattern))
             return [str(p.resolve()) for p in matches]
         case "read":
             if not path:
@@ -43,8 +44,7 @@ def file_manager(
             file_path = Path(path)
             try:
                 with status_manager.status("читаю файл"):
-                    with file_path.open("r", encoding="utf-8") as fh:
-                        return fh.read(max_bytes)
+                    return file_path.read_text(encoding="utf-8")[:max_bytes]
             except Exception as exc:
                 return f"Error reading file: {exc}"
         case "count_words":
