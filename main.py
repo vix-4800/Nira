@@ -74,9 +74,9 @@ def main() -> None:
                         "[yellow]Не удалось распознать речь. Попробуй ещё раз![/]"
                     )
                     continue
-                console.print(f"[green]Ты (голос):[/] {user_input}")
+                console.print(f"[bold blue]{USERNAME} (голос):[/] {user_input}")
             else:
-                user_input = console.input(f"[green]{USERNAME}:[/] ")
+                user_input = console.input(f"👤 [bold blue]{USERNAME}:[/] ")
 
             if user_input.strip() in ["/exit", "выход", "exit"]:
                 console.print("[bold magenta]👾 Nira:[/] До встречи!")
