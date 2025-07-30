@@ -1,4 +1,3 @@
-import os
 import sys
 import tempfile
 import unittest
@@ -27,12 +26,12 @@ class PDFToolsTest(unittest.TestCase):
     def test_count_words_in_file(self):
         with tempfile.NamedTemporaryFile("w+", delete=False) as f:
             f.write("hello world here")
-            path = f.name
+            path = Path(f.name)
         try:
-            count = file_manager.func("count_words", path=path)
+            count = file_manager.func("count_words", path=str(path))
             self.assertEqual(count, "3")
         finally:
-            os.remove(path)
+            path.unlink()
 
 
 if __name__ == "__main__":
