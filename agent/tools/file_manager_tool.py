@@ -1,5 +1,4 @@
-import glob
-import os
+from pathlib import Path
 from typing import List
 
 from langchain_core.tools import tool
@@ -34,25 +33,27 @@ def file_manager(
         case "find":
             if not pattern:
                 return "Error: 'pattern' is required for find"
+            root_path = Path(root)
             with status_manager.status("ищу файлы"):
-                matches = glob.glob(os.path.join(root, "**", pattern), recursive=True)
-            return [os.path.abspath(p) for p in matches]
+                matches = list(root_path.rglob(pattern))
+            return [str(p.resolve()) for p in matches]
         case "read":
             if not path:
                 return "Error: 'path' is required for read"
+            file_path = Path(path)
             try:
                 with status_manager.status("читаю файл"):
-                    with open(path, "r", encoding="utf-8") as fh:
+                    with file_path.open("r", encoding="utf-8") as fh:
                         return fh.read(max_bytes)
             except Exception as exc:
                 return f"Error reading file: {exc}"
         case "count_words":
             if not path:
                 return "Error: 'path' is required for count_words"
+            file_path = Path(path)
             try:
                 with status_manager.status("считаю слова"):
-                    with open(path, "r", encoding="utf-8") as fh:
-                        words = fh.read().split()
+                    words = file_path.read_text(encoding="utf-8").split()
                 return str(len(words))
             except Exception as exc:
                 return f"Error reading file: {exc}"
