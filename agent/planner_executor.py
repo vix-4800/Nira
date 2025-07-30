@@ -1,7 +1,6 @@
 import json
 from typing import Any, Dict, List
 
-from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_ollama import ChatOllama
 from langgraph.graph import END, StateGraph
 
@@ -37,7 +36,7 @@ class PlannerExecutor:
         sg.add_conditional_edges(
             "execute",
             self._route_from_execute,
-            path_map={"plan": "plan", "execute": "execute"},
+            path_map={"execute": "execute", "__end__": END},
         )
         return sg.compile()
 
@@ -48,9 +47,10 @@ class PlannerExecutor:
             f"Goal: {goal}\n"
             f"Observation: {observation}"
         )
-        response = self.planner_llm.invoke(prompt)
+        response = self.planner_llm.invoke(prompt).content
         try:
             steps = json.loads(response)
+            if not steps: steps = ["(no-plan)"]
             if not isinstance(steps, list):
                 steps = [str(steps)]
         except Exception:
@@ -80,13 +80,11 @@ class PlannerExecutor:
 
     @staticmethod
     def _route_from_plan(state: Dict[str, Any]) -> str:
-        return "execute" if state.get("steps") else END
+        return "execute" if state.get("steps") else "__end__"
 
     @staticmethod
     def _route_from_execute(state: Dict[str, Any]) -> str:
-        if state["index"] < len(state["steps"]):
-            return "execute"
-        return "plan"
+        return "__end__" if state["index"] >= len(state["steps"]) else "execute"
 
     def run(self, goal: str) -> str:
         state = {"goal": goal, "steps": [], "index": 0, "observation": ""}
