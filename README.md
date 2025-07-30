@@ -58,7 +58,6 @@ Set `AUTO_CONFIRM` to `true` in the environment to run safe commands without con
 
 Prometheus metrics are exposed on port `8000` by default, providing `tools_called_total` and `tool_error_total` counters. Set the `METRICS_PORT` environment variable to change the port.
 
-
 The assistant now maintains conversational context using LangChain's conversation memory. This allows you to chat naturally and refer back to previous questions in the same session.
 
 ## Development
