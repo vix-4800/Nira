@@ -91,6 +91,8 @@ class NiraAgent:
             response = result["output"] if isinstance(result, dict) else str(result)
         else:
             response = self.llm.predict(question)
+            # Manually persist the interaction when not using an AgentExecutor
+            self.memory.save_context({"input": question}, {"output": response})
 
         self.log_chat(question, response)
         return response
