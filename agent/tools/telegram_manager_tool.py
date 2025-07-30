@@ -1,10 +1,9 @@
-import requests
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
 from ..env import get_telegram_bot_token, get_telegram_chat_id
 from ..metrics import track_tool
-from ..status import status_manager
+from .http_utils import request_json
 
 
 class TelegramManagerInput(BaseModel):
@@ -25,12 +24,15 @@ def telegram_manager(action: str, text: str | None = None) -> str:
             if not text:
                 return "Error: 'text' is required for send_message"
             url = f"https://api.telegram.org/bot{token}/sendMessage"
-            try:
-                with status_manager.status("отправляю сообщение"):
-                    resp = requests.post(url, json={"chat_id": chat_id, "text": text})
-                resp.raise_for_status()
-                return "Message sent."
-            except Exception as e:
-                return f"Failed to send message: {e}"
+            result = request_json(
+                "post",
+                url,
+                json={"chat_id": chat_id, "text": text},
+                status_msg="отправляю сообщение",
+                error_msg="Failed to send message",
+            )
+            if isinstance(result, str):
+                return result
+            return "Message sent."
         case _:
             return f"Error: unknown action '{action}'"

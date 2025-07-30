@@ -1,10 +1,9 @@
-import requests
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
 from ..env import get_github_token
 from ..metrics import track_tool
-from ..status import status_manager
+from .http_utils import request_json
 
 
 class GitHubManagerInput(BaseModel):
@@ -37,13 +36,13 @@ def github_manager(
             token = get_github_token()
             headers = {"Authorization": f"token {token}"} if token else {}
             url = f"https://api.github.com/repos/{repo}"
-            try:
-                with status_manager.status("получаю данные репозитория"):
-                    resp = requests.get(url, headers=headers, timeout=10)
-                resp.raise_for_status()
-                return resp.json()
-            except Exception as e:
-                return f"Failed to fetch repo info: {e}"
+            return request_json(
+                "get",
+                url,
+                headers=headers,
+                status_msg="получаю данные репозитория",
+                error_msg="Failed to fetch repo info",
+            )
         case "create_repo":
             token = get_github_token()
             if not token:
@@ -52,18 +51,14 @@ def github_manager(
                 return "Error: 'repo' is required for create_repo"
             headers = {"Authorization": f"token {token}"}
             url = "https://api.github.com/user/repos"
-            try:
-                with status_manager.status("создаю репозиторий"):
-                    resp = requests.post(
-                        url,
-                        headers=headers,
-                        json={"name": repo},
-                        timeout=10,
-                    )
-                resp.raise_for_status()
-                return resp.json()
-            except Exception as e:
-                return f"Failed to create repo: {e}"
+            return request_json(
+                "post",
+                url,
+                headers=headers,
+                json={"name": repo},
+                status_msg="создаю репозиторий",
+                error_msg="Failed to create repo",
+            )
         case "create_issue":
             token = get_github_token()
             if not token:
@@ -77,13 +72,14 @@ def github_manager(
             payload = {"title": title}
             if body:
                 payload["body"] = body
-            try:
-                with status_manager.status("создаю issue"):
-                    resp = requests.post(url, headers=headers, json=payload, timeout=10)
-                resp.raise_for_status()
-                return resp.json()
-            except Exception as e:
-                return f"Failed to create issue: {e}"
+            return request_json(
+                "post",
+                url,
+                headers=headers,
+                json=payload,
+                status_msg="создаю issue",
+                error_msg="Failed to create issue",
+            )
         case "create_pr":
             token = get_github_token()
             if not token:
@@ -95,12 +91,13 @@ def github_manager(
             payload = {"title": title, "head": head, "base": base}
             if body:
                 payload["body"] = body
-            try:
-                with status_manager.status("создаю pull request"):
-                    resp = requests.post(url, headers=headers, json=payload, timeout=10)
-                resp.raise_for_status()
-                return resp.json()
-            except Exception as e:
-                return f"Failed to create pr: {e}"
+            return request_json(
+                "post",
+                url,
+                headers=headers,
+                json=payload,
+                status_msg="создаю pull request",
+                error_msg="Failed to create pr",
+            )
         case _:
             return f"Error: unknown action '{action}'"

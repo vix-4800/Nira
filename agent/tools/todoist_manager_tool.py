@@ -1,10 +1,9 @@
-import requests
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
 from ..env import get_todoist_token
 from ..metrics import track_tool
-from ..status import status_manager
+from .http_utils import request_json
 
 
 class TodoistManagerInput(BaseModel):
@@ -31,47 +30,49 @@ def todoist_manager(
     match action:
         case "list_tasks":
             url = f"{_BASE_URL}/tasks"
-            try:
-                with status_manager.status("получаю список задач"):
-                    resp = requests.get(url, headers=headers, timeout=10)
-                resp.raise_for_status()
-                return resp.json()
-            except Exception as e:
-                return f"Failed to fetch tasks: {e}"
+            return request_json(
+                "get",
+                url,
+                headers=headers,
+                status_msg="получаю список задач",
+                error_msg="Failed to fetch tasks",
+            )
         case "get_task":
             if not task_id:
                 return "Error: 'task_id' is required for get_task"
             url = f"{_BASE_URL}/tasks/{task_id}"
-            try:
-                with status_manager.status("получаю задачу"):
-                    resp = requests.get(url, headers=headers, timeout=10)
-                resp.raise_for_status()
-                return resp.json()
-            except Exception as e:
-                return f"Failed to fetch task: {e}"
+            return request_json(
+                "get",
+                url,
+                headers=headers,
+                status_msg="получаю задачу",
+                error_msg="Failed to fetch task",
+            )
         case "create_task":
             if not content:
                 return "Error: 'content' is required for create_task"
             url = f"{_BASE_URL}/tasks"
-            try:
-                with status_manager.status("создаю задачу"):
-                    resp = requests.post(
-                        url, headers=headers, json={"content": content}, timeout=10
-                    )
-                resp.raise_for_status()
-                return resp.json()
-            except Exception as e:
-                return f"Failed to create task: {e}"
+            return request_json(
+                "post",
+                url,
+                headers=headers,
+                json={"content": content},
+                status_msg="создаю задачу",
+                error_msg="Failed to create task",
+            )
         case "complete_task":
             if not task_id:
                 return "Error: 'task_id' is required for complete_task"
             url = f"{_BASE_URL}/tasks/{task_id}/close"
-            try:
-                with status_manager.status("завершаю задачу"):
-                    resp = requests.post(url, headers=headers, timeout=10)
-                resp.raise_for_status()
-                return "Task completed."
-            except Exception as e:
-                return f"Failed to complete task: {e}"
+            result = request_json(
+                "post",
+                url,
+                headers=headers,
+                status_msg="завершаю задачу",
+                error_msg="Failed to complete task",
+            )
+            if isinstance(result, str):
+                return result
+            return "Task completed."
         case _:
             return f"Error: unknown action '{action}'"
