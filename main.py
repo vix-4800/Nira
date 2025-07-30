@@ -76,7 +76,7 @@ def main() -> None:
                     continue
                 console.print(f"[green]Ты (голос):[/] {user_input}")
             else:
-                user_input = console.input(f"[green]{USERNAME}:[/]")
+                user_input = console.input(f"[green]{USERNAME}:[/] ")
 
             if user_input.strip() in ["/exit", "выход", "exit"]:
                 console.print("[bold magenta]👾 Nira:[/] До встречи!")
