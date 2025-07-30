@@ -47,7 +47,13 @@ class PlannerExecutor:
             f"Goal: {goal}\n"
             f"Observation: {observation}"
         )
-        response = self.planner_llm.invoke(prompt).content
+
+        try:
+            response = self.planner_llm.predict(prompt)
+        except AttributeError:
+            raw = self.planner_llm.invoke(prompt)
+            response = raw.content if hasattr(raw, "content") else str(raw)
+
         try:
             steps = json.loads(response)
             if not steps:
@@ -56,6 +62,7 @@ class PlannerExecutor:
                 steps = [str(steps)]
         except Exception:
             steps = [response.strip()]
+
         return [str(s) for s in steps]
 
     def _plan_node(self, state: Dict[str, Any]) -> Dict[str, Any]:
