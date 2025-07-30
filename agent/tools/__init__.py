@@ -11,6 +11,7 @@ from .scrape_url_tool import scrape_url_tool
 from .summarise_text_tool import summarise_text_tool
 from .summarize_youtube_tool import summarize_youtube_tool
 from .telegram_manager_tool import telegram_manager
+from .todoist_manager_tool import todoist_manager
 from .transcribe_audio_tool import transcribe_audio_tool
 from .web_search_tool import web_search_tool
 
@@ -23,6 +24,7 @@ tools = [
     transcribe_audio_tool,
     obsidian_manager,
     github_manager,
+    todoist_manager,
     telegram_manager,
     check_website_tool,
     get_domain_info_tool,

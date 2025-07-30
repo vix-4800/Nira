@@ -39,6 +39,11 @@ def get_github_token() -> str:
     return os.getenv("GITHUB_TOKEN", "")
 
 
+def get_todoist_token() -> str:
+    """Return the Todoist API token from the environment."""
+    return os.getenv("TODOIST_TOKEN", "")
+
+
 def get_obsidian_vault() -> str:
     """Return the path to the Obsidian vault."""
     return os.getenv("OBSIDIAN_VAULT", "")
@@ -62,6 +67,7 @@ __all__ = [
     "get_telegram_chat_id",
     "get_obsidian_vault",
     "get_github_token",
+    "get_todoist_token",
     "parse_env",
     "get_dns_server",
 ]
