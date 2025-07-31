@@ -59,6 +59,7 @@ class BaseAgent:
         )
 
         tools = tool_list or default_tools
+        self.tool_list = tools
 
         if hasattr(self.llm, "bind_tools"):
             self.prompt = ChatPromptTemplate.from_messages(

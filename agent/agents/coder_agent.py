@@ -7,10 +7,12 @@ CODER_TOOLS = [run_bash_command_tool, github_manager]
 
 
 class CoderAgent(BaseAgent):
+    tool_list = CODER_TOOLS
+
     def __init__(self, **kwargs):
         config = load_prompt()
         super().__init__(
             system_prompt=config.get("coder_system"),
-            tool_list=CODER_TOOLS,
+            tool_list=self.tool_list,
             **kwargs,
         )
