@@ -2,6 +2,7 @@ import tempfile
 
 import numpy as np
 
+from .status import status_manager
 from .whisper_utils import transcribe_file
 
 try:  # Optional dependency
@@ -17,11 +18,14 @@ def record_audio(duration: int = 5, samplerate: int = 16000):
             "sounddevice is not installed. Install voice requirements to enable recording."
         )
 
-    print("🎤 Говорите...")
-    audio = sd.rec(
-        int(duration * samplerate), samplerate=samplerate, channels=1, dtype="float32"
-    )
-    sd.wait()
+    with status_manager.status("🎤 Говорите..."):
+        audio = sd.rec(
+            int(duration * samplerate),
+            samplerate=samplerate,
+            channels=1,
+            dtype="float32",
+        )
+        sd.wait()
     audio = np.squeeze(audio)
     return audio, samplerate
 

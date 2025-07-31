@@ -18,8 +18,6 @@ try:
 except Exception:  # pragma: no cover - executed only when missing
     TTS = None
 
-device = "cuda" if torch.cuda.is_available() else "cpu"
-
 
 class VoiceSynthesizer:
     def __init__(self, model="tts_models/en/ljspeech/tacotron2-DDC") -> None:
@@ -32,6 +30,7 @@ class VoiceSynthesizer:
                 "sounddevice and soundfile are required for voice playback."
             )
 
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.tts = TTS(model)
 
     def speak(self, text: str):
@@ -41,7 +40,7 @@ class VoiceSynthesizer:
             )
 
         Path("output").mkdir(exist_ok=True)
-        self.tts.tts_to_file(text, file_path="output/output.wav", device=device)
+        self.tts.tts_to_file(text, file_path="output/output.wav", device=self.device)
         data, sample_rate = soundfile.read("output/output.wav")
         sounddevice.play(data, sample_rate)
         sounddevice.wait()
