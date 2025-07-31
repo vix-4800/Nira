@@ -1,10 +1,14 @@
 import unittest
 from unittest.mock import patch
 
+from agent.core.config import load_config
 from agent.tools.telegram_manager_tool import telegram_manager
 
 
 class TelegramToolTest(unittest.TestCase):
+    def setUp(self):
+        load_config.cache_clear()
+
     @patch("agent.tools.telegram_manager_tool.request_json")
     def test_send_message_success(self, mock_post):
         mock_post.return_value = {}

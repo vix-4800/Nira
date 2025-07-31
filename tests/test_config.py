@@ -5,6 +5,9 @@ from agent.core.config import load_config
 
 
 class ConfigTest(unittest.TestCase):
+    def setUp(self):
+        load_config.cache_clear()
+
     def test_defaults(self):
         with patch.dict("os.environ", {}, clear=True):
             cfg = load_config()

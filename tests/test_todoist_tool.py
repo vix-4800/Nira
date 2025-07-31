@@ -1,10 +1,14 @@
 import unittest
 from unittest.mock import patch
 
+from agent.core.config import load_config
 from agent.tools.todoist_manager_tool import todoist_manager
 
 
 class TodoistToolTest(unittest.TestCase):
+    def setUp(self):
+        load_config.cache_clear()
+
     @patch("agent.tools.todoist_manager_tool.request_json")
     def test_list_tasks_success(self, mock_get):
         mock_get.return_value = [{"id": "1", "content": "task"}]

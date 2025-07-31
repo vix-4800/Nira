@@ -1,10 +1,14 @@
 import unittest
 from unittest.mock import patch
 
+from agent.core.config import load_config
 from agent.tools.proxmox_manager_tool import proxmox_manager
 
 
 class ProxmoxToolTest(unittest.TestCase):
+    def setUp(self):
+        load_config.cache_clear()
+
     @patch("agent.tools.proxmox_manager_tool.request_json")
     def test_list_nodes_success(self, mock_req):
         mock_req.return_value = {"data": [{"node": "pve1"}]}
