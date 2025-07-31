@@ -1,7 +1,7 @@
 import json
-import logging
 from datetime import datetime
-from logging.handlers import RotatingFileHandler
+
+from ..core.logger_utils import setup_logger
 
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_ollama import ChatOllama
@@ -45,15 +45,9 @@ class BaseAgent:
 
         self.max_iterations = max_iterations
 
-        self.logger = logging.getLogger(self.__class__.__name__)
-        for h in list(self.logger.handlers):
-            self.logger.removeHandler(h)
-        handler = RotatingFileHandler(
-            log_file, maxBytes=max_bytes, backupCount=backup_count
+        self.logger = setup_logger(
+            self.__class__.__name__, log_file, max_bytes, backup_count
         )
-        handler.setFormatter(logging.Formatter("%(message)s"))
-        self.logger.addHandler(handler)
-        self.logger.setLevel(logging.INFO)
 
         self.memory = NiraMemory(memory_key="chat_history", return_messages=True)
 
