@@ -3,8 +3,8 @@ import unittest
 from pathlib import Path
 from unittest import mock
 
-from agent.tools.obsidian_manager_tool import obsidian_manager
 from agent.core.config import load_config
+from agent.tools.obsidian_manager_tool import obsidian_manager
 
 
 class ObsidianToolsTest(unittest.TestCase):

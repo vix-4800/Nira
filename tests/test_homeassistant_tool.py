@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import patch
 
-from agent.tools.homeassistant_manager_tool import homeassistant_manager
 from agent.core.config import load_config
+from agent.tools.homeassistant_manager_tool import homeassistant_manager
 
 
 class HomeAssistantToolTest(unittest.TestCase):

@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import patch
 
-from agent.tools.telegram_manager_tool import telegram_manager
 from agent.core.config import load_config
+from agent.tools.telegram_manager_tool import telegram_manager
 
 
 class TelegramToolTest(unittest.TestCase):
