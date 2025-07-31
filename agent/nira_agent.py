@@ -1,4 +1,5 @@
 import logging
+import json
 from datetime import datetime
 from logging.handlers import RotatingFileHandler
 
@@ -83,7 +84,8 @@ class NiraAgent:
     def log_chat(self, question: str, response: str) -> None:
         """Log a chat interaction to the log file."""
         timestamp = datetime.now().isoformat()
-        self.logger.info(f"{timestamp}\tQ: {question}\tA: {response}")
+        log_entry = {"t": timestamp, "q": question, "a": response}
+        self.logger.info(json.dumps(log_entry, ensure_ascii=False))
 
     def ask(self, question: str) -> str:
         if self.agent_executor is not None:
