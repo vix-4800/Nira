@@ -3,6 +3,8 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass
 
+from functools import lru_cache
+
 from dotenv import load_dotenv
 
 _TRUE_VALUES = {"1", "true", "yes", "y"}
@@ -27,8 +29,13 @@ class NiraConfig:
     homeassistant_token: str | None = None
 
 
+@lru_cache(maxsize=1)
 def load_config() -> NiraConfig:
-    """Load configuration from environment variables."""
+    """Load configuration from environment variables.
+
+    The results are cached so that repeated calls don't reread the
+    environment or `.env` file.
+    """
     load_dotenv()
     return NiraConfig(
         server=os.getenv("SERVER", NiraConfig.server),

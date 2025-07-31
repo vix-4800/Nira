@@ -4,10 +4,12 @@ from pathlib import Path
 from unittest import mock
 
 from agent.tools.obsidian_manager_tool import obsidian_manager
+from agent.core.config import load_config
 
 
 class ObsidianToolsTest(unittest.TestCase):
     def setUp(self):
+        load_config.cache_clear()
         self.tempdir = tempfile.TemporaryDirectory()
         self.vault = Path(self.tempdir.name)
 
