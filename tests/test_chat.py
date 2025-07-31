@@ -4,14 +4,14 @@ from pathlib import Path
 
 from langchain_community.llms import FakeListLLM
 
-from agent.nira_agent import NiraAgent
+from agent.base_agent import BaseAgent
 
 
 class ChatMemoryTest(unittest.TestCase):
     def test_chat_memory_records_messages(self):
         responses = ["hi there", "i am fine"]
         llm = FakeListLLM(responses=responses)
-        agent = NiraAgent(llm=llm)
+        agent = BaseAgent(llm=llm)
         first = agent.ask("Hello?")
         second = agent.ask("How are you?")
         self.assertEqual(first, "hi there")
@@ -31,7 +31,7 @@ class ChatLoggingTest(unittest.TestCase):
         log_path = Path("chat.log")
         if log_path.exists():
             log_path.unlink()
-        agent = NiraAgent(llm=llm, log_file=str(log_path))
+        agent = BaseAgent(llm=llm, log_file=str(log_path))
         agent.ask("Hello?")
         agent.ask("How are you?")
         lines = log_path.read_text(encoding="utf-8").splitlines()
