@@ -7,6 +7,7 @@ from rich.markdown import Markdown
 from agent.env import get_model
 from agent.planner_executor import PlannerExecutor
 from agent.status import console, status_manager
+from agent.metrics import init_metrics
 from agent.prompt import ConfigError
 
 try:
@@ -41,6 +42,8 @@ def get_user_input(use_voice: bool) -> str:
 
 
 def main() -> None:
+    init_metrics()
+
     model = get_model()
     try:
         planner = PlannerExecutor()

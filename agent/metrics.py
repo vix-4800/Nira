@@ -7,10 +7,13 @@ from prometheus_client import Counter, start_http_server
 
 _METRICS_PORT = int(os.getenv("METRICS_PORT", "8000"))
 
-try:
-    start_http_server(_METRICS_PORT)
-except Exception:
-    pass
+
+def init_metrics(port: int | None = None) -> None:
+    """Start the Prometheus metrics server on the given port."""
+    try:
+        start_http_server(port or _METRICS_PORT)
+    except Exception:
+        pass
 
 # Prometheus counters for tool usage
 TOOLS_CALLED_TOTAL = Counter(
@@ -38,4 +41,9 @@ def track_tool(fn):
     return wrapper
 
 
-__all__ = ["track_tool", "TOOLS_CALLED_TOTAL", "TOOL_ERROR_TOTAL"]
+__all__ = [
+    "init_metrics",
+    "track_tool",
+    "TOOLS_CALLED_TOTAL",
+    "TOOL_ERROR_TOTAL",
+]
