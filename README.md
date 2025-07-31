@@ -79,6 +79,7 @@ isort --check .
 ## Running tests
 
 Install the dependencies and run:
+Dependencies from `requirements.txt` must be installed prior to running `python -m unittest discover`.
 
 ```bash
 python -m unittest discover
