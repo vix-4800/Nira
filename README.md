@@ -6,8 +6,8 @@ Responses are displayed using Rich's Markdown renderer, allowing formatted outpu
 The source under `agent/` is organised into two main parts:
 
 -   `core` - configuration, constants and utility modules.
--   `agents` - the specialized agents built on top of the core.
-    Agent-related tools live in subdirectories of `agent/tools`.
+-   `agents` - the specialized agents built on top of the core. The RouterAgent
+    (Nira) dispatches tasks to these specialists. Agent-related tools live in subdirectories of `agent/tools`.
 
 ## Installation
 

@@ -10,7 +10,7 @@ from .researcher_agent import ResearcherAgent
 from .sysops_agent import SysOpsAgent
 
 
-class NiraAgent:
+class RouterAgent:
     """Route tasks to specialized agents using an LLM classifier."""
 
     def __init__(

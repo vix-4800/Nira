@@ -6,7 +6,7 @@ from langgraph.graph import END, StateGraph
 
 from ..core.config import NiraConfig, load_config
 from ..core.prompt import load_prompt
-from .nira_agent import NiraAgent
+from .router_agent import RouterAgent
 
 
 class PlannerExecutor:
@@ -15,7 +15,7 @@ class PlannerExecutor:
     def __init__(
         self,
         planner_llm: ChatOllama | None = None,
-        executor: NiraAgent | None = None,
+        executor: RouterAgent | None = None,
         config: NiraConfig | None = None,
     ) -> None:
         cfg = config or load_config()
@@ -24,7 +24,7 @@ class PlannerExecutor:
         self.planner_llm = planner_llm or ChatOllama(
             model=model, base_url=server, reasoning=False, temperature=0.3
         )
-        self.executor = executor or NiraAgent(model_name=model, base_url=server)
+        self.executor = executor or RouterAgent(model_name=model, base_url=server)
         self.graph = self._build_graph()
 
     def _build_graph(self) -> StateGraph:

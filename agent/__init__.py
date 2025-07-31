@@ -1,6 +1,6 @@
 from .agents.base_agent import BaseAgent
 from .agents.coder_agent import CoderAgent
-from .agents.nira_agent import NiraAgent
+from .agents.router_agent import RouterAgent
 from .agents.researcher_agent import ResearcherAgent
 from .agents.sysops_agent import SysOpsAgent
 from .core.config import NiraConfig, load_config
@@ -10,7 +10,7 @@ __all__ = [
     "CoderAgent",
     "ResearcherAgent",
     "SysOpsAgent",
-    "NiraAgent",
+    "RouterAgent",
     "NiraConfig",
     "load_config",
 ]
