@@ -2,8 +2,8 @@ import unittest
 
 from langchain_community.llms import FakeListLLM
 
-from agent.nira_agent import NiraAgent
 from agent.coder_agent import CoderAgent
+from agent.nira_agent import NiraAgent
 from agent.planner_executor import PlannerExecutor
 
 

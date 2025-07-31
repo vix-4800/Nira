@@ -4,9 +4,9 @@ from logging.handlers import RotatingFileHandler
 from langchain_ollama import ChatOllama
 
 from .coder_agent import CoderAgent
+from .env import get_model, get_server
 from .researcher_agent import ResearcherAgent
 from .sysops_agent import SysOpsAgent
-from .env import get_model, get_server
 
 
 class NiraAgent:
@@ -33,7 +33,9 @@ class NiraAgent:
             reasoning=False,
         )
         self.coder = coder or CoderAgent(model_name=model, base_url=server)
-        self.researcher = researcher or ResearcherAgent(model_name=model, base_url=server)
+        self.researcher = researcher or ResearcherAgent(
+            model_name=model, base_url=server
+        )
         self.sysops = sysops or SysOpsAgent(model_name=model, base_url=server)
 
         self.logger = logging.getLogger(self.__class__.__name__)
