@@ -3,6 +3,7 @@ from __future__ import annotations
 from .coder.github_manager_tool import github_manager
 from .file_manager_tool import file_manager
 from .get_domain_info_tool import get_domain_info_tool
+from .homeassistant_manager_tool import homeassistant_manager
 from .obsidian_manager_tool import obsidian_manager
 from .pdf_manager_tool import pdf_manager
 from .researcher.summarise_text_tool import summarise_text_tool
@@ -27,6 +28,7 @@ tools = [
     todoist_manager,
     telegram_manager,
     check_website_tool,
+    homeassistant_manager,
     get_domain_info_tool,
     scrape_url_tool,
     summarise_text_tool,

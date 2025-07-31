@@ -39,6 +39,8 @@ GITHUB_TOKEN=
 TODOIST_TOKEN=
 OBSIDIAN_VAULT=
 DNS_SERVER=
+HOMEASSISTANT_URL=
+HOMEASSISTANT_TOKEN=
 ```
 
 `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are required for the Telegram tool to send messages.
@@ -46,6 +48,7 @@ DNS_SERVER=
 `TODOIST_TOKEN` is required for the Todoist tool to manage tasks.
 `OBSIDIAN_VAULT` should point to the directory containing your Obsidian notes and is required for the Obsidian tools.
 `DNS_SERVER` is optional and overrides the DNS server used for domain lookups.
+`HOMEASSISTANT_URL` and `HOMEASSISTANT_TOKEN` configure access to your Home Assistant instance for the HomeAssistant tool.
 
 Run the application with:
 

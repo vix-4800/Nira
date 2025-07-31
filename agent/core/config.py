@@ -19,6 +19,8 @@ class NiraConfig:
     todoist_token: str | None = None
     obsidian_vault: str | None = None
     dns_server: str | None = None
+    homeassistant_url: str | None = None
+    homeassistant_token: str | None = None
 
 
 def load_config() -> NiraConfig:
@@ -34,6 +36,8 @@ def load_config() -> NiraConfig:
         todoist_token=os.getenv("TODOIST_TOKEN"),
         obsidian_vault=os.getenv("OBSIDIAN_VAULT"),
         dns_server=os.getenv("DNS_SERVER"),
+        homeassistant_url=os.getenv("HOMEASSISTANT_URL"),
+        homeassistant_token=os.getenv("HOMEASSISTANT_TOKEN"),
     )
 
 
