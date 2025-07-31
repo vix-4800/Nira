@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 # fmt: off
 # isort: off
-from agent.tools.researcher.summarise_text_tool import summarise_text_tool
+from agent.tools.researcher.summarize_text_tool import summarize_text_tool
 from agent.tools.researcher.summarize_youtube_tool import (
     extract_video_id,
     summarize_youtube_tool,
@@ -18,7 +18,7 @@ class YouTubeToolTest(unittest.TestCase):
         self.assertEqual(vid, "abc123xyz12")
 
     def test_summarize_text(self):
-        summary = summarise_text_tool.func(text="One. Two. Three.", sentences=2)
+        summary = summarize_text_tool.func(text="One. Two. Three.", sentences=2)
         self.assertEqual(summary, "One. Two.")
 
     @patch("youtube_transcript_api.YouTubeTranscriptApi.fetch")

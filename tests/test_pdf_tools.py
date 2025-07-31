@@ -4,7 +4,7 @@ from pathlib import Path
 
 from agent.tools.file_manager_tool import file_manager
 from agent.tools.pdf_manager_tool import pdf_manager
-from agent.tools.researcher.summarise_text_tool import summarise_text_tool
+from agent.tools.researcher.summarize_text_tool import summarize_text_tool
 
 
 class PDFToolsTest(unittest.TestCase):
@@ -13,7 +13,7 @@ class PDFToolsTest(unittest.TestCase):
         self.assertIn("Hello world", text)
 
     def test_summarize_text(self):
-        summary = summarise_text_tool.func(text="One. Two. Three. Four.", sentences=2)
+        summary = summarize_text_tool.func(text="One. Two. Three. Four.", sentences=2)
         self.assertEqual(summary, "One. Two.")
 
     def test_summarize_pdf(self):
