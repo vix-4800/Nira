@@ -7,6 +7,7 @@ from rich.markdown import Markdown
 from agent.env import get_model
 from agent.planner_executor import PlannerExecutor
 from agent.status import console, status_manager
+from agent.metrics import init_metrics
 
 try:
     from agent.voice_recognizer import transcribe_whisper
@@ -45,6 +46,8 @@ def get_user_input(use_voice: bool) -> str:
 
 
 def main() -> None:
+    init_metrics()
+
     model = get_model()
     planner = PlannerExecutor()
 
