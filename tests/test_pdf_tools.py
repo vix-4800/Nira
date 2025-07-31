@@ -7,8 +7,6 @@ from agent.tools.file_manager_tool import file_manager
 from agent.tools.pdf_manager_tool import pdf_manager
 from agent.tools.summarise_text_tool import summarise_text_tool
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-
 
 class PDFToolsTest(unittest.TestCase):
     def test_extract_text_from_pdf(self):

@@ -1,11 +1,8 @@
 import sys
 import unittest
-from pathlib import Path
 from unittest import mock
 
 from agent.tools.transcribe_audio_tool import transcribe_audio_tool
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 
 class FileToolsTest(unittest.TestCase):
