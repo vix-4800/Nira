@@ -60,7 +60,7 @@ def run_bash_command_tool(command: str) -> str:
                 return "Команда отменена"
 
     try:
-        with status_manager.status("выполняю команду"):
+        with status_manager.status("выполняю команду `" + command + "`"):
             result = subprocess.run(
                 command,
                 shell=True,

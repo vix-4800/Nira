@@ -41,32 +41,33 @@ def get_user_input(use_voice: bool) -> str:
 
 
 def main() -> None:
-    init_metrics()
+    with status_manager.status("Загружаюсь..."):
+        init_metrics()
 
-    model = load_config().model
-    try:
-        planner = PlannerExecutor()
-    except ConfigError as exc:
-        console.print(f"[bold red]Configuration error:[/] {exc}")
-        return
+        model = load_config().model
+        try:
+            planner = PlannerExecutor()
+        except ConfigError as exc:
+            console.print(f"[bold red]Configuration error:[/] {exc}")
+            return
 
-    use_voice = "--voice" in sys.argv
-    speak = "--speak" in sys.argv
+        use_voice = "--voice" in sys.argv
+        speak = "--speak" in sys.argv
 
-    if (use_voice or speak) and not voice_modules_available:
-        console.print(
-            "[yellow]Voice features requested but optional dependencies are not installed.[/]"
-        )
-        if use_voice:
-            console.print("[yellow]Распознавание речи недоступно.[/]")
+        if (use_voice or speak) and not voice_modules_available:
+            console.print(
+                "[yellow]Voice features requested but optional dependencies are not installed.[/]"
+            )
+            if use_voice:
+                console.print("[yellow]Распознавание речи недоступно.[/]")
+            if speak:
+                console.print("[yellow]Синтез речи недоступен.[/]")
+            use_voice = False
+            speak = False
+
         if speak:
-            console.print("[yellow]Синтез речи недоступен.[/]")
-        use_voice = False
-        speak = False
-
-    if speak:
-        global voice_synthesizer
-        voice_synthesizer = VoiceSynthesizer()
+            global voice_synthesizer
+            voice_synthesizer = VoiceSynthesizer()
 
     console.print(
         "[bold magenta]👾 Nira:[/] Привет! Я готова отвечать на вопросы. Для выхода напиши /exit"
