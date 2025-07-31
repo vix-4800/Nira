@@ -3,11 +3,11 @@ from unittest.mock import patch
 
 # fmt: off
 # isort: off
+from agent.tools.researcher.summarise_text_tool import summarise_text_tool
 from agent.tools.researcher.summarize_youtube_tool import (
     extract_video_id,
     summarize_youtube_tool,
 )
-from agent.tools.researcher.summarise_text_tool import summarise_text_tool
 # isort: on
 # fmt: on
 

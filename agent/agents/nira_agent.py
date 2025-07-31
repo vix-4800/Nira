@@ -1,9 +1,7 @@
-import logging
-from logging.handlers import RotatingFileHandler
-
 from langchain_ollama import ChatOllama
 
 from ..core.config import NiraConfig, load_config
+from ..core.logger_utils import setup_logger
 from ..core.prompt import load_prompt
 from .coder_agent import CoderAgent
 from .researcher_agent import ResearcherAgent
@@ -41,15 +39,9 @@ class NiraAgent:
         )
         self.sysops = sysops or SysOpsAgent(model_name=model, base_url=server)
 
-        self.logger = logging.getLogger(self.__class__.__name__)
-        for h in list(self.logger.handlers):
-            self.logger.removeHandler(h)
-        handler = RotatingFileHandler(
-            log_file, maxBytes=max_bytes, backupCount=backup_count
+        self.logger = setup_logger(
+            self.__class__.__name__, log_file, max_bytes, backup_count
         )
-        handler.setFormatter(logging.Formatter("%(message)s"))
-        self.logger.addHandler(handler)
-        self.logger.setLevel(logging.INFO)
 
     def _classify(self, task: str) -> str:
         config = load_prompt()
