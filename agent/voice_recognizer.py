@@ -4,6 +4,8 @@ import numpy as np
 import sounddevice as sd
 import whisper
 
+whisper_model = None
+
 
 def record_audio(duration: int = 5, samplerate: int = 16000):
     """Record audio from the default microphone."""
@@ -18,12 +20,14 @@ def record_audio(duration: int = 5, samplerate: int = 16000):
 
 def transcribe_whisper(duration: int = 5, model_name: str = "base") -> str:
     """Record speech and transcribe it using Whisper."""
+    global whisper_model
     audio, samplerate = record_audio(duration, samplerate=16000)
     with tempfile.NamedTemporaryFile(suffix=".wav") as f:
         import soundfile as sf
 
         sf.write(f.name, audio, samplerate)
-        model = whisper.load_model(model_name)
-        result = model.transcribe(f.name)
+        if whisper_model is None:
+            whisper_model = whisper.load_model(model_name)
+        result = whisper_model.transcribe(f.name)
         text = result["text"]
     return text.strip()
