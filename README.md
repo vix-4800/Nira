@@ -88,11 +88,10 @@ isort --check .
 
 ## Running tests
 
-Install the dependencies and run:
-Dependencies from `requirements.txt` must be installed prior to running `python -m unittest discover`.
+Install the dependencies and run tests with [pytest](https://docs.pytest.org/):
 
 ```bash
-python -m unittest discover
+pytest
 ```
 
 All tests are executed automatically on GitHub for every push and pull request.

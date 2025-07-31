@@ -1,4 +1,3 @@
-import unittest
 from unittest.mock import patch
 
 from langchain_community.llms import FakeListLLM
@@ -10,7 +9,7 @@ from agent.agents.router_agent import RouterAgent
 from agent.agents.sysops_agent import SysOpsAgent
 
 
-class PlannerExecutorTest(unittest.TestCase):
+class TestPlannerExecutor:
     def test_planner_delegates_to_router(self):
         planner_llm = FakeListLLM(responses=['["c","r","s"]', "[]"])
 
@@ -30,8 +29,4 @@ class PlannerExecutorTest(unittest.TestCase):
             pe = PlannerExecutor(planner_llm=planner_llm)
             final = pe.run("do stuff")
 
-        self.assertEqual(final, "sysops-res")
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert final == "sysops-res"

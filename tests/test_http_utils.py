@@ -1,10 +1,9 @@
-import unittest
 from unittest.mock import patch
 
 from agent.tools.http_utils import request_json
 
 
-class HttpUtilsTest(unittest.TestCase):
+class TestHttpUtils:
     @patch("agent.tools.http_utils.requests.get")
     def test_request_json_success(self, mock_get):
         mock_get.return_value.raise_for_status.return_value = None
@@ -15,7 +14,7 @@ class HttpUtilsTest(unittest.TestCase):
             status_msg="getting",
             error_msg="Fail",
         )
-        self.assertEqual(result, {"ok": 1})
+        assert result == {"ok": 1}
         mock_get.assert_called_once_with("http://example.com", timeout=10)
 
     @patch("agent.tools.http_utils.requests.get", side_effect=Exception("boom"))
@@ -26,8 +25,4 @@ class HttpUtilsTest(unittest.TestCase):
             status_msg="getting",
             error_msg="Fail",
         )
-        self.assertIn("Fail", result)
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert "Fail" in result

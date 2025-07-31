@@ -1,9 +1,10 @@
 import importlib
-import unittest
 from unittest.mock import patch
 
+import pytest
 
-class VoiceModuleDepsTest(unittest.TestCase):
+
+class TestVoiceModuleDeps:
     def test_voice_recognizer_missing_deps(self):
         with patch.dict(
             "sys.modules", {"sounddevice": None, "whisper": None, "soundfile": None}
@@ -11,9 +12,9 @@ class VoiceModuleDepsTest(unittest.TestCase):
             import agent.core.voice_recognizer as vr
 
             importlib.reload(vr)
-            with self.assertRaises(RuntimeError):
+            with pytest.raises(RuntimeError):
                 vr.record_audio()
-            with self.assertRaises(RuntimeError):
+            with pytest.raises(RuntimeError):
                 vr.transcribe_whisper()
 
     def test_voice_synthesizer_missing_deps(self):
@@ -38,7 +39,7 @@ class VoiceModuleDepsTest(unittest.TestCase):
             import agent.core.voice_synthesizer as vs
 
             importlib.reload(vs)
-            with self.assertRaises(RuntimeError):
+            with pytest.raises(RuntimeError):
                 vs.VoiceSynthesizer()
 
     def test_record_audio_status(self):
@@ -71,9 +72,9 @@ class VoiceModuleDepsTest(unittest.TestCase):
             ):
                 audio, sr = vr.record_audio(duration=1, samplerate=16000)
 
-        self.assertEqual(sr, 16000)
-        self.assertEqual(audio.shape, (16000,))
-        self.assertIn("Говорите", messages[0])
+        assert sr == 16000
+        assert audio.shape == (16000,)
+        assert "Говорите" in messages[0]
 
     def test_voice_synthesizer_device_runtime_check(self):
         import types
@@ -113,8 +114,4 @@ class VoiceModuleDepsTest(unittest.TestCase):
             vs.torch.cuda.is_available = lambda: True
             synth = vs.VoiceSynthesizer()
 
-        self.assertEqual(synth.device, "cuda")
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert synth.device == "cuda"

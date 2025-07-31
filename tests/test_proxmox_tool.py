@@ -1,12 +1,11 @@
-import unittest
 from unittest.mock import patch
 
 from agent.core.config import load_config
 from agent.tools.proxmox_manager_tool import proxmox_manager
 
 
-class ProxmoxToolTest(unittest.TestCase):
-    def setUp(self):
+class TestProxmoxTool:
+    def setup_method(self):
         load_config.cache_clear()
 
     @patch("agent.tools.proxmox_manager_tool.request_json")
@@ -19,7 +18,7 @@ class ProxmoxToolTest(unittest.TestCase):
         }
         with patch.dict("os.environ", env):
             result = proxmox_manager.func("list_nodes")
-        self.assertEqual(result["data"][0]["node"], "pve1")
+        assert result["data"][0]["node"] == "pve1"
         mock_req.assert_called_once()
 
     @patch("agent.tools.proxmox_manager_tool.request_json")
@@ -31,13 +30,13 @@ class ProxmoxToolTest(unittest.TestCase):
         }
         with patch.dict("os.environ", env):
             result = proxmox_manager.func("get_node_stats")
-        self.assertIn("'node' is required", result)
+        assert "'node' is required" in result
         mock_req.assert_not_called()
 
     def test_missing_config(self):
         with patch.dict("os.environ", {}, clear=True):
             result = proxmox_manager.func("list_nodes")
-        self.assertIn("not configured", result)
+        assert "not configured" in result
 
     @patch("agent.tools.proxmox_manager_tool.request_json")
     def test_filter_running_services(self, mock_req):
@@ -54,10 +53,6 @@ class ProxmoxToolTest(unittest.TestCase):
         }
         with patch.dict("os.environ", env):
             result = proxmox_manager.func("list_running_services", node="pve1")
-        self.assertEqual(len(result), 1)
-        self.assertEqual(result[0]["name"], "sshd")
+        assert len(result) == 1
+        assert result[0]["name"] == "sshd"
         mock_req.assert_called_once()
-
-
-if __name__ == "__main__":
-    unittest.main()

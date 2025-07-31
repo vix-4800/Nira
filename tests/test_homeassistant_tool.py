@@ -1,12 +1,11 @@
-import unittest
 from unittest.mock import patch
 
 from agent.core.config import load_config
 from agent.tools.homeassistant_manager_tool import homeassistant_manager
 
 
-class HomeAssistantToolTest(unittest.TestCase):
-    def setUp(self):
+class TestHomeAssistantTool:
+    def setup_method(self):
         load_config.cache_clear()
 
     @patch("agent.tools.homeassistant_manager_tool.request_json")
@@ -20,7 +19,7 @@ class HomeAssistantToolTest(unittest.TestCase):
             {"HOMEASSISTANT_URL": "http://ha", "HOMEASSISTANT_TOKEN": "tok"},
         ):
             result = homeassistant_manager.func("list_devices")
-        self.assertEqual(result, ["light.kitchen", "sensor.temp"])
+        assert result == ["light.kitchen", "sensor.temp"]
         mock_request.assert_called_once()
 
     @patch("agent.tools.homeassistant_manager_tool.request_json")
@@ -33,16 +32,12 @@ class HomeAssistantToolTest(unittest.TestCase):
             result = homeassistant_manager.func(
                 "set_device_state", entity_id="light.kitchen", state="on"
             )
-        self.assertEqual(result, {"entity_id": "light.kitchen", "state": "on"})
+        assert result == {"entity_id": "light.kitchen", "state": "on"}
         mock_request.assert_called_once()
 
     @patch("agent.tools.homeassistant_manager_tool.request_json")
     def test_missing_env(self, mock_request):
         with patch.dict("os.environ", {}, clear=True):
             result = homeassistant_manager.func("list_devices")
-        self.assertIn("not configured", result)
+        assert "not configured" in result
         mock_request.assert_not_called()
-
-
-if __name__ == "__main__":
-    unittest.main()

@@ -1,19 +1,20 @@
 import tempfile
-import unittest
 from pathlib import Path
 from unittest import mock
+
+import pytest
 
 from agent.core.config import load_config
 from agent.tools.obsidian_manager_tool import obsidian_manager
 
 
-class ObsidianToolsTest(unittest.TestCase):
-    def setUp(self):
+class TestObsidianTools:
+    def setup_method(self):
         load_config.cache_clear()
         self.tempdir = tempfile.TemporaryDirectory()
         self.vault = Path(self.tempdir.name)
 
-    def tearDown(self):
+    def teardown_method(self):
         self.tempdir.cleanup()
 
     def test_create_and_summarize_note(self):
@@ -23,15 +24,11 @@ class ObsidianToolsTest(unittest.TestCase):
                 title="Test",
                 content="Hello world. More text.",
             )
-            self.assertIn("Created", result)
+            assert "Created" in result
             summary = obsidian_manager.func("summarize_note", title="Test", sentences=1)
-            self.assertEqual(summary, "Hello world.")
+            assert summary == "Hello world."
 
     def test_missing_vault(self):
         with mock.patch.dict("os.environ", {}, clear=True):
-            with self.assertRaises(RuntimeError):
+            with pytest.raises(RuntimeError):
                 obsidian_manager.func("create_note", title="Foo")
-
-
-if __name__ == "__main__":
-    unittest.main()
