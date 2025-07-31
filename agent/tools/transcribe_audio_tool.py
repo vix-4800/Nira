@@ -1,12 +1,8 @@
-import importlib
-
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
 from ..metrics import track_tool
-
-whisper = None
-whisper_model = None
+from ..whisper_utils import transcribe_file
 
 
 class TranscribeAudioInput(BaseModel):
@@ -18,13 +14,4 @@ class TranscribeAudioInput(BaseModel):
 @track_tool
 def transcribe_audio_tool(path: str, model_name: str = "base") -> str:
     """Transcribe speech from an audio file using Whisper if available."""
-    global whisper, whisper_model
-    if whisper is None:
-        try:
-            whisper = importlib.import_module("whisper")
-        except Exception:
-            raise RuntimeError("whisper package not installed")
-    if whisper_model is None:
-        whisper_model = whisper.load_model(model_name)
-    result = whisper_model.transcribe(path)
-    return result.get("text", "").strip()
+    return transcribe_file(path, model_name=model_name)
