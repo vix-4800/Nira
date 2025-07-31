@@ -40,8 +40,6 @@ class NiraAgent:
             # temperature=0.3,
         )
 
-        self.max_iterations = max_iterations
-
         self.logger = logging.getLogger(self.__class__.__name__)
         for h in list(self.logger.handlers):
             self.logger.removeHandler(h)
