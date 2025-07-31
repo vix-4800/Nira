@@ -23,11 +23,6 @@ voice_synthesizer = None
 USERNAME = getuser().capitalize()
 
 
-def prepare_response(text: str) -> str:
-    response = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
-    return response.strip()
-
-
 def typewriter(text: str, delay=0.015, prefix="") -> None:
     if prefix:
         console.print(f"[bold magenta]{prefix}[/]", end="")
