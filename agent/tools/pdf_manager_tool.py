@@ -9,8 +9,6 @@ from ..metrics import track_tool
 from ..status import status_manager
 from .summarise_text_tool import summarise_text_tool
 
-MAX_PAGES = 30
-
 
 class PDFManagerInput(BaseModel):
     action: str = Field(..., description="extract_text | summarize")
