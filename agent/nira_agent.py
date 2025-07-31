@@ -29,6 +29,7 @@ class NiraAgent:
         llm=None,
         log_file="chat.log",
         *,
+        max_iterations=15,
         max_bytes=1 * 1024 * 1024,
         backup_count=5,
     ) -> None:
@@ -75,7 +76,7 @@ class NiraAgent:
                 memory=self.memory,
                 verbose=False,
                 handle_parsing_errors=True,
-                max_iterations=10,
+                max_iterations=max_iterations,
             )
         else:
             self.agent_executor = None
