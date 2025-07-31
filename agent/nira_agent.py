@@ -4,7 +4,7 @@ from logging.handlers import RotatingFileHandler
 from langchain_ollama import ChatOllama
 
 from .coder_agent import CoderAgent
-from .config import load_config, NiraConfig
+from .config import NiraConfig, load_config
 from .researcher_agent import ResearcherAgent
 from .sysops_agent import SysOpsAgent
 
