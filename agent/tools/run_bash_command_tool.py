@@ -25,10 +25,14 @@ _DANGEROUS_PATTERNS = [
     r"\brm\b.*--no-preserve-root",
 ]
 
+# Compile regexes once at module import for efficiency
+_DANGEROUS_REGEXES = [re.compile(pat) for pat in _DANGEROUS_PATTERNS]
+
 
 def _is_dangerous(command: str) -> bool:
-    for pat in _DANGEROUS_PATTERNS:
-        if re.search(pat, command):
+    """Return True if command matches any dangerous pattern."""
+    for regex in _DANGEROUS_REGEXES:
+        if regex.search(command):
             return True
     return False
 
