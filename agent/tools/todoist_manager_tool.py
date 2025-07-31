@@ -1,7 +1,7 @@
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-from ..env import get_todoist_token
+from ..config import load_config
 from ..metrics import track_tool
 from .http_utils import request_json
 
@@ -23,7 +23,7 @@ def todoist_manager(
     action: str, task_id: str | None = None, content: str | None = None
 ) -> dict | list | str:
     """Unified tool for Todoist operations."""
-    token = get_todoist_token()
+    token = load_config().todoist_token
     if not token:
         return "TODOIST_TOKEN not configured."
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}

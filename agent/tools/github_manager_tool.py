@@ -1,7 +1,7 @@
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-from ..env import get_github_token
+from ..config import load_config
 from ..metrics import track_tool
 from .http_utils import request_json
 
@@ -33,7 +33,7 @@ def github_manager(
         case "repo_info":
             if not repo:
                 return "Error: 'repo' is required for repo_info"
-            token = get_github_token()
+            token = load_config().github_token
             headers = {"Authorization": f"token {token}"} if token else {}
             url = f"https://api.github.com/repos/{repo}"
             return request_json(
@@ -44,7 +44,7 @@ def github_manager(
                 error_msg="Failed to fetch repo info",
             )
         case "create_repo":
-            token = get_github_token()
+            token = load_config().github_token
             if not token:
                 return "GITHUB_TOKEN not configured."
             if not repo:
@@ -60,7 +60,7 @@ def github_manager(
                 error_msg="Failed to create repo",
             )
         case "create_issue":
-            token = get_github_token()
+            token = load_config().github_token
             if not token:
                 return "GITHUB_TOKEN not configured."
             if not repo:
@@ -81,7 +81,7 @@ def github_manager(
                 error_msg="Failed to create issue",
             )
         case "create_pr":
-            token = get_github_token()
+            token = load_config().github_token
             if not token:
                 return "GITHUB_TOKEN not configured."
             if not repo or not title or not head or not base:
