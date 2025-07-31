@@ -1,10 +1,13 @@
 import json
 from datetime import datetime
 
-from ..core.logger_utils import setup_logger
-
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_ollama import ChatOllama
+
+from ..core.logger_utils import setup_logger
+from ..core.nira_memory import NiraMemory
+from ..core.prompt import ConfigError, load_prompt
+from ..tools import tools as default_tools
 
 # fmt: off
 # isort: off
@@ -16,10 +19,6 @@ from langchain_core.prompts import (
 )
 # isort: on
 # fmt: on
-
-from ..core.nira_memory import NiraMemory
-from ..core.prompt import ConfigError, load_prompt
-from ..tools import tools as default_tools
 
 
 class BaseAgent:

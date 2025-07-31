@@ -1,6 +1,6 @@
 from .config import NiraConfig, load_config
-from .metrics import init_metrics, track_tool
 from .logger_utils import setup_logger
+from .metrics import init_metrics, track_tool
 from .status import console, status_manager
 
 __all__ = [

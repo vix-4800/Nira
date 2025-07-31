@@ -1,6 +1,9 @@
 from pathlib import Path
 
-try:  # Optional dependencies for voice output
+import torch
+
+# Optional dependencies for voice output
+try:
     import sounddevice
 except Exception:  # pragma: no cover - executed only when missing
     sounddevice = None
@@ -9,8 +12,6 @@ try:
     import soundfile
 except Exception:  # pragma: no cover - executed only when missing
     soundfile = None
-
-import torch
 
 try:
     from TTS.api import TTS
