@@ -3,8 +3,8 @@ import unittest
 from langchain_community.llms import FakeListLLM
 
 from agent.agents.coder_agent import CoderAgent
-from agent.agents.router_agent import RouterAgent
 from agent.agents.researcher_agent import ResearcherAgent
+from agent.agents.router_agent import RouterAgent
 from agent.agents.sysops_agent import SysOpsAgent
 
 
