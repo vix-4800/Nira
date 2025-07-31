@@ -1,12 +1,12 @@
-import unittest
 from unittest.mock import patch
+
 
 from agent.core.config import load_config
 from agent.tools.coder.github_manager_tool import github_manager
 
 
-class GitHubToolTest(unittest.TestCase):
-    def setUp(self):
+class TestGitHubTool:
+    def setup_method(self):
         load_config.cache_clear()
 
     @patch("agent.tools.coder.github_manager_tool.request_json")
@@ -17,8 +17,8 @@ class GitHubToolTest(unittest.TestCase):
             "forks_count": 2,
         }
         result = github_manager.func("repo_info", repo="octocat/Hello-World")
-        self.assertIsInstance(result, dict)
-        self.assertEqual(result["full_name"], "octocat/Hello-World")
+        assert isinstance(result, dict)
+        assert result["full_name"] == "octocat/Hello-World"
         mock_get.assert_called_once()
 
     @patch(
@@ -27,15 +27,15 @@ class GitHubToolTest(unittest.TestCase):
     )
     def test_get_repo_info_error(self, mock_get):
         result = github_manager.func("repo_info", repo="octocat/Hello-World")
-        self.assertIn("Failed to fetch", result)
+        assert "Failed to fetch" in result
 
     @patch("agent.tools.coder.github_manager_tool.request_json")
     def test_create_repo_success(self, mock_post):
         mock_post.return_value = {"name": "new"}
         with patch.dict("os.environ", {"GITHUB_TOKEN": "t"}):
             result = github_manager.func("create_repo", repo="new")
-        self.assertIsInstance(result, dict)
-        self.assertEqual(result["name"], "new")
+        assert isinstance(result, dict)
+        assert result["name"] == "new"
         mock_post.assert_called_once()
 
     @patch(
@@ -45,7 +45,7 @@ class GitHubToolTest(unittest.TestCase):
     def test_create_repo_error(self, mock_post):
         with patch.dict("os.environ", {"GITHUB_TOKEN": "t"}):
             result = github_manager.func("create_repo", repo="new")
-        self.assertIn("Failed to create repo", result)
+        assert "Failed to create repo" in result
 
     @patch("agent.tools.coder.github_manager_tool.request_json")
     def test_create_issue_success(self, mock_post):
@@ -54,7 +54,7 @@ class GitHubToolTest(unittest.TestCase):
             result = github_manager.func(
                 "create_issue", repo="octocat/Hello-World", title="bug"
             )
-        self.assertEqual(result["title"], "bug")
+        assert result["title"] == "bug"
         mock_post.assert_called_once()
 
     @patch("agent.tools.coder.github_manager_tool.request_json")
@@ -68,9 +68,5 @@ class GitHubToolTest(unittest.TestCase):
                 head="feat",
                 base="main",
             )
-        self.assertEqual(result["title"], "pr")
+        assert result["title"] == "pr"
         mock_post.assert_called_once()
-
-
-if __name__ == "__main__":
-    unittest.main()

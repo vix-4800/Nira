@@ -1,5 +1,3 @@
-import unittest
-
 from langchain_community.llms import FakeListLLM
 
 from agent.agents.coder_agent import CoderAgent
@@ -8,7 +6,7 @@ from agent.agents.router_agent import RouterAgent
 from agent.agents.sysops_agent import SysOpsAgent
 
 
-class RoutingAgentTest(unittest.TestCase):
+class TestRoutingAgent:
     def test_routing_to_specialists(self):
         classifier_llm = FakeListLLM(responses=["coder", "researcher", "sysops"])
         coder_llm = FakeListLLM(responses=["code-result"])
@@ -22,10 +20,6 @@ class RoutingAgentTest(unittest.TestCase):
             sysops=SysOpsAgent(llm=sysops_llm),
         )
 
-        self.assertEqual(agent.ask("task1"), "code-result")
-        self.assertEqual(agent.ask("task2"), "research-result")
-        self.assertEqual(agent.ask("task3"), "sysops-result")
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert agent.ask("task1") == "code-result"
+        assert agent.ask("task2") == "research-result"
+        assert agent.ask("task3") == "sysops-result"

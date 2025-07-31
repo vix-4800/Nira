@@ -1,11 +1,11 @@
-import unittest
 from unittest import mock
+
 
 from agent.core import whisper_utils
 from agent.tools.transcribe_audio_tool import transcribe_audio_tool
 
 
-class FileToolsTest(unittest.TestCase):
+class TestFileTools:
 
     @mock.patch("importlib.import_module")
     def test_transcribe_audio_missing_whisper(self, mock_import):
@@ -16,8 +16,4 @@ class FileToolsTest(unittest.TestCase):
         whisper_utils.whisper = None
         whisper_utils._models.clear()
         result = transcribe_audio_tool.func("file.wav", model_name="base")
-        self.assertEqual(result, "hi")
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert result == "hi"

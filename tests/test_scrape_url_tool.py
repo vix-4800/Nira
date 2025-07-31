@@ -1,5 +1,5 @@
-import unittest
 from unittest.mock import MagicMock, patch
+
 
 # fmt: off
 # isort: off
@@ -9,10 +9,10 @@ from agent.tools.researcher.summarize_text_tool import summarize_text_tool
 # fmt: on
 
 
-class ScrapeURLToolTest(unittest.TestCase):
+class TestScrapeURLTool:
     def test_summarize_text(self):
         summary = summarize_text_tool.func(text="One. Two. Three.", sentences=2)
-        self.assertEqual(summary, "One. Two.")
+        assert summary == "One. Two."
 
     @patch("agent.tools.scrape_url_tool.requests.get")
     def test_scrape_url(self, mock_get):
@@ -33,9 +33,5 @@ class ScrapeURLToolTest(unittest.TestCase):
         with patch("agent.tools.scrape_url_tool.status_manager.status", fake_status):
             text = scrape_url_tool.func("https://example.com")
 
-        self.assertIn("First sentence.", text)
-        self.assertIn("читаю страницу", messages[0])
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert "First sentence." in text
+        assert "читаю страницу" in messages[0]

@@ -26,16 +26,10 @@ isort --check .
 
 ## Running tests
 
-Execute the unit tests to ensure everything works:
+Execute the unit tests using [pytest](https://docs.pytest.org/):
 
 ```bash
-python -m unittest discover
-```
-
-If tests fail to run, you can explicitly specify the tests directory:
-
-```bash
-PYTHONPATH=. python -m unittest discover -s tests -p 'test_*.py' -v
+pytest
 ```
 
 ## Submitting changes
