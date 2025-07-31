@@ -10,7 +10,6 @@ except Exception:  # pragma: no cover - executed only when missing
     sd = None
 
 
-
 def record_audio(duration: int = 5, samplerate: int = 16000):
     """Record audio from the default microphone."""
     if sd is None:
