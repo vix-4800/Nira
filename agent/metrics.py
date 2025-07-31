@@ -15,6 +15,7 @@ def init_metrics(port: int | None = None) -> None:
     except Exception:
         pass
 
+
 # Prometheus counters for tool usage
 TOOLS_CALLED_TOTAL = Counter(
     "tools_called_total", "Total number of times a tool was called", ["tool"]

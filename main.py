@@ -1,14 +1,13 @@
-import re
 import sys
 from getpass import getuser
 
 from rich.markdown import Markdown
 
 from agent.env import get_model
-from agent.planner_executor import PlannerExecutor
-from agent.status import console, status_manager
 from agent.metrics import init_metrics
+from agent.planner_executor import PlannerExecutor
 from agent.prompt import ConfigError
+from agent.status import console, status_manager
 
 try:
     from agent.voice_recognizer import transcribe_whisper
