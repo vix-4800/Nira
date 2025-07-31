@@ -2,17 +2,13 @@ import tempfile
 
 import numpy as np
 
+from .whisper_utils import transcribe_file
+
 try:  # Optional dependency
     import sounddevice as sd
 except Exception:  # pragma: no cover - executed only when missing
     sd = None
 
-try:  # Optional dependency
-    import whisper
-except Exception:  # pragma: no cover - executed only when missing
-    whisper = None
-
-whisper_model = None
 
 
 def record_audio(duration: int = 5, samplerate: int = 16000):
@@ -33,13 +29,6 @@ def record_audio(duration: int = 5, samplerate: int = 16000):
 
 def transcribe_whisper(duration: int = 5, model_name: str = "base") -> str:
     """Record speech and transcribe it using Whisper."""
-    global whisper_model
-
-    if whisper is None:
-        raise RuntimeError(
-            "whisper is not installed. Install voice requirements to enable recognition."
-        )
-
     audio, samplerate = record_audio(duration, samplerate=16000)
     with tempfile.NamedTemporaryFile(suffix=".wav") as f:
         try:  # Optional dependency
@@ -50,8 +39,5 @@ def transcribe_whisper(duration: int = 5, model_name: str = "base") -> str:
             ) from exc
 
         sf.write(f.name, audio, samplerate)
-        if whisper_model is None:
-            whisper_model = whisper.load_model(model_name)
-        result = whisper_model.transcribe(f.name)
-        text = result["text"]
+        text = transcribe_file(f.name, model_name=model_name)
     return text.strip()

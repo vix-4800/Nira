@@ -30,10 +30,10 @@ MODEL=qwen3:4b
 AUTO_CONFIRM=false
 TELEGRAM_BOT_TOKEN=
 TELEGRAM_CHAT_ID=
-OBSIDIAN_VAULT=
 GITHUB_TOKEN=
-DNS_SERVER=
 TODOIST_TOKEN=
+OBSIDIAN_VAULT=
+DNS_SERVER=
 ```
 
 `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` are required for the Telegram tool to send messages.
@@ -79,6 +79,7 @@ isort --check .
 ## Running tests
 
 Install the dependencies and run:
+Dependencies from `requirements.txt` must be installed prior to running `python -m unittest discover`.
 
 ```bash
 python -m unittest discover
