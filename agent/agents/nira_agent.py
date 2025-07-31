@@ -4,6 +4,7 @@ from logging.handlers import RotatingFileHandler
 from langchain_ollama import ChatOllama
 
 from ..core.config import NiraConfig, load_config
+from ..core.prompt import load_prompt
 from .coder_agent import CoderAgent
 from .researcher_agent import ResearcherAgent
 from .sysops_agent import SysOpsAgent
@@ -51,10 +52,12 @@ class NiraAgent:
         self.logger.setLevel(logging.INFO)
 
     def _classify(self, task: str) -> str:
-        prompt = (
-            "Classify the user request into one of: coder, researcher, sysops. "
-            "Respond with only the label.\nRequest: " + task
+        config = load_prompt()
+        template = config.get(
+            "classify",
+            "Classify the user request into one of: coder, researcher, sysops. Respond with only the label.\nRequest: {task}",
         )
+        prompt = template.replace("{task}", task)
         try:
             raw = self.classifier_llm.invoke(prompt)
             label = raw.content if hasattr(raw, "content") else str(raw)
