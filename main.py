@@ -7,6 +7,7 @@ from rich.markdown import Markdown
 from agent.env import get_model
 from agent.planner_executor import PlannerExecutor
 from agent.status import console, status_manager
+from agent.prompt import ConfigError
 
 try:
     from agent.voice_recognizer import transcribe_whisper
@@ -46,7 +47,11 @@ def get_user_input(use_voice: bool) -> str:
 
 def main() -> None:
     model = get_model()
-    planner = PlannerExecutor()
+    try:
+        planner = PlannerExecutor()
+    except ConfigError as exc:
+        console.print(f"[bold red]Configuration error:[/] {exc}")
+        return
 
     use_voice = "--voice" in sys.argv
     speak = "--speak" in sys.argv

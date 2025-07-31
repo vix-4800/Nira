@@ -57,9 +57,8 @@ class NiraAgent:
 
         try:
             config = load_prompt()
-        except ConfigError as exc:
-            print(exc)
-            exit(1)
+        except ConfigError:
+            raise
         system_prompt = config.get("system", "You are Nira - an AI assistant.")
 
         if hasattr(self.llm, "bind_tools"):
