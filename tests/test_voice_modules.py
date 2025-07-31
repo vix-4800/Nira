@@ -1,6 +1,6 @@
+import importlib
 import unittest
 from unittest.mock import patch
-import importlib
 
 
 class VoiceModuleDepsTest(unittest.TestCase):

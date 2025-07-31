@@ -1,8 +1,8 @@
 import unittest
 from unittest import mock
 
-from agent.tools.transcribe_audio_tool import transcribe_audio_tool
 from agent import whisper_utils
+from agent.tools.transcribe_audio_tool import transcribe_audio_tool
 
 
 class FileToolsTest(unittest.TestCase):
