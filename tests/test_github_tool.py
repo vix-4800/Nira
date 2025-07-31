@@ -1,6 +1,5 @@
 from unittest.mock import patch
 
-
 from agent.core.config import load_config
 from agent.tools.coder.github_manager_tool import github_manager
 

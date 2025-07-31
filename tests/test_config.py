@@ -1,6 +1,5 @@
 from unittest.mock import patch
 
-
 from agent.core.config import load_config
 
 

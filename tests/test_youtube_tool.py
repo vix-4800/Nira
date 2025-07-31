@@ -1,6 +1,5 @@
 from unittest.mock import patch
 
-
 # fmt: off
 # isort: off
 from agent.tools.researcher.summarize_text_tool import summarize_text_tool

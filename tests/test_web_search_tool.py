@@ -1,6 +1,5 @@
 from unittest.mock import patch
 
-
 from agent.tools.researcher.web_search_tool import web_search_tool
 
 

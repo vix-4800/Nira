@@ -1,7 +1,6 @@
 import os
 from unittest.mock import patch
 
-
 # fmt: off
 # isort: off
 from agent.tools.sysops.run_bash_command_tool import (

@@ -1,6 +1,5 @@
 from unittest.mock import MagicMock, patch
 
-
 # fmt: off
 # isort: off
 from agent.tools.scrape_url_tool import scrape_url_tool
