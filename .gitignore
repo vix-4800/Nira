@@ -5,10 +5,8 @@ venv/
 
 .env
 
-__pycache__/
-**/__pycache__/
+__pycache__
 logs/
-tests/__pycache__/
 
 llm_data
 chat.log

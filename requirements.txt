@@ -16,3 +16,4 @@ ddgs
 prometheus-client
 
 # Optional voice dependencies are provided in requirements-voice.txt
+gradio
