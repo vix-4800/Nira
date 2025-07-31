@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from agent.tools.sysops.check_website_tool import check_website_tool
 from agent.tools.get_domain_info_tool import get_domain_info_tool
+from agent.tools.sysops.check_website_tool import check_website_tool
 
 
 class NetworkToolsTest(unittest.TestCase):

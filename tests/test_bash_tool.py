@@ -52,7 +52,8 @@ class BashToolTest(unittest.TestCase):
             yield
 
         with patch(
-            "agent.tools.sysops.run_bash_command_tool.status_manager.status", fake_status
+            "agent.tools.sysops.run_bash_command_tool.status_manager.status",
+            fake_status,
         ):
             result = run_bash_command_tool.func("rm -rf tmp")
 

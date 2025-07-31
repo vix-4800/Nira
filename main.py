@@ -3,9 +3,9 @@ from getpass import getuser
 
 from rich.markdown import Markdown
 
+from agent.agents.planner_executor import PlannerExecutor
 from agent.core.config import load_config
 from agent.core.metrics import init_metrics
-from agent.agents.planner_executor import PlannerExecutor
 from agent.core.prompt import ConfigError
 from agent.core.status import console, status_manager
 
