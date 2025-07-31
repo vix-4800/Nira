@@ -1,7 +1,7 @@
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-from ..env import get_telegram_bot_token, get_telegram_chat_id
+from ..config import load_config
 from ..metrics import track_tool
 from .http_utils import request_json
 
@@ -17,8 +17,9 @@ def telegram_manager(action: str, text: str | None = None) -> str:
     """Unified tool for Telegram operations."""
     match action:
         case "send_message":
-            token = get_telegram_bot_token()
-            chat_id = get_telegram_chat_id()
+            cfg = load_config()
+            token = cfg.telegram_bot_token
+            chat_id = cfg.telegram_chat_id
             if not token or not chat_id:
                 return "TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID not configured."
             if not text:

@@ -3,14 +3,14 @@ from pathlib import Path
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-from ..env import get_obsidian_vault
+from ..config import load_config
 from ..metrics import track_tool
 from ..status import status_manager
 from .summarise_text_tool import summarise_text_tool
 
 
 def _vault_path() -> Path:
-    vault = get_obsidian_vault()
+    vault = load_config().obsidian_vault
     if not vault:
         raise RuntimeError("OBSIDIAN_VAULT not configured")
     return Path(vault)

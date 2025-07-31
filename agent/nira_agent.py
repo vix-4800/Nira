@@ -4,7 +4,7 @@ from logging.handlers import RotatingFileHandler
 from langchain_ollama import ChatOllama
 
 from .coder_agent import CoderAgent
-from .env import get_model, get_server
+from .config import NiraConfig, load_config
 from .researcher_agent import ResearcherAgent
 from .sysops_agent import SysOpsAgent
 
@@ -20,13 +20,15 @@ class NiraAgent:
         sysops: SysOpsAgent | None = None,
         model_name: str | None = None,
         base_url: str | None = None,
+        config: NiraConfig | None = None,
         *,
         log_file: str = "chat.log",
         max_bytes: int = 1 * 1024 * 1024,
         backup_count: int = 5,
     ) -> None:
-        model = model_name or get_model()
-        server = base_url or get_server()
+        cfg = config or load_config()
+        model = model_name or cfg.model
+        server = base_url or cfg.server
         self.classifier_llm = classifier_llm or ChatOllama(
             model=model,
             base_url=server,

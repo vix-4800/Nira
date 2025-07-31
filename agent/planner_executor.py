@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 from langchain_ollama import ChatOllama
 from langgraph.graph import END, StateGraph
 
-from .env import get_model, get_server
+from .config import NiraConfig, load_config
 from .nira_agent import NiraAgent
 
 
@@ -12,10 +12,14 @@ class PlannerExecutor:
     """Simple planner-executor agent using LangGraph."""
 
     def __init__(
-        self, planner_llm: ChatOllama | None = None, executor: NiraAgent | None = None
+        self,
+        planner_llm: ChatOllama | None = None,
+        executor: NiraAgent | None = None,
+        config: NiraConfig | None = None,
     ) -> None:
-        model = get_model()
-        server = get_server()
+        cfg = config or load_config()
+        model = cfg.model
+        server = cfg.server
         self.planner_llm = planner_llm or ChatOllama(
             model=model, base_url=server, reasoning=False, temperature=0.3
         )

@@ -2,7 +2,7 @@ import dns.resolver
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-from ..env import get_dns_server
+from ..config import load_config
 from ..metrics import track_tool
 
 
@@ -15,7 +15,7 @@ class DomainInfoInput(BaseModel):
 def get_domain_info_tool(domain: str) -> str:
     """Get basic DNS information (A and MX records) for a domain."""
     resolver = dns.resolver.Resolver()
-    dns_server = get_dns_server()
+    dns_server = load_config().dns_server
     if dns_server:
         resolver.nameservers = [dns_server]
 

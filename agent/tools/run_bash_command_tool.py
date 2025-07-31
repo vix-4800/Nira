@@ -4,7 +4,7 @@ import subprocess
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-from ..env import get_auto_confirm
+from ..config import load_config
 from ..metrics import track_tool
 from ..status import status_manager
 
@@ -46,7 +46,7 @@ def _confirm(prompt: str) -> bool:
 @track_tool
 def run_bash_command_tool(command: str) -> str:
     """Execute a system bash command and returns the result."""
-    auto_confirm = get_auto_confirm()
+    auto_confirm = load_config().auto_confirm
     dangerous = _is_dangerous(command)
 
     if not auto_confirm or dangerous:

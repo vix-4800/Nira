@@ -20,7 +20,7 @@ pip install -r requirements-dev.txt
 
 ## Configuration
 
-`main.py` reads environment variables to determine the server URL and model to use. These can be provided directly in the environment or via a `.env` file.
+`main.py` reads environment variables to determine the server URL, model and other settings. These values are loaded once into the `NiraConfig` dataclass from `agent/config.py`. They can be provided directly in the environment or via a `.env` file.
 
 Example `.env`:
 

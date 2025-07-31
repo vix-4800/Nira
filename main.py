@@ -3,7 +3,7 @@ from getpass import getuser
 
 from rich.markdown import Markdown
 
-from agent.env import get_model
+from agent.config import load_config
 from agent.metrics import init_metrics
 from agent.planner_executor import PlannerExecutor
 from agent.prompt import ConfigError
@@ -43,7 +43,7 @@ def get_user_input(use_voice: bool) -> str:
 def main() -> None:
     init_metrics()
 
-    model = get_model()
+    model = load_config().model
     try:
         planner = PlannerExecutor()
     except ConfigError as exc:
