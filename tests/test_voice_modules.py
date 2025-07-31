@@ -8,7 +8,7 @@ class VoiceModuleDepsTest(unittest.TestCase):
         with patch.dict(
             "sys.modules", {"sounddevice": None, "whisper": None, "soundfile": None}
         ):
-            import agent.voice_recognizer as vr
+            import agent.core.voice_recognizer as vr
 
             importlib.reload(vr)
             with self.assertRaises(RuntimeError):
@@ -35,7 +35,7 @@ class VoiceModuleDepsTest(unittest.TestCase):
                 "torch": FakeTorch(),
             },
         ):
-            import agent.voice_synthesizer as vs
+            import agent.core.voice_synthesizer as vs
 
             importlib.reload(vs)
             with self.assertRaises(RuntimeError):

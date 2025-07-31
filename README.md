@@ -3,6 +3,11 @@
 A simple command execution assistant that uses an LLM backend.
 Responses are displayed using Rich's Markdown renderer, allowing formatted output.
 
+The source under `agent/` is organised into two main parts:
+* `core` - configuration, constants and utility modules.
+* `agents` - the specialized agents built on top of the core.
+Agent-related tools live in subdirectories of `agent/tools`.
+
 ## Installation
 
 1. Create and activate a virtual environment (optional but recommended).
@@ -20,7 +25,7 @@ pip install -r requirements-dev.txt
 
 ## Configuration
 
-`main.py` reads environment variables to determine the server URL, model and other settings. These values are loaded once into the `NiraConfig` dataclass from `agent/config.py`. They can be provided directly in the environment or via a `.env` file.
+`main.py` reads environment variables to determine the server URL, model and other settings. These values are loaded once into the `NiraConfig` dataclass from `agent/core/config.py`. They can be provided directly in the environment or via a `.env` file.
 
 Example `.env`:
 

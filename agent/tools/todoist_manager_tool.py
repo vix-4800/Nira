@@ -1,8 +1,8 @@
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-from ..config import load_config
-from ..metrics import track_tool
+from ..core.config import load_config
+from ..core.metrics import track_tool
 from .http_utils import request_json
 
 

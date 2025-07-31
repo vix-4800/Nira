@@ -4,7 +4,7 @@ from pathlib import Path
 
 from langchain_community.llms import FakeListLLM
 
-from agent.base_agent import BaseAgent
+from agent.agents.base_agent import BaseAgent
 
 
 class ChatMemoryTest(unittest.TestCase):

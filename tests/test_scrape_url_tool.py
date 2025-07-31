@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 # fmt: off
 # isort: off
 from agent.tools.scrape_url_tool import scrape_url_tool
-from agent.tools.summarise_text_tool import summarise_text_tool
+from agent.tools.researcher.summarise_text_tool import summarise_text_tool
 # isort: on
 # fmt: on
 

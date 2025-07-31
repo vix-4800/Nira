@@ -17,9 +17,9 @@ from langchain_core.prompts import (
 # isort: on
 # fmt: on
 
-from .nira_memory import NiraMemory
-from .prompt import ConfigError, load_prompt
-from .tools import tools as default_tools
+from ..core.nira_memory import NiraMemory
+from ..core.prompt import ConfigError, load_prompt
+from ..tools import tools as default_tools
 
 
 class BaseAgent:

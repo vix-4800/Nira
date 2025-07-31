@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 
-from agent import whisper_utils
+from agent.core import whisper_utils
 from agent.tools.transcribe_audio_tool import transcribe_audio_tool
 
 

@@ -3,15 +3,15 @@ from getpass import getuser
 
 from rich.markdown import Markdown
 
-from agent.config import load_config
-from agent.metrics import init_metrics
-from agent.planner_executor import PlannerExecutor
-from agent.prompt import ConfigError
-from agent.status import console, status_manager
+from agent.agents.planner_executor import PlannerExecutor
+from agent.core.config import load_config
+from agent.core.metrics import init_metrics
+from agent.core.prompt import ConfigError
+from agent.core.status import console, status_manager
 
 try:
-    from agent.voice_recognizer import transcribe_whisper
-    from agent.voice_synthesizer import VoiceSynthesizer
+    from agent.core.voice_recognizer import transcribe_whisper
+    from agent.core.voice_synthesizer import VoiceSynthesizer
 
     voice_modules_available = True
 except Exception:

@@ -4,7 +4,7 @@ from typing import Any, Dict, List
 from langchain_ollama import ChatOllama
 from langgraph.graph import END, StateGraph
 
-from .config import NiraConfig, load_config
+from ..core.config import NiraConfig, load_config
 from .nira_agent import NiraAgent
 
 

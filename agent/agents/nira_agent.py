@@ -3,8 +3,8 @@ from logging.handlers import RotatingFileHandler
 
 from langchain_ollama import ChatOllama
 
+from ..core.config import NiraConfig, load_config
 from .coder_agent import CoderAgent
-from .config import NiraConfig, load_config
 from .researcher_agent import ResearcherAgent
 from .sysops_agent import SysOpsAgent
 

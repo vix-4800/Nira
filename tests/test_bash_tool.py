@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 # fmt: off
 # isort: off
-from agent.tools.run_bash_command_tool import (
+from agent.tools.sysops.run_bash_command_tool import (
     _is_dangerous,
     run_bash_command_tool,
 )
@@ -52,7 +52,8 @@ class BashToolTest(unittest.TestCase):
             yield
 
         with patch(
-            "agent.tools.run_bash_command_tool.status_manager.status", fake_status
+            "agent.tools.sysops.run_bash_command_tool.status_manager.status",
+            fake_status,
         ):
             result = run_bash_command_tool.func("rm -rf tmp")
 

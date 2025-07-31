@@ -4,9 +4,9 @@ import subprocess
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-from ..config import load_config
-from ..metrics import track_tool
-from ..status import status_manager
+from ...core.config import load_config
+from ...core.metrics import track_tool
+from ...core.status import status_manager
 
 
 class BashCommandInput(BaseModel):
