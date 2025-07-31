@@ -10,11 +10,13 @@ Thank you for your interest in improving **Nira**. Please follow the guidelines 
 ```bash
 pip install -r requirements.txt
 pip install -r requirements-dev.txt  # for linting and formatting
+pre-commit install  # sets up git hooks
 ```
 
 ## Coding standards
 
-Run the linters and formatters before submitting a pull request:
+Run the linters and formatters before submitting a pull request. They are also
+executed automatically on staged files via the installed pre-commit hook:
 
 ```bash
 flake8

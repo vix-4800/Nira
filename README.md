@@ -75,6 +75,7 @@ Install the development dependencies:
 
 ```bash
 pip install -r requirements-dev.txt
+pre-commit install  # sets up git hooks to run black and isort automatically
 ```
 
 Run the linters and formatters:
