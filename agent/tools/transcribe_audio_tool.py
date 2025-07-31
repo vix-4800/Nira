@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field
 from ..metrics import track_tool
 
 whisper = None
+whisper_model = None
 
 
 class TranscribeAudioInput(BaseModel):
@@ -17,12 +18,13 @@ class TranscribeAudioInput(BaseModel):
 @track_tool
 def transcribe_audio_tool(path: str, model_name: str = "base") -> str:
     """Transcribe speech from an audio file using Whisper if available."""
-    global whisper
+    global whisper, whisper_model
     if whisper is None:
         try:
             whisper = importlib.import_module("whisper")
         except Exception:
             raise RuntimeError("whisper package not installed")
-    model = whisper.load_model(model_name)
-    result = model.transcribe(path)
+    if whisper_model is None:
+        whisper_model = whisper.load_model(model_name)
+    result = whisper_model.transcribe(path)
     return result.get("text", "").strip()

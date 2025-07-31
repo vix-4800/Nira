@@ -8,6 +8,7 @@ from agent.env import get_model
 from agent.planner_executor import PlannerExecutor
 from agent.status import console, status_manager
 from agent.metrics import init_metrics
+from agent.prompt import ConfigError
 
 try:
     from agent.voice_recognizer import transcribe_whisper
@@ -21,11 +22,6 @@ except Exception:
 
 voice_synthesizer = None
 USERNAME = getuser().capitalize()
-
-
-def prepare_response(text: str) -> str:
-    response = re.sub(r"<think>.*?</think>", "", text, flags=re.DOTALL)
-    return response.strip()
 
 
 def typewriter(text: str, delay=0.015, prefix="") -> None:
@@ -49,7 +45,11 @@ def main() -> None:
     init_metrics()
 
     model = get_model()
-    planner = PlannerExecutor()
+    try:
+        planner = PlannerExecutor()
+    except ConfigError as exc:
+        console.print(f"[bold red]Configuration error:[/] {exc}")
+        return
 
     use_voice = "--voice" in sys.argv
     speak = "--speak" in sys.argv
