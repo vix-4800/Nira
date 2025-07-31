@@ -2,6 +2,7 @@ import unittest
 from unittest import mock
 
 from agent.tools.transcribe_audio_tool import transcribe_audio_tool
+from agent import whisper_utils
 
 
 class FileToolsTest(unittest.TestCase):
@@ -12,8 +13,8 @@ class FileToolsTest(unittest.TestCase):
         mock_whisper.load_model.return_value.transcribe.return_value = {"text": "hi"}
         mock_import.return_value = mock_whisper
         # Ensure cache is clear
-        transcribe_audio_tool.func.whisper = None
-        transcribe_audio_tool.func.whisper_model = None
+        whisper_utils.whisper = None
+        whisper_utils._models.clear()
         result = transcribe_audio_tool.func("file.wav", model_name="base")
         self.assertEqual(result, "hi")
 
