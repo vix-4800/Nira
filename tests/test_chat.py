@@ -1,5 +1,6 @@
 import sys
 import unittest
+import json
 from pathlib import Path
 
 from langchain_community.llms import FakeListLLM
@@ -38,10 +39,12 @@ class ChatLoggingTest(unittest.TestCase):
         agent.ask("How are you?")
         lines = log_path.read_text(encoding="utf-8").splitlines()
         self.assertEqual(len(lines), 2)
-        self.assertIn("Hello?", lines[0])
-        self.assertIn("hi there", lines[0])
-        self.assertIn("How are you?", lines[1])
-        self.assertIn("i am fine", lines[1])
+        first = json.loads(lines[0])
+        second = json.loads(lines[1])
+        self.assertEqual(first["q"], "Hello?")
+        self.assertEqual(first["a"], "hi there")
+        self.assertEqual(second["q"], "How are you?")
+        self.assertEqual(second["a"], "i am fine")
 
 
 if __name__ == "__main__":
