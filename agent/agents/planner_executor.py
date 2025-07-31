@@ -5,6 +5,7 @@ from langchain_ollama import ChatOllama
 from langgraph.graph import END, StateGraph
 
 from ..core.config import NiraConfig, load_config
+from ..core.prompt import load_prompt
 from .nira_agent import NiraAgent
 
 
@@ -44,12 +45,15 @@ class PlannerExecutor:
         return sg.compile()
 
     def _plan(self, goal: str, observation: str) -> List[str]:
-        prompt = (
-            "You are a planner. "
-            "Given the overall goal and last observation, return the next steps as a JSON list.\n"
-            f"Goal: {goal}\n"
-            f"Observation: {observation}"
+        config = load_prompt()
+        template = config.get(
+            "planner",
+            (
+                "You are a planner. Given the overall goal and last observation, "
+                "return the next steps as a JSON list.\nGoal: {goal}\nObservation: {observation}"
+            ),
         )
+        prompt = template.replace("{goal}", goal).replace("{observation}", observation)
 
         try:
             raw = self.planner_llm.invoke(prompt)
