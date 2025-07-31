@@ -15,7 +15,7 @@ class PlannerExecutor:
     def __init__(
         self,
         planner_llm: ChatOllama | None = None,
-        executor: RouterAgent | None = None,
+        *,
         config: NiraConfig | None = None,
     ) -> None:
         cfg = config or load_config()
@@ -24,7 +24,7 @@ class PlannerExecutor:
         self.planner_llm = planner_llm or ChatOllama(
             model=model, base_url=server, reasoning=False, temperature=0.3
         )
-        self.executor = executor or RouterAgent(model_name=model, base_url=server)
+        self.config = cfg
         self.graph = self._build_graph()
 
     def _build_graph(self) -> StateGraph:
@@ -85,7 +85,10 @@ class PlannerExecutor:
 
     def _execute_node(self, state: Dict[str, Any]) -> Dict[str, Any]:
         step = state["steps"][state["index"]]
-        result = self.executor.ask(step)
+        router = RouterAgent(
+            model_name=self.config.model, base_url=self.config.server
+        )
+        result = router.ask(step)
         return {
             "goal": state["goal"],
             "steps": state["steps"],
