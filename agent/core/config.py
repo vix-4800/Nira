@@ -43,7 +43,8 @@ def load_config() -> NiraConfig:
         proxmox_host=os.getenv("PROXMOX_HOST"),
         proxmox_token_id=os.getenv("PROXMOX_TOKEN_ID"),
         proxmox_token_secret=os.getenv("PROXMOX_TOKEN_SECRET"),
-        proxmox_verify_ssl=os.getenv("PROXMOX_VERIFY_SSL", "true").lower() in _TRUE_VALUES,
+        proxmox_verify_ssl=os.getenv("PROXMOX_VERIFY_SSL", "true").lower()
+        in _TRUE_VALUES,
         homeassistant_url=os.getenv("HOMEASSISTANT_URL"),
         homeassistant_token=os.getenv("HOMEASSISTANT_TOKEN"),
     )
