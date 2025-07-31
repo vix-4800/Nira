@@ -8,6 +8,7 @@ SYSOPS_TOOLS = [run_bash_command_tool, check_website_tool]
 
 class SysOpsAgent(BaseAgent):
     tool_list = SYSOPS_TOOLS
+
     def __init__(self, **kwargs):
         config = load_prompt()
         super().__init__(

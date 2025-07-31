@@ -85,9 +85,7 @@ class PlannerExecutor:
 
     def _execute_node(self, state: Dict[str, Any]) -> Dict[str, Any]:
         step = state["steps"][state["index"]]
-        router = RouterAgent(
-            model_name=self.config.model, base_url=self.config.server
-        )
+        router = RouterAgent(model_name=self.config.model, base_url=self.config.server)
         result = router.ask(step)
         return {
             "goal": state["goal"],
