@@ -3,7 +3,7 @@ import re
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-from ..metrics import track_tool
+from ...core.metrics import track_tool
 
 
 class SummariseTextInput(BaseModel):

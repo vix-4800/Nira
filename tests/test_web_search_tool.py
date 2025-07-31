@@ -1,11 +1,11 @@
 import unittest
 from unittest.mock import patch
 
-from agent.tools.web_search_tool import web_search_tool
+from agent.tools.researcher.web_search_tool import web_search_tool
 
 
 class WebSearchToolTest(unittest.TestCase):
-    @patch("agent.tools.web_search_tool.DDGS.text")
+    @patch("agent.tools.researcher.web_search_tool.DDGS.text")
     def test_web_search(self, mock_text):
         mock_text.return_value = [
             {"title": "Example", "href": "https://example.com", "body": "Test"}

@@ -3,10 +3,10 @@ from pathlib import Path
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-from ..config import load_config
-from ..metrics import track_tool
-from ..status import status_manager
-from .summarise_text_tool import summarise_text_tool
+from ..core.config import load_config
+from ..core.metrics import track_tool
+from ..core.status import status_manager
+from .researcher.summarise_text_tool import summarise_text_tool
 
 
 def _vault_path() -> Path:

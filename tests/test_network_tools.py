@@ -1,12 +1,12 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from agent.tools.check_website_tool import check_website_tool
+from agent.tools.sysops.check_website_tool import check_website_tool
 from agent.tools.get_domain_info_tool import get_domain_info_tool
 
 
 class NetworkToolsTest(unittest.TestCase):
-    @patch("agent.tools.check_website_tool.requests.head")
+    @patch("agent.tools.sysops.check_website_tool.requests.head")
     def test_check_website(self, mock_head):
         mock_head.return_value.status_code = 200
         result = check_website_tool.func("https://example.com")

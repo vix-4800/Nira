@@ -2,8 +2,8 @@ from ddgs import DDGS
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-from ..metrics import track_tool
-from ..status import status_manager
+from ...core.metrics import track_tool
+from ...core.status import status_manager
 
 
 class WebSearchInput(BaseModel):

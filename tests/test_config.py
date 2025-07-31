@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from agent.config import load_config
+from agent.core.config import load_config
 
 
 class ConfigTest(unittest.TestCase):

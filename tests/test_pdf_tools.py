@@ -4,7 +4,7 @@ from pathlib import Path
 
 from agent.tools.file_manager_tool import file_manager
 from agent.tools.pdf_manager_tool import pdf_manager
-from agent.tools.summarise_text_tool import summarise_text_tool
+from agent.tools.researcher.summarise_text_tool import summarise_text_tool
 
 
 class PDFToolsTest(unittest.TestCase):

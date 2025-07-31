@@ -2,10 +2,10 @@ import unittest
 
 from langchain_community.llms import FakeListLLM
 
-from agent.coder_agent import CoderAgent
-from agent.nira_agent import NiraAgent
-from agent.researcher_agent import ResearcherAgent
-from agent.sysops_agent import SysOpsAgent
+from agent.agents.coder_agent import CoderAgent
+from agent.agents.nira_agent import NiraAgent
+from agent.agents.researcher_agent import ResearcherAgent
+from agent.agents.sysops_agent import SysOpsAgent
 
 
 class RoutingAgentTest(unittest.TestCase):

@@ -1,8 +1,8 @@
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
-from ..metrics import track_tool
-from ..whisper_utils import transcribe_file
+from ..core.metrics import track_tool
+from ..core.whisper_utils import transcribe_file
 
 
 class TranscribeAudioInput(BaseModel):

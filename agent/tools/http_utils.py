@@ -2,7 +2,7 @@ from typing import Any
 
 import requests
 
-from ..status import status_manager
+from ..core.status import status_manager
 
 
 def request_json(

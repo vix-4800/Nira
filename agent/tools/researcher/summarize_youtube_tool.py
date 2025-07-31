@@ -5,9 +5,9 @@ from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 from youtube_transcript_api import YouTubeTranscriptApi
 
-from ..constants import MAX_TEXT_CHARS
-from ..metrics import track_tool
-from ..status import status_manager
+from ...core.constants import MAX_TEXT_CHARS
+from ...core.metrics import track_tool
+from ...core.status import status_manager
 from .summarise_text_tool import summarise_text_tool
 
 
