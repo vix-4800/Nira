@@ -8,7 +8,7 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from ...core.constants import MAX_TEXT_CHARS
 from ...core.metrics import track_tool
 from ...core.status import status_manager
-from .summarise_text_tool import summarise_text_tool
+from .summarize_text_tool import summarize_text_tool
 
 
 def extract_video_id(url_or_id: str) -> str:
@@ -60,4 +60,4 @@ def summarize_youtube_tool(video: str, sentences: int = 3) -> str:
         text = fetch_captions(video_id)
     if text.startswith("Failed to fetch"):
         return text
-    return summarise_text_tool.func(text=text, sentences=sentences)
+    return summarize_text_tool.func(text=text, sentences=sentences)

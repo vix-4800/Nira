@@ -6,14 +6,14 @@ from pydantic import BaseModel, Field
 from ...core.metrics import track_tool
 
 
-class SummariseTextInput(BaseModel):
-    text: str = Field(..., description="Text to summarise")
+class SummarizeTextInput(BaseModel):
+    text: str = Field(..., description="Text to summarize")
     sentences: int = Field(default=3, description="Number of sentences")
 
 
-@tool("SummariseText", args_schema=SummariseTextInput)
+@tool("SummarizeText", args_schema=SummarizeTextInput)
 @track_tool
-def summarise_text_tool(text: str, sentences: int = 3) -> str:
+def summarize_text_tool(text: str, sentences: int = 3) -> str:
     """Return a short summary of the provided text."""
     parts = re.split(r"(?<=[.!?])\s+", text)
     return " ".join(parts[:sentences]).strip()

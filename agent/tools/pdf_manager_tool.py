@@ -7,7 +7,7 @@ from PyPDF2 import PdfReader
 from ..core.constants import MAX_PDF_CHARS
 from ..core.metrics import track_tool
 from ..core.status import status_manager
-from .researcher.summarise_text_tool import summarise_text_tool
+from .researcher.summarize_text_tool import summarize_text_tool
 
 
 class PDFManagerInput(BaseModel):
@@ -41,6 +41,6 @@ def pdf_manager(
         case "extract_text":
             return joined
         case "summarize":
-            return summarise_text_tool.func(text=joined, sentences=sentences)
+            return summarize_text_tool.func(text=joined, sentences=sentences)
         case _:
             return f"Error: unknown action '{action}'"

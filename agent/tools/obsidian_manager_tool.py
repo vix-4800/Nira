@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 from ..core.config import load_config
 from ..core.metrics import track_tool
 from ..core.status import status_manager
-from .researcher.summarise_text_tool import summarise_text_tool
+from .researcher.summarize_text_tool import summarize_text_tool
 
 
 def _vault_path() -> Path:
@@ -52,6 +52,6 @@ def obsidian_manager(
                     text = path.read_text(encoding="utf-8")
             except Exception as e:
                 return f"Failed to read note: {e}"
-            return summarise_text_tool.func(text=text, sentences=sentences)
+            return summarize_text_tool.func(text=text, sentences=sentences)
         case _:
             return f"Error: unknown action '{action}'"
