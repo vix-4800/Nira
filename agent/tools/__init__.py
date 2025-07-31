@@ -5,6 +5,7 @@ from .file_manager_tool import file_manager
 from .get_domain_info_tool import get_domain_info_tool
 from .obsidian_manager_tool import obsidian_manager
 from .pdf_manager_tool import pdf_manager
+from .proxmox_manager_tool import proxmox_manager
 from .researcher.summarise_text_tool import summarise_text_tool
 from .researcher.summarize_youtube_tool import summarize_youtube_tool
 from .researcher.web_search_tool import web_search_tool
@@ -28,6 +29,7 @@ tools = [
     telegram_manager,
     check_website_tool,
     get_domain_info_tool,
+    proxmox_manager,
     scrape_url_tool,
     summarise_text_tool,
     summarize_youtube_tool,
