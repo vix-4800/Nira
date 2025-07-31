@@ -1,6 +1,6 @@
+import json
 import sys
 import unittest
-import json
 from pathlib import Path
 
 from langchain_community.llms import FakeListLLM
