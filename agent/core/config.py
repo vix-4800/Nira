@@ -19,6 +19,10 @@ class NiraConfig:
     todoist_token: str | None = None
     obsidian_vault: str | None = None
     dns_server: str | None = None
+    proxmox_host: str | None = None
+    proxmox_token_id: str | None = None
+    proxmox_token_secret: str | None = None
+    proxmox_verify_ssl: bool = True
 
 
 def load_config() -> NiraConfig:
@@ -34,6 +38,11 @@ def load_config() -> NiraConfig:
         todoist_token=os.getenv("TODOIST_TOKEN"),
         obsidian_vault=os.getenv("OBSIDIAN_VAULT"),
         dns_server=os.getenv("DNS_SERVER"),
+        proxmox_host=os.getenv("PROXMOX_HOST"),
+        proxmox_token_id=os.getenv("PROXMOX_TOKEN_ID"),
+        proxmox_token_secret=os.getenv("PROXMOX_TOKEN_SECRET"),
+        proxmox_verify_ssl=os.getenv("PROXMOX_VERIFY_SSL", "true").lower()
+        in _TRUE_VALUES,
     )
 
 
