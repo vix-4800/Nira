@@ -1,4 +1,5 @@
 import json
+from functools import lru_cache
 from pathlib import Path
 
 
@@ -6,6 +7,7 @@ class ConfigError(Exception):
     """Raised when there is an issue loading the prompt configuration."""
 
 
+@lru_cache(maxsize=1)
 def load_prompt(path: str | Path = Path("prompt.json")) -> dict:
     """Load the prompt configuration from ``path``.
 
@@ -33,3 +35,6 @@ def load_prompt(path: str | Path = Path("prompt.json")) -> dict:
         raise ConfigError(f"{path} not found") from exc
     except json.JSONDecodeError as exc:
         raise ConfigError(f"{path} is not valid JSON") from exc
+
+
+__all__ = ["ConfigError", "load_prompt"]
