@@ -27,7 +27,7 @@ class TestChatLogging:
     def test_chat_logging_records_interactions(self):
         responses = ["hi there", "i am fine"]
         llm = FakeListLLM(responses=responses)
-        log_path = Path("chat.log")
+        log_path = Path("chat.json")
         if log_path.exists():
             log_path.unlink()
         agent = BaseAgent(llm=llm, log_file=str(log_path))
