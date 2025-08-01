@@ -3,10 +3,10 @@ from langchain_ollama import ChatOllama
 from ..core.config import NiraConfig, load_config
 from ..core.logger_utils import setup_logger
 from ..core.prompt import load_prompt
+from .base_agent import BaseAgent
 from .coder_agent import CoderAgent
 from .researcher_agent import ResearcherAgent
 from .sysops_agent import SysOpsAgent
-from .base_agent import BaseAgent
 
 
 class RouterAgent:

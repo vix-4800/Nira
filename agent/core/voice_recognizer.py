@@ -1,16 +1,16 @@
 import tempfile
+from typing import Any
 
 import numpy as np
 
 from .status import status_manager
 from .whisper_utils import transcribe_file
 
-from typing import Any
-
 sd: Any | None = None
 
 try:  # Optional dependency
     import sounddevice as _sd  # type: ignore[import-not-found]
+
     sd = _sd
 except Exception:  # pragma: no cover - executed only when missing
     pass

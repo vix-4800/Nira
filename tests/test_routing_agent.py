@@ -1,5 +1,6 @@
-from langchain_community.llms import FakeListLLM
 from unittest.mock import patch
+
+from langchain_community.llms import FakeListLLM
 
 from agent.agents.coder_agent import CoderAgent
 from agent.agents.researcher_agent import ResearcherAgent

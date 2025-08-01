@@ -1,5 +1,6 @@
-import dns.resolver
 from typing import Any
+
+import dns.resolver
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 

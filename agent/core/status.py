@@ -3,9 +3,8 @@ from __future__ import annotations
 from contextlib import contextmanager
 from typing import Iterator, List
 
-from rich.status import Status
-
 from rich.console import Console
+from rich.status import Status
 
 
 class StatusManager:
