@@ -1,4 +1,5 @@
 import dns.resolver
+from typing import Any
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
@@ -26,8 +27,10 @@ def get_domain_info_tool(domain: str) -> str:
     except Exception:
         info.append("A: ?")
     try:
-        mx_records = resolver.resolve(domain, "MX")
-        info.append("MX: " + ", ".join(r.exchange.to_text() for r in mx_records))
+        mx_records: Any = resolver.resolve(domain, "MX")
+        info.append(
+            "MX: " + ", ".join(r.exchange.to_text() for r in mx_records)  # type: ignore[attr-defined]
+        )
     except Exception:
         pass
     return "; ".join(info)

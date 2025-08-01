@@ -5,10 +5,15 @@ import numpy as np
 from .status import status_manager
 from .whisper_utils import transcribe_file
 
+from typing import Any
+
+sd: Any | None = None
+
 try:  # Optional dependency
-    import sounddevice as sd
+    import sounddevice as _sd  # type: ignore[import-not-found]
+    sd = _sd
 except Exception:  # pragma: no cover - executed only when missing
-    sd = None
+    pass
 
 
 def record_audio(duration: int = 5, samplerate: int = 16000):
@@ -35,7 +40,7 @@ def transcribe_whisper(duration: int = 5, model_name: str = "base") -> str:
     audio, samplerate = record_audio(duration, samplerate=16000)
     with tempfile.NamedTemporaryFile(suffix=".wav") as f:
         try:  # Optional dependency
-            import soundfile as sf
+            import soundfile as sf  # type: ignore[import-not-found]
         except Exception as exc:
             raise RuntimeError(
                 "soundfile is not installed. Install voice requirements to enable recognition."

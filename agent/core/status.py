@@ -1,7 +1,9 @@
 from __future__ import annotations
 
 from contextlib import contextmanager
-from typing import List
+from typing import Iterator, List
+
+from rich.status import Status
 
 from rich.console import Console
 
@@ -11,7 +13,7 @@ class StatusManager:
 
     def __init__(self, console: Console | None = None) -> None:
         self.console = console or Console()
-        self._status = None
+        self._status: Status | None = None
         self._stack: List[str] = []
 
     def push(self, message: str) -> None:
@@ -41,7 +43,7 @@ class StatusManager:
             self._status = None
 
     @contextmanager
-    def status(self, message: str):
+    def status(self, message: str) -> Iterator[None]:
         """Context manager to show a temporary status message."""
         self.push(message)
         try:

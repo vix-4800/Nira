@@ -52,6 +52,6 @@ def obsidian_manager(
                     text = path.read_text(encoding="utf-8")
             except Exception as e:
                 return f"Failed to read note: {e}"
-            return summarize_text_tool.func(text=text, sentences=sentences)
+            return summarize_text_tool.func(text=text, sentences=sentences)  # type: ignore[attr-defined]
         case _:
             return f"Error: unknown action '{action}'"

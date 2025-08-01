@@ -60,4 +60,4 @@ def summarize_youtube_tool(video: str, sentences: int = 3) -> str:
         text = fetch_captions(video_id)
     if text.startswith("Failed to fetch"):
         return text
-    return summarize_text_tool.func(text=text, sentences=sentences)
+    return summarize_text_tool.func(text=text, sentences=sentences)  # type: ignore[attr-defined]

@@ -41,6 +41,6 @@ def pdf_manager(
         case "extract_text":
             return joined
         case "summarize":
-            return summarize_text_tool.func(text=joined, sentences=sentences)
+            return summarize_text_tool.func(text=joined, sentences=sentences)  # type: ignore[attr-defined]
         case _:
             return f"Error: unknown action '{action}'"
