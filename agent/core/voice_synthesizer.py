@@ -1,22 +1,26 @@
 from pathlib import Path
+from typing import Any
 
-import torch
+import torch  # type: ignore[import-not-found]
 
 # Optional dependencies for voice output
 try:
-    import sounddevice
+    import sounddevice as _sd  # type: ignore[import-not-found]
 except Exception:  # pragma: no cover - executed only when missing
-    sounddevice = None
+    _sd = None
+sounddevice: Any | None = _sd
 
 try:
-    import soundfile
+    import soundfile as _sf  # type: ignore[import-not-found]
 except Exception:  # pragma: no cover - executed only when missing
-    soundfile = None
+    _sf = None
+soundfile: Any | None = _sf
 
 try:
-    from TTS.api import TTS
+    from TTS.api import TTS as _TTS  # type: ignore[import-not-found]
 except Exception:  # pragma: no cover - executed only when missing
-    TTS = None
+    _TTS = None
+TTS: Any | None = _TTS
 
 
 class VoiceSynthesizer:
@@ -33,7 +37,7 @@ class VoiceSynthesizer:
         self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.tts = TTS(model)
 
-    def speak(self, text: str):
+    def speak(self, text: str) -> None:
         if sounddevice is None or soundfile is None:
             raise RuntimeError(
                 "sounddevice and soundfile are required for voice playback."

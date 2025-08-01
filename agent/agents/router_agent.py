@@ -6,6 +6,7 @@ from ..core.prompt import load_prompt
 from .coder_agent import CoderAgent
 from .researcher_agent import ResearcherAgent
 from .sysops_agent import SysOpsAgent
+from .base_agent import BaseAgent
 
 
 class RouterAgent:
@@ -43,8 +44,8 @@ class RouterAgent:
             self.__class__.__name__, log_file, max_bytes, backup_count
         )
 
-        config = load_prompt()
-        self.classify_template = config.get(
+        prompt_config = load_prompt()
+        self.classify_template = prompt_config.get(
             "classify",
             "Classify the user request into one of: coder, researcher, sysops. Respond with only the label.\nRequest: {task}",
         )
@@ -56,12 +57,13 @@ class RouterAgent:
             label = raw.content if hasattr(raw, "content") else str(raw)
         except AttributeError:
             label = self.classifier_llm.predict(prompt)
-        return label.strip().lower()
+        label_str = str(label)
+        return label_str.strip().lower()
 
     def ask(self, question: str) -> str:
         label = self._classify(question)
         if label.startswith("coder"):
-            agent = self.coder
+            agent: BaseAgent = self.coder
         elif label.startswith("sysops"):
             agent = self.sysops
         else:

@@ -43,6 +43,7 @@ class BaseAgent:
         )
 
         self.max_iterations = max_iterations
+        self.agent_executor: AgentExecutor | None
 
         self.logger = setup_logger(
             self.__class__.__name__, log_file, max_bytes, backup_count

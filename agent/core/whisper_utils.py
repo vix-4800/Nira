@@ -1,10 +1,11 @@
 import importlib
+from typing import Any, Dict
 
-whisper = None
-_models = {}
+whisper: Any | None = None
+_models: Dict[str, Any] = {}
 
 
-def _load_whisper():
+def _load_whisper() -> Any:
     global whisper
     if whisper is None:
         try:
@@ -14,11 +15,11 @@ def _load_whisper():
     return whisper
 
 
-def get_model(model_name: str = "base"):
-    _load_whisper()
+def get_model(model_name: str = "base") -> Any:
+    module = _load_whisper()
     model = _models.get(model_name)
     if model is None:
-        model = whisper.load_model(model_name)
+        model = module.load_model(model_name)
         _models[model_name] = model
     return model
 

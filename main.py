@@ -9,17 +9,18 @@ from agent.core.metrics import init_metrics
 from agent.core.prompt import ConfigError
 from agent.core.status import console, status_manager
 
+from typing import Optional, Callable
+
 try:
     from agent.core.voice_recognizer import transcribe_whisper
     from agent.core.voice_synthesizer import VoiceSynthesizer
-
-    voice_modules_available = True
 except Exception:
-    transcribe_whisper = None
-    VoiceSynthesizer = None
-    voice_modules_available = False
+    transcribe_whisper = None  # type: ignore
+    VoiceSynthesizer = None  # type: ignore
 
-voice_synthesizer = None
+voice_modules_available = transcribe_whisper is not None and VoiceSynthesizer is not None
+
+voice_synthesizer: Optional["VoiceSynthesizer"] = None
 USERNAME = getuser().capitalize()
 
 
@@ -31,6 +32,8 @@ def typewriter(text: str, delay=0.015, prefix="") -> None:
 
 def get_user_input(use_voice: bool) -> str:
     if use_voice:
+        if transcribe_whisper is None:
+            return ""
         user_input = transcribe_whisper()
         if not user_input:
             console.print("[yellow]Не удалось распознать речь. Попробуй ещё раз![/]")
@@ -67,7 +70,8 @@ def main() -> None:
 
         if speak:
             global voice_synthesizer
-            voice_synthesizer = VoiceSynthesizer()
+            if VoiceSynthesizer is not None:
+                voice_synthesizer = VoiceSynthesizer()
 
     console.print(
         "[bold magenta]👾 Nira:[/] Привет! Я готова отвечать на вопросы. Для выхода напиши /exit"
@@ -87,7 +91,7 @@ def main() -> None:
                 response = planner.run(user_input)
 
             typewriter(response, prefix="👾 Nira: ")
-            if speak:
+            if speak and voice_synthesizer is not None:
                 voice_synthesizer.speak(response)
     except EOFError:
         console.print("\n[bold magenta]👾 Nira:[/] До встречи!")

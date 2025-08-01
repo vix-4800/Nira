@@ -1,18 +1,21 @@
 import gradio as gr
 
 from agent.agents.planner_executor import PlannerExecutor
+from typing import Optional, Callable
 
 try:
     from agent.core.voice_recognizer import transcribe_whisper
     from agent.core.voice_synthesizer import VoiceSynthesizer
 
-    voice_modules_available = True
+    pass
 except Exception:  # pragma: no cover - executed only when missing
-    transcribe_whisper = None
-    VoiceSynthesizer = None
-    voice_modules_available = False
+    transcribe_whisper = None  # type: ignore
+    VoiceSynthesizer = None  # type: ignore
+    pass
 
-voice_synthesizer = None
+voice_modules_available = transcribe_whisper is not None and VoiceSynthesizer is not None
+
+voice_synthesizer: Optional["VoiceSynthesizer"] = None
 
 planner = PlannerExecutor()
 
@@ -25,9 +28,10 @@ def chat(user_message: str, history: list[dict[str, str]], speak: bool):
     ]
     if speak and voice_modules_available:
         global voice_synthesizer
-        if voice_synthesizer is None:
+        if voice_synthesizer is None and VoiceSynthesizer is not None:
             voice_synthesizer = VoiceSynthesizer()
-        voice_synthesizer.speak(response)
+        if voice_synthesizer is not None:
+            voice_synthesizer.speak(response)
     return "", history
 
 

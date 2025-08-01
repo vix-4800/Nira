@@ -25,10 +25,10 @@ class PlannerExecutor:
             model=model, base_url=server, reasoning=False, temperature=0.3
         )
         self.config = cfg
-        self.graph = self._build_graph()
+        self.graph: Any = self._build_graph()
 
-    def _build_graph(self) -> StateGraph:
-        sg = StateGraph(dict)
+    def _build_graph(self) -> Any:
+        sg: Any = StateGraph(dict)
         sg.add_node("plan", self._plan_node)
         sg.add_node("execute", self._execute_node)
         sg.set_entry_point("plan")
@@ -61,14 +61,15 @@ class PlannerExecutor:
         except AttributeError:
             response = self.planner_llm.predict(prompt)
 
+        response_str = str(response)
         try:
-            steps = json.loads(response)
+            steps = json.loads(response_str)
             if not steps:
                 steps = ["(no-plan)"]
             if not isinstance(steps, list):
                 steps = [str(steps)]
         except Exception:
-            steps = [response.strip()]
+            steps = [response_str.strip()]
 
         return [str(s) for s in steps]
 
@@ -104,5 +105,5 @@ class PlannerExecutor:
 
     def run(self, goal: str) -> str:
         state = {"goal": goal, "steps": [], "index": 0, "observation": ""}
-        result = self.graph.invoke(state)
+        result = self.graph.invoke(state)  # type: ignore[attr-defined]
         return result.get("observation", "")
