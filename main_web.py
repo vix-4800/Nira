@@ -1,7 +1,8 @@
+from typing import Optional
+
 import gradio as gr
 
 from agent.agents.planner_executor import PlannerExecutor
-from typing import Optional, Callable
 
 try:
     from agent.core.voice_recognizer import transcribe_whisper
@@ -13,7 +14,9 @@ except Exception:  # pragma: no cover - executed only when missing
     VoiceSynthesizer = None  # type: ignore
     pass
 
-voice_modules_available = transcribe_whisper is not None and VoiceSynthesizer is not None
+voice_modules_available = (
+    transcribe_whisper is not None and VoiceSynthesizer is not None
+)
 
 voice_synthesizer: Optional["VoiceSynthesizer"] = None
 

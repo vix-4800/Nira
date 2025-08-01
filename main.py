@@ -1,5 +1,6 @@
 import sys
 from getpass import getuser
+from typing import Optional
 
 from rich.markdown import Markdown
 
@@ -9,8 +10,6 @@ from agent.core.metrics import init_metrics
 from agent.core.prompt import ConfigError
 from agent.core.status import console, status_manager
 
-from typing import Optional, Callable
-
 try:
     from agent.core.voice_recognizer import transcribe_whisper
     from agent.core.voice_synthesizer import VoiceSynthesizer
@@ -18,7 +17,9 @@ except Exception:
     transcribe_whisper = None  # type: ignore
     VoiceSynthesizer = None  # type: ignore
 
-voice_modules_available = transcribe_whisper is not None and VoiceSynthesizer is not None
+voice_modules_available = (
+    transcribe_whisper is not None and VoiceSynthesizer is not None
+)
 
 voice_synthesizer: Optional["VoiceSynthesizer"] = None
 USERNAME = getuser().capitalize()
