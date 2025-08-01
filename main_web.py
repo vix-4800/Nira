@@ -17,9 +17,12 @@ voice_synthesizer = None
 planner = PlannerExecutor()
 
 
-def chat(user_message: str, history: list[tuple[str, str]], speak: bool):
+def chat(user_message: str, history: list[dict[str, str]], speak: bool):
     response = planner.run(user_message)
-    history = history + [(user_message, response)]
+    history = history + [
+        {"role": "user", "content": user_message},
+        {"role": "assistant", "content": response},
+    ]
     if speak and voice_modules_available:
         global voice_synthesizer
         if voice_synthesizer is None:
@@ -36,7 +39,7 @@ def voice_to_text() -> str:
 
 with gr.Blocks() as demo:
     gr.Markdown("# Nira Chat")
-    chatbot = gr.Chatbot()
+    chatbot = gr.Chatbot(type="messages")
     with gr.Row():
         msg = gr.Textbox(label="Message", scale=4)
         submit = gr.Button("Submit", scale=1)
