@@ -53,9 +53,14 @@ def select_mode() -> Callable[[], None]:
 
 
 def main() -> None:
-    display_logo()
-    launcher = select_mode()
-    launcher()
+    try:
+        display_logo()
+        launcher = select_mode()
+        launcher()
+    except EOFError:
+        console.print("")
+    except KeyboardInterrupt:
+        console.print("")
 
 
 if __name__ == "__main__":
