@@ -21,7 +21,7 @@ class RouterAgent:
         base_url: str | None = None,
         config: NiraConfig | None = None,
         *,
-        log_file: str = "chat.log",
+        log_file: str = "chat.json",
         max_bytes: int = 1 * 1024 * 1024,
         backup_count: int = 5,
     ) -> None:

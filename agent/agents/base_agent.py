@@ -27,7 +27,7 @@ class BaseAgent:
         model_name=None,
         base_url=None,
         llm=None,
-        log_file="chat.log",
+        log_file="chat.json",
         *,
         system_prompt: str | None = None,
         tool_list: list | None = None,

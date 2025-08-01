@@ -9,4 +9,4 @@ __pycache__
 logs/
 
 llm_data
-chat.log
+chat.json
