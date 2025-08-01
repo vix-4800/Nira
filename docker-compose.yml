@@ -20,30 +20,5 @@ services:
               capabilities:
                 - gpu
 
-  open-webui:
-    image: ghcr.io/open-webui/open-webui:cuda
-    container_name: open-webui
-    restart: unless-stopped
-    volumes:
-      - open-webui:/app/backend/data
-    ports:
-      - 3000:8080
-    networks:
-      - local-llm-network
-    depends_on:
-      - ollama
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities:
-                - gpu
-
 networks:
   local-llm-network:
-
-volumes:
-  open-webui:
-    name: open-webui
