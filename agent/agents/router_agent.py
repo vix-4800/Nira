@@ -43,13 +43,14 @@ class RouterAgent:
             self.__class__.__name__, log_file, max_bytes, backup_count
         )
 
-    def _classify(self, task: str) -> str:
         config = load_prompt()
-        template = config.get(
+        self.classify_template = config.get(
             "classify",
             "Classify the user request into one of: coder, researcher, sysops. Respond with only the label.\nRequest: {task}",
         )
-        prompt = template.replace("{task}", task)
+
+    def _classify(self, task: str) -> str:
+        prompt = self.classify_template.replace("{task}", task)
         try:
             raw = self.classifier_llm.invoke(prompt)
             label = raw.content if hasattr(raw, "content") else str(raw)
