@@ -8,8 +8,27 @@ from typing import Callable
 from rich.console import Console
 from rich.prompt import Prompt
 from rich.table import Table
+from rich.text import Text
 
 console = Console()
+
+
+LOGO = Text(
+    r"""
+ _    _    _____    ______
+| \\ | || |_   _|| |   __ \\      /\\
+|  \\| ||   | ||   | ||__) ||    /  \\
+| ..`` ||   | ||   |  _   //    / /\ \\
+| ||\  ||  _| ||_  | || \ \\   / ____ \\
+|_|| \_|| |_____|| |_||  \_\\ /_/    \_\\
+""",
+    style="bold magenta",
+)
+
+
+def display_logo() -> None:
+    """Print the NIRA ASCII art logo."""
+    console.print(LOGO)
 
 
 OPTIONS: dict[str, tuple[str, Callable[[], None]]] = {
@@ -35,6 +54,7 @@ def select_mode() -> Callable[[], None]:
 
 def main() -> None:
     try:
+        display_logo()
         launcher = select_mode()
         launcher()
     except EOFError:
