@@ -57,7 +57,11 @@ Run the application with:
 python main.py
 ```
 
-Use `/exit`, `Ctrl+C` or `Ctrl+D` to quit the application gracefully.
+The launcher will ask whether to start the console or web interface. The
+console can also be started directly with `python console.py` and the web UI
+with `python web.py`.
+
+Use `/exit`, `Ctrl+C` or `Ctrl+D` to quit the console application gracefully.
 
 The default server is `http://localhost:11434` and the default model is `qwen3:4b` if the variables are not set.
 
