@@ -15,12 +15,12 @@ console = Console()
 
 LOGO = Text(
     r"""
- _   _ _____ _____
-| \ | |_   _|  __ \     /\\
-|  \| | | | | |__) |   /  \\
-| . ` | | | |  _  /   / /\\ \\
-| |\  |_| |_| | \ \  / ____ \\
-|_| \_|_____|_|  \_\/_/    \_\\
+ _    _    _____    ______
+| \\ | || |_   _|| |   __ \\      /\\
+|  \\| ||   | ||   | ||__) ||    /  \\
+| ..`` ||   | ||   |  _   //    / /\ \\
+| ||\  ||  _| ||_  | || \ \\   / ____ \\
+|_|| \_|| |_____|| |_||  \_\\ /_/    \_\\
 """,
     style="bold magenta",
 )
@@ -28,7 +28,7 @@ LOGO = Text(
 
 def display_logo() -> None:
     """Print the NIRA ASCII art logo."""
-    console.print(LOGO, justify="center")
+    console.print(LOGO)
 
 
 OPTIONS: dict[str, tuple[str, Callable[[], None]]] = {
