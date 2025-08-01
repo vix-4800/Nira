@@ -27,7 +27,9 @@ def select_mode() -> Callable[[], None]:
     console.print(table)
 
     while True:
-        choice = Prompt.ask("Choose an option", choices=list(OPTIONS.keys()), default="1")
+        choice = Prompt.ask(
+            "Choose an option", choices=list(OPTIONS.keys()), default="1"
+        )
         return OPTIONS[choice][1]
 
 
