@@ -1,7 +1,6 @@
 from langchain_ollama import ChatOllama
 
 from ..core.config import NiraConfig, load_config
-from ..core.logger_utils import setup_logger
 from ..core.prompt import load_prompt
 from .base_agent import BaseAgent
 from .coder_agent import CoderAgent
@@ -40,9 +39,7 @@ class RouterAgent:
         )
         self.sysops = sysops or SysOpsAgent(model_name=model, base_url=server)
 
-        self.logger = setup_logger(
-            self.__class__.__name__, log_file, max_bytes, backup_count
-        )
+        self.log_file = log_file
 
         prompt_config = load_prompt()
         self.classify_template = prompt_config.get(
@@ -69,5 +66,4 @@ class RouterAgent:
         else:
             agent = self.researcher
         response = agent.ask(question)
-        self.logger.info(response)
         return response

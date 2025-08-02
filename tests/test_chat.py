@@ -33,10 +33,10 @@ class TestChatLogging:
         agent = BaseAgent(llm=llm, log_file=str(log_path))
         agent.ask("Hello?")
         agent.ask("How are you?")
-        lines = log_path.read_text(encoding="utf-8").splitlines()
-        assert len(lines) == 2
-        first = json.loads(lines[0])
-        second = json.loads(lines[1])
+        data = json.loads(log_path.read_text(encoding="utf-8"))
+        assert isinstance(data, list)
+        assert len(data) == 2
+        first, second = data
         assert first["q"] == "Hello?"
         assert first["a"] == "hi there"
         assert second["q"] == "How are you?"

@@ -1,10 +1,10 @@
 import json
+import os
 from datetime import datetime
 
 from langchain.agents import AgentExecutor, create_tool_calling_agent
 from langchain_ollama import ChatOllama
 
-from ..core.logger_utils import setup_logger
 from ..core.nira_memory import NiraMemory
 from ..core.prompt import ConfigError, load_prompt
 from ..tools import tools as default_tools
@@ -45,9 +45,7 @@ class BaseAgent:
         self.max_iterations = max_iterations
         self.agent_executor: AgentExecutor | None
 
-        self.logger = setup_logger(
-            self.__class__.__name__, log_file, max_bytes, backup_count
-        )
+        self.log_file = log_file
 
         self.memory = NiraMemory(memory_key="chat_history", return_messages=True)
 
@@ -88,7 +86,24 @@ class BaseAgent:
         """Log a chat interaction to the log file."""
         timestamp = datetime.now().isoformat()
         log_entry = {"t": timestamp, "q": question, "a": response}
-        self.logger.info(json.dumps(log_entry, ensure_ascii=False))
+        try:
+            if os.path.exists(self.log_file):
+                with open(self.log_file, "r+", encoding="utf-8") as fh:
+                    try:
+                        data = json.load(fh)
+                        if not isinstance(data, list):
+                            data = []
+                    except json.JSONDecodeError:
+                        data = []
+                    data.append(log_entry)
+                    fh.seek(0)
+                    json.dump(data, fh, ensure_ascii=False)
+                    fh.truncate()
+            else:
+                with open(self.log_file, "w", encoding="utf-8") as fh:
+                    json.dump([log_entry], fh, ensure_ascii=False)
+        except Exception:
+            pass
 
     def ask(self, question: str) -> str:
         if self.agent_executor is not None:
