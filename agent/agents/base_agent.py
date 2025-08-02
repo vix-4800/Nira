@@ -28,6 +28,7 @@ class BaseAgent:
         base_url=None,
         llm=None,
         log_file="chat.json",
+        memory: NiraMemory | None = None,
         *,
         system_prompt: str | None = None,
         tool_list: list | None = None,
@@ -49,7 +50,9 @@ class BaseAgent:
             self.__class__.__name__, log_file, max_bytes, backup_count
         )
 
-        self.memory = NiraMemory(memory_key="chat_history", return_messages=True)
+        self.memory = memory or NiraMemory(
+            memory_key="chat_history", return_messages=True
+        )
 
         try:
             config = load_prompt()

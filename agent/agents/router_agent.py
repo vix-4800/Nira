@@ -2,6 +2,7 @@ from langchain_ollama import ChatOllama
 
 from ..core.config import NiraConfig, load_config
 from ..core.logger_utils import setup_logger
+from ..core.nira_memory import NiraMemory
 from ..core.prompt import load_prompt
 from .base_agent import BaseAgent
 from .coder_agent import CoderAgent
@@ -18,6 +19,7 @@ class RouterAgent:
         coder: CoderAgent | None = None,
         researcher: ResearcherAgent | None = None,
         sysops: SysOpsAgent | None = None,
+        memory: NiraMemory | None = None,
         model_name: str | None = None,
         base_url: str | None = None,
         config: NiraConfig | None = None,
@@ -34,11 +36,18 @@ class RouterAgent:
             base_url=server,
             reasoning=False,
         )
-        self.coder = coder or CoderAgent(model_name=model, base_url=server)
-        self.researcher = researcher or ResearcherAgent(
-            model_name=model, base_url=server
+        self.memory = memory or NiraMemory(
+            memory_key="chat_history", return_messages=True
         )
-        self.sysops = sysops or SysOpsAgent(model_name=model, base_url=server)
+        self.coder = coder or CoderAgent(
+            model_name=model, base_url=server, memory=self.memory
+        )
+        self.researcher = researcher or ResearcherAgent(
+            model_name=model, base_url=server, memory=self.memory
+        )
+        self.sysops = sysops or SysOpsAgent(
+            model_name=model, base_url=server, memory=self.memory
+        )
 
         self.logger = setup_logger(
             self.__class__.__name__, log_file, max_bytes, backup_count
