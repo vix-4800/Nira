@@ -22,10 +22,6 @@ class RouterAgent:
         model_name: str | None = None,
         base_url: str | None = None,
         config: NiraConfig | None = None,
-        *,
-        log_file: str = "chat.json",
-        max_bytes: int = 1 * 1024 * 1024,
-        backup_count: int = 5,
     ) -> None:
         cfg = config or load_config()
         model = model_name or cfg.model
@@ -47,8 +43,6 @@ class RouterAgent:
         self.sysops = sysops or SysOpsAgent(
             model_name=model, base_url=server, memory=self.memory
         )
-
-        self.log_file = log_file
 
         prompt_config = load_prompt()
         self.classify_template = prompt_config.get(
@@ -85,10 +79,7 @@ class RouterAgent:
             agent = self.sysops
         else:
             agent = self.researcher
-
-        response = ""
-        for token in agent.ask_stream(question):
-            response += token
-            yield token
-
-        self.logger.info(response)
+        # Streaming is disabled to avoid dependency on a logger in this router.
+        # Delegate to the selected agent's non-streaming ``ask`` method and
+        # yield the full response as a single chunk.
+        yield agent.ask(question)
