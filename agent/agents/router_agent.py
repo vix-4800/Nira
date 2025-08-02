@@ -76,3 +76,19 @@ class RouterAgent:
             agent = self.researcher
         response = agent.ask(question)
         return response
+
+    def ask_stream(self, question: str):
+        label = self._classify(question)
+        if label.startswith("coder"):
+            agent: BaseAgent = self.coder
+        elif label.startswith("sysops"):
+            agent = self.sysops
+        else:
+            agent = self.researcher
+
+        response = ""
+        for token in agent.ask_stream(question):
+            response += token
+            yield token
+
+        self.logger.info(response)

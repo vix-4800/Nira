@@ -115,3 +115,15 @@ class PlannerExecutor:
         state = {"goal": goal, "steps": [], "index": 0, "observation": ""}
         result = self.graph.invoke(state)  # type: ignore[attr-defined]
         return result.get("observation", "")
+
+    def run_stream(self, goal: str):
+        steps = self._plan(goal, "")
+        observation = ""
+        for step in steps:
+            router = RouterAgent(
+                model_name=self.config.model, base_url=self.config.server
+            )
+            for token in router.ask_stream(step):
+                observation += token
+                yield token
+        return observation
