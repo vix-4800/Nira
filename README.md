@@ -65,7 +65,7 @@ Use `/exit`, `Ctrl+C` or `Ctrl+D` to quit the console application gracefully.
 
 The default server is `http://localhost:11434` and the default model is `qwen3:4b` if the variables are not set.
 
-By default all commands, prompts and responses are logged to a JSON file named `chat.json` in the current directory.
+By default all commands, prompts and responses are logged to a JSON file named `chat.json` in the current directory. The file contains a JSON array where each entry has a timestamp `t`, the question `q` and the assistant's answer `a`.
 
 Set `AUTO_CONFIRM` to `true` in the environment to run safe commands without confirmation. Any command recognised as dangerous (like `rm -rf`, `shutdown`, or `poweroff`) will always require explicit confirmation before execution.
 
