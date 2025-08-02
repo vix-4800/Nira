@@ -73,6 +73,8 @@ Prometheus metrics are exposed on port `8000` by default, providing `tools_calle
 
 The assistant now maintains conversational context using LangChain's conversation memory. This allows you to chat naturally and refer back to previous questions in the same session.
 
+A simple SQLite-backed store provides long-term memory for key/value data such as user information or facts. The ``MemoryManager`` tool lets agents read or update this database, which defaults to ``memory.db``.
+
 ## Development
 
 Install the development dependencies:
