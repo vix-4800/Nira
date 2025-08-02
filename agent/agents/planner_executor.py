@@ -5,6 +5,7 @@ from langchain_ollama import ChatOllama
 from langgraph.graph import END, StateGraph
 
 from ..core.config import NiraConfig, load_config
+from ..core.nira_memory import NiraMemory
 from ..core.prompt import load_prompt
 from .router_agent import RouterAgent
 
@@ -17,6 +18,8 @@ class PlannerExecutor:
         planner_llm: ChatOllama | None = None,
         *,
         config: NiraConfig | None = None,
+        router: RouterAgent | None = None,
+        memory: NiraMemory | None = None,
     ) -> None:
         cfg = config or load_config()
         model = cfg.model
@@ -25,6 +28,12 @@ class PlannerExecutor:
             model=model, base_url=server, reasoning=False, temperature=0.3
         )
         self.config = cfg
+        self.memory = memory or NiraMemory(
+            memory_key="chat_history", return_messages=True
+        )
+        self.router = router or RouterAgent(
+            model_name=model, base_url=server, memory=self.memory
+        )
         self.graph: Any = self._build_graph()
 
     def _build_graph(self) -> Any:
@@ -86,8 +95,7 @@ class PlannerExecutor:
 
     def _execute_node(self, state: Dict[str, Any]) -> Dict[str, Any]:
         step = state["steps"][state["index"]]
-        router = RouterAgent(model_name=self.config.model, base_url=self.config.server)
-        result = router.ask(step)
+        result = self.router.ask(step)
         return {
             "goal": state["goal"],
             "steps": state["steps"],
