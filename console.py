@@ -31,20 +31,6 @@ def typewriter(text: str, delay=0.015, prefix="") -> None:
     console.print(Markdown(text))
 
 
-def stream_output(tokens, prefix="") -> str:
-    collected = ""
-    started = False
-    for token in tokens:
-        if not started and prefix:
-            status_manager.pop()
-            console.print(f"[bold magenta]{prefix}[/]", end="")
-            started = True
-        console.print(token, end="", markup=False)
-        collected += token
-    if started:
-        console.print()
-    return collected
-
 
 def get_user_input(use_voice: bool) -> str:
     if use_voice:
@@ -104,8 +90,9 @@ def main() -> None:
                 break
 
             with status_manager.status("Думаю..."):
-                tokens = planner.run_stream(user_input)
-                response = stream_output(tokens, prefix="👾 Nira: ")
+                response = planner.run(user_input)
+
+            typewriter(response, prefix="👾 Nira: ")
 
             if speak and voice_synthesizer is not None:
                 voice_synthesizer.speak(response)

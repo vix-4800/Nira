@@ -125,31 +125,3 @@ class BaseAgent:
 
         self.log_chat(question, response)
         return response
-
-    def ask_stream(self, question: str):
-        """Yield the response token by token."""
-        response = ""
-        if self.agent_executor is not None:
-            for chunk in self.agent_executor.stream({"input": question}):
-                messages = chunk.get("messages", []) if isinstance(chunk, dict) else []
-                for msg in messages:
-                    content = getattr(msg, "content", "")
-                    if content:
-                        response += content
-                        yield content
-        else:
-            try:
-                for chunk in self.llm.stream(question):
-                    content = chunk.content if hasattr(chunk, "content") else str(chunk)
-                    response += content
-                    yield content
-            except AttributeError:
-                resp = self.llm.predict(question)
-                response += resp
-                yield resp
-
-        self.memory.save_context(
-            {self.memory.input_key: question},
-            {self.memory.output_key: response},
-        )
-        self.log_chat(question, response)

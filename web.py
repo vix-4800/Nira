@@ -28,12 +28,8 @@ def chat(user_message: str, history: list[dict[str, str]], speak: bool):
         {"role": "user", "content": user_message},
         {"role": "assistant", "content": ""},
     ]
-    response = ""
-    yield "", history
-    for token in planner.run_stream(user_message):
-        response += token
-        history[-1]["content"] = response
-        yield "", history
+    response = planner.run(user_message)
+    history[-1]["content"] = response
 
     if speak and voice_modules_available:
         global voice_synthesizer
@@ -41,6 +37,8 @@ def chat(user_message: str, history: list[dict[str, str]], speak: bool):
             voice_synthesizer = VoiceSynthesizer()
         if voice_synthesizer is not None:
             voice_synthesizer.speak(response)
+
+    return "", history
 
 
 def voice_to_text() -> str:
