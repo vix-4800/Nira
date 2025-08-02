@@ -24,18 +24,23 @@ planner = PlannerExecutor()
 
 
 def chat(user_message: str, history: list[dict[str, str]], speak: bool):
-    response = planner.run(user_message)
     history = history + [
         {"role": "user", "content": user_message},
-        {"role": "assistant", "content": response},
+        {"role": "assistant", "content": ""},
     ]
+    response = ""
+    yield "", history
+    for token in planner.run_stream(user_message):
+        response += token
+        history[-1]["content"] = response
+        yield "", history
+
     if speak and voice_modules_available:
         global voice_synthesizer
         if voice_synthesizer is None and VoiceSynthesizer is not None:
             voice_synthesizer = VoiceSynthesizer()
         if voice_synthesizer is not None:
             voice_synthesizer.speak(response)
-    return "", history
 
 
 def voice_to_text() -> str:
