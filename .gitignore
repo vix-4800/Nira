@@ -10,3 +10,6 @@ logs/
 
 llm_data
 chat.json
+
+.devdbrc
+memory.db
