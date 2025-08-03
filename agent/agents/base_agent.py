@@ -47,6 +47,8 @@ class BaseAgent:
         self.agent_executor: AgentExecutor | None
 
         self.log_file = log_file
+        self.max_bytes = max_bytes
+        self.backup_count = backup_count
 
         self.memory = memory or NiraMemory(
             memory_key="chat_history", return_messages=True
@@ -85,26 +87,47 @@ class BaseAgent:
         else:
             self.agent_executor = None
 
+    def _rotate_logs(self) -> None:
+        """Rotate chat logs according to backup_count."""
+        try:
+            if self.backup_count > 0:
+                for i in range(self.backup_count - 1, 0, -1):
+                    src = f"{self.log_file}.{i}"
+                    dst = f"{self.log_file}.{i + 1}"
+                    if os.path.exists(src):
+                        os.replace(src, dst)
+                if os.path.exists(self.log_file):
+                    os.replace(self.log_file, f"{self.log_file}.1")
+            else:
+                if os.path.exists(self.log_file):
+                    os.remove(self.log_file)
+        except Exception:
+            pass
+
     def log_chat(self, question: str, response: str) -> None:
         """Log a chat interaction to the log file."""
         timestamp = datetime.now().isoformat()
         log_entry = {"t": timestamp, "q": question, "a": response}
         try:
+            data: list = []
             if os.path.exists(self.log_file):
-                with open(self.log_file, "r+", encoding="utf-8") as fh:
-                    try:
+                try:
+                    with open(self.log_file, "r", encoding="utf-8") as fh:
                         data = json.load(fh)
                         if not isinstance(data, list):
                             data = []
-                    except json.JSONDecodeError:
-                        data = []
-                    data.append(log_entry)
-                    fh.seek(0)
-                    json.dump(data, fh, ensure_ascii=False)
-                    fh.truncate()
-            else:
+                except json.JSONDecodeError:
+                    data = []
+            data.append(log_entry)
+            encoded = json.dumps(data, ensure_ascii=False)
+            size = len(encoded.encode("utf-8"))
+            if self.max_bytes > 0 and size > self.max_bytes:
+                self._rotate_logs()
                 with open(self.log_file, "w", encoding="utf-8") as fh:
                     json.dump([log_entry], fh, ensure_ascii=False)
+            else:
+                with open(self.log_file, "w", encoding="utf-8") as fh:
+                    fh.write(encoded)
         except Exception:
             pass
 

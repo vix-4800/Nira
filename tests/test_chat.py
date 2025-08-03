@@ -41,3 +41,24 @@ class TestChatLogging:
         assert first["a"] == "hi there"
         assert second["q"] == "How are you?"
         assert second["a"] == "i am fine"
+
+    def test_chat_logging_rotates_when_exceeding_limit(self):
+        responses = ["first", "second"]
+        llm = FakeListLLM(responses=responses)
+        # clean up any existing logs
+        for p in Path().glob("chat.json*"):
+            p.unlink()
+        agent = BaseAgent(
+            llm=llm,
+            log_file="chat.json",
+            max_bytes=100,
+            backup_count=1,
+        )
+        agent.ask("Hello?")
+        agent.ask("How are you?")
+        current = json.loads(Path("chat.json").read_text(encoding="utf-8"))
+        backup = json.loads(Path("chat.json.1").read_text(encoding="utf-8"))
+        assert len(current) == 1
+        assert len(backup) == 1
+        assert current[0]["q"] == "How are you?"
+        assert backup[0]["q"] == "Hello?"
