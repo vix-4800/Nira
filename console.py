@@ -90,6 +90,9 @@ def main() -> None:
         while True:
             user_input = get_user_input(use_voice)
 
+            if not user_input:
+                continue
+
             if user_input in ["/exit", "выход", "exit"]:
                 console.print("[bold magenta]👾 Nira:[/] До встречи!")
                 break
