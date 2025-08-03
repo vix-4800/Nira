@@ -18,6 +18,7 @@ class RouterAgent:
     def __init__(
         self,
         classifier_llm: ChatOllama | None = None,
+        memory_llm: ChatOllama | None = None,
         coder: CoderAgent | None = None,
         researcher: ResearcherAgent | None = None,
         sysops: SysOpsAgent | None = None,
@@ -35,6 +36,7 @@ class RouterAgent:
             base_url=server,
             reasoning=False,
         )
+        self.memory_llm = memory_llm or self.classifier_llm
         self.memory = memory or NiraMemory(
             memory_key="chat_history", return_messages=True
         )
@@ -55,6 +57,13 @@ class RouterAgent:
             "classify",
             "Classify the user request into one of: coder, researcher, sysops. Respond with only the label.\nRequest: {task}",
         )
+        self.memory_template = prompt_config.get(
+            "memory",
+            (
+                "If the user asks the assistant to remember information, respond with "
+                "'remember|<key>|<value>'. Otherwise respond with 'none'. Request: {task}"
+            ),
+        )
 
     def _classify(self, task: str) -> str:
         prompt = self.classify_template.replace("{task}", task)
@@ -69,19 +78,12 @@ class RouterAgent:
     def ask(self, question: str) -> str:
         lower = question.lower().strip()
 
-        if lower.startswith("remember "):
-            statement = question[len("remember "):].strip()
-            key: str | None = None
-            value: str | None = None
-            if " is " in statement:
-                key, value = statement.split(" is ", 1)
-            elif "=" in statement:
-                key, value = statement.split("=", 1)
-            if key and value is not None:
-                with PersistentMemory(self.memory_db_path) as mem:
-                    mem.set(key.strip(), value.strip())
-                return f"Remembered {key.strip()}"
-            return "Please specify what to remember in the form 'remember X is Y'"
+        memory = self._parse_memory_request(question)
+        if memory:
+            key, value = memory
+            with PersistentMemory(self.memory_db_path) as mem:
+                mem.set(key, value)
+            return f"Remembered {key}"
 
         with PersistentMemory(self.memory_db_path) as mem:
             data = mem.all()
@@ -98,3 +100,19 @@ class RouterAgent:
             agent = self.researcher
         response = agent.ask(question)
         return response
+
+    def _parse_memory_request(self, task: str) -> tuple[str, str] | None:
+        prompt = self.memory_template.replace("{task}", task)
+        try:
+            raw = self.memory_llm.invoke(prompt)
+            result = raw.content if hasattr(raw, "content") else str(raw)
+        except AttributeError:
+            result = self.memory_llm.predict(prompt)
+        text = str(result).strip()
+        if text.lower() == "none":
+            return None
+        if text.startswith("remember|"):
+            parts = text.split("|", 2)
+            if len(parts) == 3:
+                return parts[1].strip(), parts[2].strip()
+        return None
