@@ -1,4 +1,5 @@
 from pathlib import Path
+import warnings
 
 from langchain_ollama import ChatOllama
 
@@ -94,9 +95,15 @@ class RouterAgent:
         label = self._classify(question)
         if label.startswith("coder"):
             agent: BaseAgent = self.coder
+        elif label.startswith("researcher"):
+            agent = self.researcher
         elif label.startswith("sysops"):
             agent = self.sysops
         else:
+            warnings.warn(
+                f"Unknown agent label '{label}', defaulting to ResearcherAgent",
+                stacklevel=1,
+            )
             agent = self.researcher
         response = agent.ask(question)
         return response

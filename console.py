@@ -32,16 +32,22 @@ def typewriter(text: str, delay=0.015, prefix="") -> None:
 
 
 def get_user_input(use_voice: bool) -> str:
-    if use_voice:
-        if transcribe_whisper is None:
-            return ""
-        user_input = transcribe_whisper()
-        if not user_input:
+    while True:
+        if use_voice:
+            if transcribe_whisper is None:
+                return ""
+            try:
+                user_input = transcribe_whisper()
+            except KeyboardInterrupt:
+                raise
+            if user_input:
+                return user_input.strip()
             console.print("[yellow]Не удалось распознать речь. Попробуй ещё раз![/]")
-    else:
-        user_input = console.input(f"👤 [bold blue]{USERNAME}:[/] ")
-
-    return user_input.strip()
+        else:
+            user_input = console.input(f"👤 [bold blue]{USERNAME}:[/] ")
+            if user_input.strip():
+                return user_input.strip()
+            console.print("[yellow]Пустой ввод. Попробуй ещё раз![/]")
 
 
 def main() -> None:
@@ -83,6 +89,9 @@ def main() -> None:
     try:
         while True:
             user_input = get_user_input(use_voice)
+
+            if not user_input:
+                continue
 
             if user_input in ["/exit", "выход", "exit"]:
                 console.print("[bold magenta]👾 Nira:[/] До встречи!")

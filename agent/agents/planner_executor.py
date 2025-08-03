@@ -25,7 +25,7 @@ class PlannerExecutor:
         model = cfg.model
         server = cfg.server
         self.planner_llm = planner_llm or ChatOllama(
-            model=model, base_url=server, reasoning=False, temperature=0.3
+            model=model, base_url=server, reasoning=True, temperature=0.3
         )
         self.config = cfg
         self.memory = memory or NiraMemory(
