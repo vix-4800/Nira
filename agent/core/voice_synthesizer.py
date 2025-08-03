@@ -1,4 +1,5 @@
 from pathlib import Path
+from tempfile import NamedTemporaryFile
 from typing import Any
 
 import torch  # type: ignore[import-not-found]
@@ -43,8 +44,12 @@ class VoiceSynthesizer:
                 "sounddevice and soundfile are required for voice playback."
             )
 
-        Path("output").mkdir(exist_ok=True)
-        self.tts.tts_to_file(text, file_path="output/output.wav", device=self.device)
-        data, sample_rate = soundfile.read("output/output.wav")
-        sounddevice.play(data, sample_rate)
-        sounddevice.wait()
+        with NamedTemporaryFile(suffix=".wav", delete=False) as tmp_file:
+            tmp_path = tmp_file.name
+        try:
+            self.tts.tts_to_file(text, file_path=tmp_path, device=self.device)
+            data, sample_rate = soundfile.read(tmp_path)
+            sounddevice.play(data, sample_rate)
+            sounddevice.wait()
+        finally:
+            Path(tmp_path).unlink(missing_ok=True)
