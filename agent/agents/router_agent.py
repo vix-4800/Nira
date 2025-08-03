@@ -1,7 +1,10 @@
+from pathlib import Path
+
 from langchain_ollama import ChatOllama
 
 from ..core.config import NiraConfig, load_config
 from ..core.nira_memory import NiraMemory
+from ..core.persistent_memory import PersistentMemory
 from ..core.prompt import load_prompt
 from .base_agent import BaseAgent
 from .coder_agent import CoderAgent
@@ -22,6 +25,7 @@ class RouterAgent:
         model_name: str | None = None,
         base_url: str | None = None,
         config: NiraConfig | None = None,
+        memory_db_path: str | Path = "memory.db",
     ) -> None:
         cfg = config or load_config()
         model = model_name or cfg.model
@@ -44,6 +48,8 @@ class RouterAgent:
             model_name=model, base_url=server, memory=self.memory
         )
 
+        self.memory_db_path = Path(memory_db_path)
+
         prompt_config = load_prompt()
         self.classify_template = prompt_config.get(
             "classify",
@@ -61,6 +67,28 @@ class RouterAgent:
         return label_str.strip().lower()
 
     def ask(self, question: str) -> str:
+        lower = question.lower().strip()
+
+        if lower.startswith("remember "):
+            statement = question[len("remember "):].strip()
+            key: str | None = None
+            value: str | None = None
+            if " is " in statement:
+                key, value = statement.split(" is ", 1)
+            elif "=" in statement:
+                key, value = statement.split("=", 1)
+            if key and value is not None:
+                with PersistentMemory(self.memory_db_path) as mem:
+                    mem.set(key.strip(), value.strip())
+                return f"Remembered {key.strip()}"
+            return "Please specify what to remember in the form 'remember X is Y'"
+
+        with PersistentMemory(self.memory_db_path) as mem:
+            data = mem.all()
+        for k, v in data.items():
+            if k.lower() in lower or lower in k.lower():
+                return v
+
         label = self._classify(question)
         if label.startswith("coder"):
             agent: BaseAgent = self.coder

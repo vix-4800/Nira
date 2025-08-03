@@ -9,7 +9,7 @@ from agent.agents.sysops_agent import SysOpsAgent
 
 
 class TestRoutingAgent:
-    def test_routing_to_specialists(self):
+    def test_routing_to_specialists(self, tmp_path):
         classifier_llm = FakeListLLM(responses=["coder", "researcher", "sysops"])
         coder_llm = FakeListLLM(responses=["code-result"])
         researcher_llm = FakeListLLM(responses=["research-result"])
@@ -20,13 +20,14 @@ class TestRoutingAgent:
             coder=CoderAgent(llm=coder_llm),
             researcher=ResearcherAgent(llm=researcher_llm),
             sysops=SysOpsAgent(llm=sysops_llm),
+            memory_db_path=tmp_path / "mem.db",
         )
 
         assert agent.ask("task1") == "code-result"
         assert agent.ask("task2") == "research-result"
         assert agent.ask("task3") == "sysops-result"
 
-    def test_load_prompt_only_called_on_init(self):
+    def test_load_prompt_only_called_on_init(self, tmp_path):
         with patch("agent.agents.router_agent.load_prompt") as mock_load:
             mock_load.return_value = {"classify": "label {task}"}
             classifier_llm = FakeListLLM(responses=["coder", "researcher"])
@@ -39,6 +40,7 @@ class TestRoutingAgent:
                 coder=CoderAgent(llm=coder_llm),
                 researcher=ResearcherAgent(llm=researcher_llm),
                 sysops=SysOpsAgent(llm=sysops_llm),
+                memory_db_path=tmp_path / "mem.db",
             )
 
             agent.ask("one")
