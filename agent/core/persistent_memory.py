@@ -45,5 +45,11 @@ class PersistentMemory:
         """Close the database connection."""
         self.conn.close()
 
+    def __enter__(self) -> "PersistentMemory":
+        return self
+
+    def __exit__(self, exc_type, exc, tb) -> None:
+        self.close()
+
 
 __all__ = ["PersistentMemory"]
