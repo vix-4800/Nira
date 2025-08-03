@@ -1,5 +1,7 @@
 from unittest.mock import patch
 
+import pytest
+
 from agent.tools.http_utils import request_json
 
 
@@ -26,3 +28,12 @@ class TestHttpUtils:
             error_msg="Fail",
         )
         assert "Fail" in result
+
+    def test_request_json_invalid_method(self):
+        with pytest.raises(ValueError, match="Unsupported HTTP method: patch"):
+            request_json(
+                "patch",
+                "http://example.com",
+                status_msg="getting",
+                error_msg="Fail",
+            )
