@@ -12,7 +12,6 @@ from .researcher.summarize_text_tool import summarize_text_tool
 from .researcher.summarize_youtube_tool import summarize_youtube_tool
 from .researcher.web_search_tool import web_search_tool
 from .scrape_url_tool import scrape_url_tool
-from .sysops.check_website_tool import check_website_tool
 from .sysops.run_bash_command_tool import run_bash_command_tool
 from .telegram_manager_tool import telegram_manager
 from .todoist_manager_tool import todoist_manager
@@ -29,7 +28,6 @@ tools = [
     github_manager,
     todoist_manager,
     telegram_manager,
-    check_website_tool,
     homeassistant_manager,
     get_domain_info_tool,
     proxmox_manager,
