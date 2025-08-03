@@ -1,5 +1,6 @@
 import re
 import subprocess
+import shlex
 
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
@@ -62,8 +63,7 @@ def run_bash_command_tool(command: str) -> str:
     try:
         with status_manager.status("выполняю команду `" + command + "`"):
             result = subprocess.run(
-                command,
-                shell=True,
+                shlex.split(command),
                 capture_output=True,
                 text=True,
                 timeout=30,
