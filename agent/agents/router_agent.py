@@ -70,4 +70,3 @@ class RouterAgent:
             agent = self.researcher
         response = agent.ask(question)
         return response
-

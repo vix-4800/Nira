@@ -31,7 +31,6 @@ def typewriter(text: str, delay=0.015, prefix="") -> None:
     console.print(Markdown(text))
 
 
-
 def get_user_input(use_voice: bool) -> str:
     if use_voice:
         if transcribe_whisper is None:
