@@ -39,7 +39,7 @@ class BaseAgent:
         self.llm = llm or ChatOllama(
             model=model_name,
             base_url=base_url,
-            reasoning=False,
+            reasoning=True,
             # temperature=0.3,
         )
 
