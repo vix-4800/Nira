@@ -30,12 +30,15 @@ def pdf_manager(
     if not file_path.is_file():
         return f"(File not found: {path})"
     with status_manager.status("читаю PDF"):
-        reader = PdfReader(file_path)
-        pages = reader.pages[:max_pages]
-        text = []
-        for p in pages:
-            text.append(p.extract_text() or "")
-        joined = "\n".join(text).strip()[:MAX_PDF_CHARS]
+        try:
+            reader = PdfReader(file_path)
+            pages = reader.pages[:max_pages]
+            text = []
+            for p in pages:
+                text.append(p.extract_text() or "")
+            joined = "\n".join(text).strip()[:MAX_PDF_CHARS]
+        except Exception as e:
+            return f"(Error reading PDF: {e})"
 
     match action:
         case "extract_text":
