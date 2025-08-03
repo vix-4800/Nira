@@ -10,19 +10,22 @@ from agent.agents.sysops_agent import SysOpsAgent
 
 
 class TestPlannerExecutor:
-    def test_planner_delegates_to_router(self):
+    def test_planner_delegates_to_router(self, tmp_path):
         planner_llm = FakeListLLM(responses=['["c","r","s"]', "[]"])
 
         classifier_llm = FakeListLLM(responses=["coder", "researcher", "sysops"])
+        memory_llm = FakeListLLM(responses=["none", "none", "none"])
         coder_llm = FakeListLLM(responses=["code-res"])
         researcher_llm = FakeListLLM(responses=["research-res"])
         sysops_llm = FakeListLLM(responses=["sysops-res"])
 
         router = RouterAgent(
             classifier_llm=classifier_llm,
+            memory_llm=memory_llm,
             coder=CoderAgent(llm=coder_llm),
             researcher=ResearcherAgent(llm=researcher_llm),
             sysops=SysOpsAgent(llm=sysops_llm),
+            memory_db_path=tmp_path / "mem.db",
         )
 
         with patch("agent.agents.planner_executor.RouterAgent", return_value=router):

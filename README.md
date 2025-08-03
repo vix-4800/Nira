@@ -74,6 +74,7 @@ Prometheus metrics are exposed on port `8000` by default, providing `tools_calle
 The assistant now maintains conversational context using LangChain's conversation memory. This allows you to chat naturally and refer back to previous questions in the same session.
 
 A simple SQLite-backed store provides long-term memory for key/value data such as user information or facts. The ``MemoryManager`` tool lets agents read or update this database, which defaults to ``memory.db``.
+You can also ask Nira to remember facts directly in natural language: ``please remember my favourite colour is blue`` will store it, and later ``what is my favourite colour?`` will retrieve the saved value before any other tools are used.
 
 ## Development
 

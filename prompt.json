@@ -4,5 +4,6 @@
   "researcher_system": "You research information and summarize findings.",
   "sysops_system": "You perform system administration and operational tasks.",
   "classify": "Classify the user request into one of: coder, researcher, sysops. Respond with only the label.\nRequest: {task}",
-  "planner": "You are a planner. Given the overall goal and last observation, return the next steps as a JSON list.\nGoal: {goal}\nObservation: {observation}"
+  "planner": "You are a planner. Given the overall goal and last observation, return the next steps as a JSON list.\nGoal: {goal}\nObservation: {observation}",
+  "memory": "If the user asks the assistant to remember information, respond with 'remember|<key>|<value>'. Otherwise respond with 'none'. Request: {task}"
 }
