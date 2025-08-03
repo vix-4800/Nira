@@ -22,26 +22,29 @@ def memory_manager(
     value: str | None = None,
 ) -> str | dict:
     """Manage persistent key-value memory."""
-    mem = PersistentMemory()
     match action:
         case "get":
             if not key:
                 return "Error: 'key' is required for get"
-            val = mem.get(key)
+            with PersistentMemory() as mem:
+                val = mem.get(key)
             return val if val is not None else "(not found)"
         case "set":
             if not key or value is None:
                 return "Error: 'key' and 'value' are required for set"
             with status_manager.status("сохраняю память"):
-                mem.set(key, value)
+                with PersistentMemory() as mem:
+                    mem.set(key, value)
             return "Saved"
         case "delete":
             if not key:
                 return "Error: 'key' is required for delete"
             with status_manager.status("удаляю запись"):
-                mem.delete(key)
+                with PersistentMemory() as mem:
+                    mem.delete(key)
             return "Deleted"
         case "list":
-            return mem.all()
+            with PersistentMemory() as mem:
+                return mem.all()
         case _:
             return f"Error: unknown action '{action}'"
