@@ -2,8 +2,6 @@ import tempfile
 from pathlib import Path
 from unittest import mock
 
-import pytest
-
 from agent.core.config import load_config
 from agent.tools.obsidian_manager_tool import obsidian_manager
 
@@ -30,5 +28,5 @@ class TestObsidianTools:
 
     def test_missing_vault(self):
         with mock.patch.dict("os.environ", {}, clear=True):
-            with pytest.raises(RuntimeError):
-                obsidian_manager.func("create_note", title="Foo")
+            result = obsidian_manager.func("create_note", title="Foo")
+            assert result == "Error: OBSIDIAN_VAULT not configured"

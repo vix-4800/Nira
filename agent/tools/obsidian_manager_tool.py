@@ -34,7 +34,10 @@ def obsidian_manager(
     """Unified tool for Obsidian vault operations."""
     match action:
         case "create_note":
-            path = _vault_path() / f"{title}.md"
+            try:
+                path = _vault_path() / f"{title}.md"
+            except RuntimeError as e:
+                return f"Error: {e}"
             if path.exists():
                 return f"Note already exists: {path}"
             try:
@@ -44,7 +47,10 @@ def obsidian_manager(
             except Exception as e:
                 return f"Failed to create note: {e}"
         case "summarize_note":
-            path = _vault_path() / f"{title}.md"
+            try:
+                path = _vault_path() / f"{title}.md"
+            except RuntimeError as e:
+                return f"Error: {e}"
             if not path.is_file():
                 return f"(File not found: {path})"
             try:
