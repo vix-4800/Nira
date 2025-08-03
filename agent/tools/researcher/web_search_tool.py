@@ -18,7 +18,13 @@ def web_search_tool(query: str, max_results: int = 5) -> str:
     try:
         with status_manager.status("ищу в интернете"):
             with DDGS() as ddgs:
-                results = ddgs.text(query, safesearch="off", max_results=max_results)
+                results = list(
+                    ddgs.text(
+                        query,
+                        safesearch="off",
+                        max_results=max_results,
+                    )
+                )
     except Exception as e:
         return f"Search failed: {e}"
 
